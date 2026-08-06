@@ -1,0 +1,12 @@
+{
+  "Brand": {
+    "name": "Supreme Food Service"
+  },
+  "Meta": {
+    "appDescription": "Supreme Food Service client portal"
+  },
+  "Home": {
+    "title": "Client portal",
+    "subtitle": "Supreme client front is ready."
+  }
+}
