@@ -6,10 +6,17 @@
   --cream: #f5f0e8;
   --cream-dark: #e8e0d4;
   --white: #ffffff;
+  --tomato: #c73e2e;
+  --carrot: #e07b24;
+  --leaf: #3d7a4a;
   --text: #1a2332;
   --text-muted: #5c6478;
   --border: #d4dce8;
   --shadow: 0 4px 24px rgba(26, 43, 76, 0.08);
+  --radius: 10px;
+  --radius-lg: 14px;
+  --shop-surface: #f3f3f3;
+  --shop-surface-muted: #e8e8e8;
   --background: var(--cream);
   --foreground: var(--text);
 }

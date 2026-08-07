@@ -2,11 +2,75 @@
   "Brand": {
     "name": "Supreme Food Service"
   },
-  "Meta": {
-    "appDescription": "Supreme Food Service client portal"
+  "Common": {
+    "loading": "Loading…",
+    "email": "Email",
+    "password": "Password",
+    "company": "Company",
+    "continue": "Continue"
   },
-  "Home": {
-    "title": "Client portal",
-    "subtitle": "Supreme client front is ready."
+  "Language": {
+    "label": "Language",
+    "en": "English",
+    "es": "Español"
+  },
+  "Auth": {
+    "loginTitle": "Log in",
+    "loginSubtitle": "Access your shop, pricing, and order history",
+    "enterPortal": "Continue to shop",
+    "signingIn": "Signing in…",
+    "selectCompany": "Select a company to continue.",
+    "errors": {
+      "CredentialsSignin": "Invalid email or password.",
+      "SessionExpired": "Your session expired. Please sign in again.",
+      "AccessDenied": "This account cannot access the client portal.",
+      "Configuration": "Auth is misconfigured. Check environment variables.",
+      "Default": "Unable to sign in. Please try again.",
+      "invalidCredentials": "Invalid email or password.",
+      "tooManyAttempts": "Too many attempts. Try again later.",
+      "checkEmail": "Check your email and try again.",
+      "invalidEmail": "Enter a valid email address.",
+      "apiUnreachable": "Cannot reach the API. Is the backend running?",
+      "accessDenied": "This account cannot access the client portal.",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+  "Shop": {
+    "userFallback": "Client",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "searchPlaceholder": "Search products, SKU…",
+    "searchLabel": "Search products",
+    "search": "Search",
+    "helloName": "Hello, {name}",
+    "hello": "Hello",
+    "account": "Account",
+    "returns": "Returns",
+    "orders": "Orders",
+    "cart": "Cart",
+    "categories": "Categories",
+    "allProducts": "All products",
+    "recommended": "Recommended",
+    "favorites": "Favorites",
+    "buyAgain": "Buy again",
+    "yourAccount": "Your account",
+    "accountSettings": "Account & settings",
+    "yourOrders": "Your orders",
+    "notifications": "Notifications",
+    "browse": "Browse",
+    "home": "Home",
+    "mobileNav": "Mobile navigation",
+    "alerts": "Alerts",
+    "menu": "Menu"
+  },
+  "Nav": {
+    "logout": "Log out"
+  },
+  "Meta": {
+    "appDescription": "Supreme Food Service client portal",
+    "loginTitle": "Log in — Supreme Food Service",
+    "loginDescription": "Access your shop, pricing, and order history",
+    "homeTitle": "Shop — Supreme Food Service",
+    "homeDescription": "Supreme Food Service client shop"
   }
 }

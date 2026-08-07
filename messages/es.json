@@ -2,11 +2,75 @@
   "Brand": {
     "name": "Supreme Food Service"
   },
-  "Meta": {
-    "appDescription": "Portal de clientes de Supreme Food Service"
+  "Common": {
+    "loading": "Cargando…",
+    "email": "Correo",
+    "password": "Contraseña",
+    "company": "Empresa",
+    "continue": "Continuar"
   },
-  "Home": {
-    "title": "Portal de clientes",
-    "subtitle": "Supreme client front está listo."
+  "Language": {
+    "label": "Idioma",
+    "en": "English",
+    "es": "Español"
+  },
+  "Auth": {
+    "loginTitle": "Iniciar sesión",
+    "loginSubtitle": "Accede a tu tienda, precios e historial de pedidos",
+    "enterPortal": "Continuar a la tienda",
+    "signingIn": "Iniciando sesión…",
+    "selectCompany": "Selecciona una empresa para continuar.",
+    "errors": {
+      "CredentialsSignin": "Correo o contraseña incorrectos.",
+      "SessionExpired": "Tu sesión expiró. Vuelve a iniciar sesión.",
+      "AccessDenied": "Esta cuenta no puede acceder al portal de clientes.",
+      "Configuration": "La autenticación no está configurada. Revisa las variables de entorno.",
+      "Default": "No se pudo iniciar sesión. Inténtalo de nuevo.",
+      "invalidCredentials": "Correo o contraseña incorrectos.",
+      "tooManyAttempts": "Demasiados intentos. Prueba más tarde.",
+      "checkEmail": "Revisa tu correo e inténtalo de nuevo.",
+      "invalidEmail": "Ingresa un correo válido.",
+      "apiUnreachable": "No se puede conectar a la API. ¿Está el backend en marcha?",
+      "accessDenied": "Esta cuenta no puede acceder al portal de clientes.",
+      "generic": "Algo salió mal. Inténtalo de nuevo."
+    }
+  },
+  "Shop": {
+    "userFallback": "Cliente",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
+    "searchPlaceholder": "Buscar productos, SKU…",
+    "searchLabel": "Buscar productos",
+    "search": "Buscar",
+    "helloName": "Hola, {name}",
+    "hello": "Hola",
+    "account": "Cuenta",
+    "returns": "Devoluciones",
+    "orders": "Pedidos",
+    "cart": "Carrito",
+    "categories": "Categorías",
+    "allProducts": "Todos los productos",
+    "recommended": "Recomendados",
+    "favorites": "Favoritos",
+    "buyAgain": "Comprar de nuevo",
+    "yourAccount": "Tu cuenta",
+    "accountSettings": "Cuenta y ajustes",
+    "yourOrders": "Tus pedidos",
+    "notifications": "Notificaciones",
+    "browse": "Explorar",
+    "home": "Inicio",
+    "mobileNav": "Navegación móvil",
+    "alerts": "Alertas",
+    "menu": "Menú"
+  },
+  "Nav": {
+    "logout": "Cerrar sesión"
+  },
+  "Meta": {
+    "appDescription": "Portal de clientes de Supreme Food Service",
+    "loginTitle": "Iniciar sesión — Supreme Food Service",
+    "loginDescription": "Accede a tu tienda, precios e historial de pedidos",
+    "homeTitle": "Tienda — Supreme Food Service",
+    "homeDescription": "Tienda de clientes de Supreme Food Service"
   }
 }
