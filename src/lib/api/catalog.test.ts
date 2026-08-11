@@ -26,7 +26,7 @@ describe("fetchStoreCatalog", () => {
       ],
       meta: {
         page: 1,
-        limit: 50,
+        limit: 12,
         total: 1,
         search: null,
         orderBy: "name",
@@ -36,13 +36,13 @@ describe("fetchStoreCatalog", () => {
 
     const result = await fetchStoreCatalog("token-abc", {
       page: 1,
-      limit: 50,
+      limit: 12,
       orderBy: "name",
       sort: "asc",
     });
 
     expect(apiRequest).toHaveBeenCalledWith(
-      "/api/v1/customer/catalog?page=1&limit=50&orderBy=name&sort=asc",
+      "/api/v1/customer/catalog?page=1&limit=12&orderBy=name&sort=asc",
       { method: "GET", token: "token-abc" },
     );
     expect(result.data).toHaveLength(1);

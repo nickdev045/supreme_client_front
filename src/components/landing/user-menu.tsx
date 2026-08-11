@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useRef, useState } from "react";
 
@@ -9,9 +10,11 @@ import { SignOutButton } from "@/components/portal/sign-out-button";
 type UserMenuProps = {
   name: string;
   photoUrl: string | null;
+  /** When true, includes a link back to the public landing page. */
+  showLandingLink?: boolean;
 };
 
-export function UserMenu({ name, photoUrl }: UserMenuProps) {
+export function UserMenu({ name, photoUrl, showLandingLink = false }: UserMenuProps) {
   const t = useTranslations("Nav");
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -56,11 +59,21 @@ export function UserMenu({ name, photoUrl }: UserMenuProps) {
         <div
           id={menuId}
           role="menu"
-          className="absolute top-[calc(100%+0.5rem)] right-0 z-[120] min-w-[180px] rounded-[10px] border border-[var(--border)] bg-white py-1 shadow-[var(--shadow)]"
+          className="absolute top-[calc(100%+0.5rem)] right-0 z-[120] min-w-[200px] rounded-[10px] border border-[var(--border)] bg-white py-1 shadow-[var(--shadow)]"
         >
           <p className="truncate border-b border-[var(--border)] px-3 py-2 text-[0.8rem] font-medium text-[var(--text-muted)]">
             {name}
           </p>
+          {showLandingLink ? (
+            <Link
+              href="/"
+              role="menuitem"
+              className="block w-full px-3 py-2.5 text-left text-sm font-medium text-[var(--navy)] transition hover:bg-[var(--cream)]"
+              onClick={() => setOpen(false)}
+            >
+              {t("backToLanding")}
+            </Link>
+          ) : null}
           <SignOutButton
             className="w-full px-3 py-2.5 text-left text-sm font-medium text-[var(--navy)] transition hover:bg-[var(--cream)]"
             role="menuitem"

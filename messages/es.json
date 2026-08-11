@@ -79,8 +79,6 @@
     "heroSubtitle": "Supreme Food Service entrega frutas y verduras frescas a restaurantes, comercios y operadores de food service — con inventario confiable.",
     "catalogTitle": "Catálogo de productos",
     "catalogSubtitle": "Artículos de muestra de nuestro inventario. Los precios se muestran tras iniciar sesión y varían por grupo de cliente.",
-    "catalogNoteLabel": "Nota:",
-    "catalogNote": "El catálogo público puede ocultar precios hasta iniciar sesión. Los clientes ven precios según su grupo.",
     "signInForPrice": "Inicia sesión para ver tu precio",
     "signInForPricesCta": "Inicia sesión para ver tus precios",
     "products": {
@@ -136,7 +134,7 @@
     "userFallback": "Cliente",
     "openMenu": "Abrir menú",
     "closeMenu": "Cerrar menú",
-    "searchPlaceholder": "Buscar productos, SKU…",
+    "searchPlaceholder": "Buscar productos…",
     "searchLabel": "Buscar productos",
     "search": "Buscar",
     "helloName": "Hola, {name}",
@@ -149,11 +147,23 @@
     "allProducts": "Todos los productos",
     "recommended": "Recomendados",
     "recommendedForYou": "Recomendados para ti",
-    "pricingNote": "Los precios varían por grupo de cliente. Tu cuenta ve precios dinámicos según tu empresa.",
     "catalogEmpty": "Aún no hay productos disponibles.",
     "catalogLoadError": "No se pudo cargar el catálogo. Inténtalo de nuevo.",
     "catalogForbidden": "Tu cuenta no puede ver el catálogo de productos.",
     "catalogSessionError": "Tu sesión expiró. Vuelve a iniciar sesión para ver productos.",
+    "filters": {
+      "sortBy": "Ordenar por",
+      "sortOptions": {
+        "relevant": "Más relevantes",
+        "price_asc": "Menor precio",
+        "price_desc": "Mayor precio"
+      },
+      "clearSearch": "Limpiar búsqueda",
+      "loadMore": "Ver más",
+      "loadingMore": "Cargando…",
+      "showingCount": "Mostrando {shown} de {total}",
+      "resultsFor": "{count} resultado(s) para “{query}”"
+    },
     "stock": {
       "in_stock": "En stock",
       "out_of_stock": "Agotado"
@@ -173,7 +183,8 @@
   },
   "Nav": {
     "logout": "Cerrar sesión",
-    "accountMenu": "Menú de cuenta"
+    "accountMenu": "Menú de cuenta",
+    "backToLanding": "Volver a landing"
   },
   "Meta": {
     "appDescription": "Portal de clientes de Supreme Food Service",

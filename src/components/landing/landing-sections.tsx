@@ -38,11 +38,7 @@ export async function LandingSections({ signedIn }: LandingSectionsProps) {
             </p>
           </div>
 
-          <div className="mb-6 rounded-[10px] border border-[rgba(26,43,76,0.12)] bg-[rgba(26,43,76,0.06)] px-4 py-3 text-[0.9rem] text-[var(--navy)]">
-            <strong>{t("catalogNoteLabel")}</strong> {t("catalogNote")}
-          </div>
-
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-5">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {SAMPLE_PRODUCTS.map((product) => (
               <article
                 key={product.nameKey}

@@ -1,4 +1,6 @@
-import { getTranslations } from "next-intl/server";
+"use client";
+
+import { useTranslations } from "next-intl";
 
 import type { StoreCatalogCard, StoreStockStatus } from "@/lib/api/types";
 
@@ -20,12 +22,12 @@ function formatPrice(price: number) {
   }).format(price);
 }
 
-export async function ProductCard({ product, variant }: ProductCardProps) {
-  const t = await getTranslations("Shop");
+export function ProductCard({ product, variant }: ProductCardProps) {
+  const t = useTranslations("Shop");
 
   return (
     <article className="overflow-hidden rounded-[14px] border border-[#ddd] bg-[var(--shop-surface)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow)]">
-      <div className="flex h-[140px] items-center justify-center bg-[var(--shop-surface-muted)]">
+      <div className="flex h-[110px] items-center justify-center bg-[var(--shop-surface-muted)] sm:h-[140px]">
         {product.image ? (
           // Product image hosts vary by upload/CDN config.
           // eslint-disable-next-line @next/next/no-img-element
@@ -37,14 +39,16 @@ export async function ProductCard({ product, variant }: ProductCardProps) {
         ) : (
           <span
             aria-hidden
-            className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-white text-xl font-bold text-[var(--navy)]"
+            className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-lg font-bold text-[var(--navy)] sm:h-16 sm:w-16 sm:text-xl"
           >
             {product.name.trim().charAt(0).toUpperCase() || "?"}
           </span>
         )}
       </div>
-      <div className="p-4">
-        <h3 className="m-0 text-base font-semibold text-[var(--navy)]">{product.name}</h3>
+      <div className="p-3 sm:p-4">
+        <h3 className="m-0 line-clamp-2 text-sm font-semibold text-[var(--navy)] sm:text-base">
+          {product.name}
+        </h3>
 
         {variant === "catalog" ? (
           <span

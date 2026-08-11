@@ -79,8 +79,6 @@
     "heroSubtitle": "Supreme Food Service delivers farm-fresh fruits and vegetables to restaurants, retailers, and food service operators — with inventory you can trust.",
     "catalogTitle": "Product catalog",
     "catalogSubtitle": "Sample items from our inventory. Prices are shown after sign-in and vary by client group.",
-    "catalogNoteLabel": "Note:",
-    "catalogNote": "Public catalog may hide prices until sign-in. Logged-in clients see group-specific pricing.",
     "signInForPrice": "Sign in for your price",
     "signInForPricesCta": "Sign in to see your prices",
     "products": {
@@ -136,7 +134,7 @@
     "userFallback": "Client",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
-    "searchPlaceholder": "Search products, SKU…",
+    "searchPlaceholder": "Search products…",
     "searchLabel": "Search products",
     "search": "Search",
     "helloName": "Hello, {name}",
@@ -149,11 +147,23 @@
     "allProducts": "All products",
     "recommended": "Recommended",
     "recommendedForYou": "Recommended for you",
-    "pricingNote": "Prices vary by client group. Your account sees dynamic pricing for your company.",
     "catalogEmpty": "No products available yet.",
     "catalogLoadError": "Could not load the product catalog. Please try again.",
     "catalogForbidden": "Your account cannot view the product catalog.",
     "catalogSessionError": "Your session expired. Sign in again to view products.",
+    "filters": {
+      "sortBy": "Sort by",
+      "sortOptions": {
+        "relevant": "Most relevant",
+        "price_asc": "Lowest price",
+        "price_desc": "Highest price"
+      },
+      "clearSearch": "Clear search",
+      "loadMore": "See more",
+      "loadingMore": "Loading…",
+      "showingCount": "Showing {shown} of {total}",
+      "resultsFor": "{count} result(s) for “{query}”"
+    },
     "stock": {
       "in_stock": "In stock",
       "out_of_stock": "Out of stock"
@@ -173,7 +183,8 @@
   },
   "Nav": {
     "logout": "Log out",
-    "accountMenu": "Account menu"
+    "accountMenu": "Account menu",
+    "backToLanding": "Back to landing"
   },
   "Meta": {
     "appDescription": "Supreme Food Service client portal",

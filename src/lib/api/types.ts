@@ -52,12 +52,14 @@ export type StoreCatalogCard = {
   price: number;
 };
 
+export type StoreCatalogOrderBy = "name" | "sale_price" | "created_at";
+
 export type StoreCatalogListMeta = {
   page: number;
   limit: number;
   total: number;
   search: string | null;
-  orderBy: "name" | "unit_price" | "created_at";
+  orderBy: StoreCatalogOrderBy;
   sort: "asc" | "desc";
 };
 
