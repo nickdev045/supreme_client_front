@@ -1,5 +1,7 @@
 import { getTranslations } from "next-intl/server";
 
+import { ProductCatalog } from "@/components/shop/product-catalog";
+
 export async function generateMetadata() {
   const t = await getTranslations("Meta");
   return {
@@ -8,7 +10,6 @@ export async function generateMetadata() {
   };
 }
 
-/** Authenticated home shell — catalog/search/cart land here later. */
-export default function PortalHomePage() {
-  return null;
+export default async function ShopHomePage() {
+  return <ProductCatalog />;
 }

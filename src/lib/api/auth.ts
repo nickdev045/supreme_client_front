@@ -5,6 +5,7 @@ import type { ApiLoginData, ApiMeData, ApiTenant } from "@/lib/api/types";
 
 /** Permissions that grant entry to the store / customer portal (mirror backend). */
 export const STORE_CLIENT_PERMISSIONS = [
+  "catalog.read",
   "carts.read",
   "carts.write",
   "favourites.read",

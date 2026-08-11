@@ -13,7 +13,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-[100] bg-[var(--navy)] text-[var(--cream)] shadow-[0_2px_12px_rgba(0,0,0,0.15)]">
       <div className="mx-auto flex w-[min(1200px,calc(100%-2rem))] items-center justify-between gap-4 py-3">
-        <Link href="/login" className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3">
           <Image
             src="/logo.png"
             alt=""

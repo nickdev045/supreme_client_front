@@ -12,8 +12,11 @@ export default async function PortalLayout({ children }: { children: ReactNode }
   }
 
   const t = await getTranslations("Shop");
+  const userName = session.user.name || t("userFallback");
 
   return (
-    <ShopShell userName={session.user.name || t("userFallback")}>{children}</ShopShell>
+    <ShopShell userName={userName} photoUrl={session.user.photoUrl}>
+      {children}
+    </ShopShell>
   );
 }

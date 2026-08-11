@@ -5,10 +5,12 @@ import Link from "next/link";
 import { FormEvent, useEffect, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 
+import { UserMenu } from "@/components/landing/user-menu";
 import { SignOutButton } from "@/components/portal/sign-out-button";
 
 type ShopShellProps = {
   userName: string;
+  photoUrl: string | null;
   children: ReactNode;
 };
 
@@ -32,7 +34,7 @@ function CartIcon({ className }: { className?: string }) {
 }
 
 /** Shop chrome from inventario_proyecto (Amazon / Mercado Libre style). */
-export function ShopShell({ userName, children }: ShopShellProps) {
+export function ShopShell({ userName, photoUrl, children }: ShopShellProps) {
   const t = useTranslations("Shop");
   const tBrand = useTranslations("Brand");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -73,7 +75,7 @@ export function ShopShell({ userName, children }: ShopShellProps) {
             <span aria-hidden>☰</span>
           </button>
 
-          <Link href="/" className="flex max-w-[180px] shrink-0 items-center gap-2 text-[var(--cream)]">
+          <Link href="/shop" className="flex max-w-[180px] shrink-0 items-center gap-2 text-[var(--cream)]">
             <Image
               src="/logo.png"
               alt=""
@@ -109,11 +111,8 @@ export function ShopShell({ userName, children }: ShopShellProps) {
             </button>
           </form>
 
-          <div className="hidden shrink-0 items-stretch gap-[0.35rem] md:flex">
-            <div className="flex flex-col justify-center rounded px-[0.6rem] py-[0.35rem] text-[0.78rem] leading-tight text-[var(--cream)]">
-              <span className="opacity-85">{t("helloName", { name: firstName })}</span>
-              <span className="text-[0.85rem] font-bold">{t("account")}</span>
-            </div>
+          <div className="hidden shrink-0 items-center gap-2 md:flex">
+            <UserMenu name={userName} photoUrl={photoUrl} />
             <div className="flex flex-col justify-center rounded px-[0.6rem] py-[0.35rem] text-[0.78rem] leading-tight text-[var(--cream)] opacity-70">
               <span className="opacity-85">{t("returns")}</span>
               <span className="text-[0.85rem] font-bold">{t("orders")}</span>
@@ -132,14 +131,17 @@ export function ShopShell({ userName, children }: ShopShellProps) {
             </div>
           </div>
 
-          <div
-            className="relative inline-flex shrink-0 items-center justify-center p-[0.35rem] text-[var(--cream)] opacity-70 md:hidden"
-            aria-label={t("cart")}
-          >
-            <CartIcon className="h-7 w-7" />
-            <span className="absolute -top-0.5 -right-0.5 inline-flex h-[1.35rem] min-w-[1.35rem] items-center justify-center rounded-full border-2 border-[var(--navy)] bg-[var(--carrot)] px-[0.3rem] text-[0.75rem] font-bold text-white">
-              0
-            </span>
+          <div className="flex shrink-0 items-center gap-2 md:hidden">
+            <UserMenu name={userName} photoUrl={photoUrl} />
+            <div
+              className="relative inline-flex items-center justify-center p-[0.35rem] text-[var(--cream)] opacity-70"
+              aria-label={t("cart")}
+            >
+              <CartIcon className="h-7 w-7" />
+              <span className="absolute -top-0.5 -right-0.5 inline-flex h-[1.35rem] min-w-[1.35rem] items-center justify-center rounded-full border-2 border-[var(--navy)] bg-[var(--carrot)] px-[0.3rem] text-[0.75rem] font-bold text-white">
+                0
+              </span>
+            </div>
           </div>
         </div>
 
@@ -219,11 +221,20 @@ export function ShopShell({ userName, children }: ShopShellProps) {
           <ul className="m-0 list-none p-0">
             <li>
               <Link
-                href="/"
+                href="/shop"
                 onClick={() => setMenuOpen(false)}
                 className="block border-b border-[var(--border)] px-5 py-3 text-[0.95rem] font-medium text-[var(--text)]"
               >
                 {t("home")}
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/"
+                onClick={() => setMenuOpen(false)}
+                className="block border-b border-[var(--border)] px-5 py-3 text-[0.95rem] font-medium text-[var(--text)]"
+              >
+                {t("landing")}
               </Link>
             </li>
           </ul>
@@ -244,7 +255,7 @@ export function ShopShell({ userName, children }: ShopShellProps) {
         aria-label={t("mobileNav")}
       >
         <Link
-          href="/"
+          href="/shop"
           className="flex min-w-0 flex-1 flex-col items-center justify-center gap-[0.15rem] px-1 py-[0.35rem] text-[0.65rem] font-semibold text-[var(--navy)]"
         >
           <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[rgba(26,43,76,0.1)] text-[0.85rem] font-bold">

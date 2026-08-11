@@ -1,7 +1,8 @@
 import { getToken } from "next-auth/jwt";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_PATHS = new Set(["/login"]);
+const PUBLIC_PATHS = new Set(["/", "/login", "/request"]);
+const AUTH_ENTRY_PATHS = new Set(["/login"]);
 
 function isSecureRequest(req: NextRequest) {
   return (
@@ -42,7 +43,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(login);
   }
 
-  if (isPublic && signedIn) {
+  if (AUTH_ENTRY_PATHS.has(path) && signedIn) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
