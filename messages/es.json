@@ -164,7 +164,8 @@
     },
     "stock": {
       "in_stock": "En stock",
-      "out_of_stock": "Agotado"
+      "out_of_stock": "Agotado",
+      "quantity": "Stock: {count}"
     },
     "favorites": "Favoritos",
     "buyAgain": "Comprar de nuevo",

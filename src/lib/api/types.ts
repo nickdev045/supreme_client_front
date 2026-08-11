@@ -48,6 +48,7 @@ export type StoreCatalogCard = {
   name: string;
   image: string | null;
   unit: string;
+  stock: number;
   stock_status: StoreStockStatus;
   price: number;
 };

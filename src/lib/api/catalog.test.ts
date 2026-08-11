@@ -20,6 +20,7 @@ describe("fetchStoreCatalog", () => {
           name: "Roma Tomatoes",
           image: null,
           unit: "case",
+          stock: 8,
           stock_status: "in_stock",
           price: 24.8,
         },

@@ -51,12 +51,21 @@ export function ProductCard({ product, variant }: ProductCardProps) {
         </h3>
 
         {variant === "catalog" ? (
-          <span
-            className={`mt-2 inline-block rounded-full px-[0.55rem] py-[0.2rem] text-[0.72rem] font-semibold tracking-wide uppercase ${stockBadgeClass[product.stock_status]}`}
-          >
-            {t(`stock.${product.stock_status}`)}
-          </span>
-        ) : null}
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <span
+              className={`inline-block rounded-full px-[0.55rem] py-[0.2rem] text-[0.72rem] font-semibold tracking-wide uppercase ${stockBadgeClass[product.stock_status]}`}
+            >
+              {t(`stock.${product.stock_status}`)}
+            </span>
+            <span className="text-[0.8rem] text-[var(--text-muted)]">
+              {t("stock.quantity", { count: product.stock })}
+            </span>
+          </div>
+        ) : (
+          <p className="mt-1 mb-0 text-[0.8rem] text-[var(--text-muted)]">
+            {t("stock.quantity", { count: product.stock })}
+          </p>
+        )}
 
         {product.stock_status === "out_of_stock" && variant === "catalog" ? (
           <p className="mt-2 mb-0 font-bold text-[var(--navy)]">—</p>

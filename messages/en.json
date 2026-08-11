@@ -164,7 +164,8 @@
     },
     "stock": {
       "in_stock": "In stock",
-      "out_of_stock": "Out of stock"
+      "out_of_stock": "Out of stock",
+      "quantity": "Stock: {count}"
     },
     "favorites": "Favorites",
     "buyAgain": "Buy again",
