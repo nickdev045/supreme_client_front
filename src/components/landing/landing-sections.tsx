@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { btn, fieldClass, labelClass } from "@/components/ui/styles";
@@ -18,11 +17,7 @@ const DELIVERY_ZONES = [
   { titleKey: "zoneCTitle", metaKey: "zoneCMeta" },
 ] as const;
 
-type LandingSectionsProps = {
-  signedIn: boolean;
-};
-
-export async function LandingSections({ signedIn }: LandingSectionsProps) {
+export async function LandingSections() {
   const t = await getTranslations("Landing");
 
   return (
@@ -54,25 +49,10 @@ export async function LandingSections({ signedIn }: LandingSectionsProps) {
                   <p className="mt-1 mb-0 text-[0.8rem] text-[var(--text-muted)]">
                     {t(`products.${product.metaKey}`)}
                   </p>
-                  <p className="mt-2 mb-0 text-[0.8rem] font-normal text-[var(--text-muted)]">
-                    {t("signInForPrice")}
-                  </p>
                 </div>
               </article>
             ))}
           </div>
-
-          <p className="mt-8 mb-0 text-center">
-            {signedIn ? (
-              <Link href="/shop" className={btn.primary}>
-                {t("enterShop")}
-              </Link>
-            ) : (
-              <Link href="/login" className={btn.primary}>
-                {t("signInForPricesCta")}
-              </Link>
-            )}
-          </p>
         </div>
       </section>
 

@@ -30,7 +30,7 @@ export default async function LandingPage() {
       <LandingHeader user={user} />
       <main className="flex-1">
         <LandingHero />
-        <LandingSections signedIn={signedIn} />
+        <LandingSections />
       </main>
       <LandingFooter signedIn={signedIn} />
     </div>

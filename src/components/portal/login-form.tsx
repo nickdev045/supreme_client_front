@@ -31,8 +31,7 @@ export function LoginForm() {
   const tCommon = useTranslations("Common");
   const tBrand = useTranslations("Brand");
   const searchParams = useSearchParams();
-  // Always return to the public landing after sign-in; shop is entered explicitly.
-  const callbackUrl = "/";
+  const callbackUrl = "/shop";
   const urlErrorCode = searchParams.get("error");
 
   const [email, setEmail] = useState("");
