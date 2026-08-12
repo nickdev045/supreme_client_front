@@ -2,15 +2,26 @@
 
 import { signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
+import type { ButtonHTMLAttributes } from "react";
 
-export function SignOutButton({ className }: { className?: string }) {
+type SignOutButtonProps = {
+  className?: string;
+  onClick?: ButtonHTMLAttributes<HTMLButtonElement>["onClick"];
+  role?: ButtonHTMLAttributes<HTMLButtonElement>["role"];
+};
+
+export function SignOutButton({ className, onClick, role }: SignOutButtonProps) {
   const t = useTranslations("Nav");
 
   return (
     <button
       type="button"
-      onClick={() => signOut({ callbackUrl: "/login" })}
+      role={role}
       className={className}
+      onClick={(event) => {
+        onClick?.(event);
+        void signOut({ callbackUrl: "/" });
+      }}
     >
       {t("logout")}
     </button>

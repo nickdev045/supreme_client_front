@@ -11,6 +11,7 @@ import {
 describe("canAccessStorePortal", () => {
   it("allows buyer-style permissions", () => {
     expect(canAccessStorePortal(["carts.read", "favourites.read"])).toBe(true);
+    expect(canAccessStorePortal(["catalog.read"])).toBe(true);
   });
 
   it("rejects warehouse-only permissions", () => {

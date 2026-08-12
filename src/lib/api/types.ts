@@ -39,3 +39,32 @@ export type ApiErrorBody = {
   message?: string;
   statusCode?: number;
 };
+
+/** Storefront catalog card from GET /api/v1/customer/catalog */
+export type StoreStockStatus = "in_stock" | "out_of_stock";
+
+export type StoreCatalogCard = {
+  id: string;
+  name: string;
+  image: string | null;
+  unit: string;
+  stock: number;
+  stock_status: StoreStockStatus;
+  price: number;
+};
+
+export type StoreCatalogOrderBy = "name" | "sale_price" | "created_at";
+
+export type StoreCatalogListMeta = {
+  page: number;
+  limit: number;
+  total: number;
+  search: string | null;
+  orderBy: StoreCatalogOrderBy;
+  sort: "asc" | "desc";
+};
+
+export type StoreCatalogListResponse = {
+  data: StoreCatalogCard[];
+  meta: StoreCatalogListMeta;
+};

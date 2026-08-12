@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
@@ -30,7 +31,7 @@ export function LoginForm() {
   const tCommon = useTranslations("Common");
   const tBrand = useTranslations("Brand");
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const callbackUrl = "/shop";
   const urlErrorCode = searchParams.get("error");
 
   const [email, setEmail] = useState("");
@@ -220,9 +221,16 @@ export function LoginForm() {
             ? t("signingIn")
             : needsCompany
               ? tCommon("continue")
-              : t("enterPortal")}
+              : t("signInSubmit")}
         </button>
       </form>
+
+      <p className="mt-4 mb-0 text-center text-[0.88rem] text-[var(--text-muted)]">
+        {t("noAccount")}{" "}
+        <Link href="/request" className="font-semibold text-[var(--navy)]">
+          {t("becomeMember")}
+        </Link>
+      </p>
     </div>
   );
 }

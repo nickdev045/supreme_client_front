@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 
 import { ShopShell } from "@/components/portal/shop-shell";
 import { getSession } from "@/lib/session";
@@ -12,8 +12,13 @@ export default async function PortalLayout({ children }: { children: ReactNode }
   }
 
   const t = await getTranslations("Shop");
+  const userName = session.user.name || t("userFallback");
 
   return (
-    <ShopShell userName={session.user.name || t("userFallback")}>{children}</ShopShell>
+    <Suspense fallback={<div className="min-h-full flex-1 bg-[var(--shop-surface)]" />}>
+      <ShopShell userName={userName} photoUrl={session.user.photoUrl}>
+        {children}
+      </ShopShell>
+    </Suspense>
   );
 }

@@ -2,13 +2,17 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useEffect, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 
+import { UserAvatar } from "@/components/landing/user-avatar";
+import { UserMenu } from "@/components/landing/user-menu";
 import { SignOutButton } from "@/components/portal/sign-out-button";
 
 type ShopShellProps = {
   userName: string;
+  photoUrl: string | null;
   children: ReactNode;
 };
 
@@ -31,18 +35,44 @@ function CartIcon({ className }: { className?: string }) {
   );
 }
 
+function ProfileIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+  );
+}
+
 /** Shop chrome from inventario_proyecto (Amazon / Mercado Libre style). */
-export function ShopShell({ userName, children }: ShopShellProps) {
+export function ShopShell({ userName, photoUrl, children }: ShopShellProps) {
   const t = useTranslations("Shop");
   const tBrand = useTranslations("Brand");
-  const [menuOpen, setMenuOpen] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [query, setQuery] = useState(searchParams.get("q") ?? "");
   const firstName = userName.split(/\s+/)[0] || userName;
 
   useEffect(() => {
-    if (!menuOpen) return;
+    setQuery(searchParams.get("q") ?? "");
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (!profileOpen) return;
 
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") setMenuOpen(false);
+      if (event.key === "Escape") setProfileOpen(false);
     }
 
     document.addEventListener("keydown", onKeyDown);
@@ -53,36 +83,41 @@ export function ShopShell({ userName, children }: ShopShellProps) {
       document.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = previousOverflow;
     };
-  }, [menuOpen]);
+  }, [profileOpen]);
 
-  function onSearchSubmit(event: FormEvent) {
+  function onSearchSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const next = new URLSearchParams();
+    const trimmed = query.trim();
+    if (trimmed) next.set("q", trimmed);
+    if (pathname.startsWith("/shop")) {
+      const orderBy = searchParams.get("orderBy");
+      const sort = searchParams.get("sort");
+      if (orderBy) next.set("orderBy", orderBy);
+      if (sort) next.set("sort", sort);
+    }
+    const qs = next.toString();
+    router.push(qs ? `/shop?${qs}` : "/shop");
   }
 
   return (
     <div className="flex min-h-full flex-1 flex-col bg-[var(--shop-surface)]">
       <header className="sticky top-0 z-[100] bg-[var(--navy)] text-[var(--cream)] shadow-[0_2px_8px_rgba(0,0,0,0.15)]">
-        <div className="mx-auto flex w-[min(1400px,calc(100%-2rem))] items-center gap-3 py-[0.65rem]">
-          <button
-            type="button"
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-white/35 text-[var(--cream)] md:hidden"
-            aria-label={t("openMenu")}
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen(true)}
+        <div className="mx-auto flex w-[min(1400px,calc(100%-1rem))] items-center gap-2 py-[0.65rem] sm:w-[min(1400px,calc(100%-2rem))] md:gap-3">
+          <Link
+            href="/shop"
+            className="flex shrink-0 items-center gap-2 text-[var(--cream)]"
+            aria-label={tBrand("name")}
           >
-            <span aria-hidden>☰</span>
-          </button>
-
-          <Link href="/" className="flex max-w-[180px] shrink-0 items-center gap-2 text-[var(--cream)]">
             <Image
               src="/logo.png"
               alt=""
               width={36}
               height={36}
-              className="h-9 w-9 rounded-full object-cover"
+              className="h-9 w-9 shrink-0 rounded-full object-cover"
               priority
             />
-            <span className="hidden font-[family-name:var(--font-display)] text-[0.85rem] font-bold leading-tight sm:block">
+            <span className="hidden whitespace-nowrap font-[family-name:var(--font-display)] text-[0.9rem] font-bold leading-tight md:inline">
               {tBrand("name")}
             </span>
           </Link>
@@ -95,25 +130,22 @@ export function ShopShell({ userName, children }: ShopShellProps) {
             <input
               type="search"
               name="q"
-              disabled
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
               placeholder={t("searchPlaceholder")}
               aria-label={t("searchLabel")}
-              className="min-w-0 flex-1 border-0 bg-[var(--shop-surface)] px-[0.85rem] py-[0.6rem] text-[0.9rem] text-[var(--text)] outline-none disabled:cursor-not-allowed disabled:opacity-80"
+              className="min-w-0 flex-1 border-0 bg-[var(--shop-surface)] px-3 py-2.5 text-base text-[var(--text)] outline-none sm:px-[0.85rem] sm:text-[0.9rem]"
             />
             <button
               type="submit"
-              disabled
-              className="shrink-0 whitespace-nowrap border-0 bg-[var(--carrot)] px-[1.1rem] text-[0.88rem] font-semibold text-white disabled:cursor-not-allowed disabled:opacity-80"
+              className="shrink-0 whitespace-nowrap border-0 bg-[var(--carrot)] px-3 text-[0.85rem] font-semibold text-white transition hover:brightness-105 sm:px-[1.1rem] sm:text-[0.88rem]"
             >
               {t("search")}
             </button>
           </form>
 
-          <div className="hidden shrink-0 items-stretch gap-[0.35rem] md:flex">
-            <div className="flex flex-col justify-center rounded px-[0.6rem] py-[0.35rem] text-[0.78rem] leading-tight text-[var(--cream)]">
-              <span className="opacity-85">{t("helloName", { name: firstName })}</span>
-              <span className="text-[0.85rem] font-bold">{t("account")}</span>
-            </div>
+          <div className="hidden shrink-0 items-center gap-2 md:flex">
+            <UserMenu name={userName} photoUrl={photoUrl} showLandingLink />
             <div className="flex flex-col justify-center rounded px-[0.6rem] py-[0.35rem] text-[0.78rem] leading-tight text-[var(--cream)] opacity-70">
               <span className="opacity-85">{t("returns")}</span>
               <span className="text-[0.85rem] font-bold">{t("orders")}</span>
@@ -130,16 +162,6 @@ export function ShopShell({ userName, children }: ShopShellProps) {
               </span>
               <span className="text-[0.85rem] font-bold">{t("cart")}</span>
             </div>
-          </div>
-
-          <div
-            className="relative inline-flex shrink-0 items-center justify-center p-[0.35rem] text-[var(--cream)] opacity-70 md:hidden"
-            aria-label={t("cart")}
-          >
-            <CartIcon className="h-7 w-7" />
-            <span className="absolute -top-0.5 -right-0.5 inline-flex h-[1.35rem] min-w-[1.35rem] items-center justify-center rounded-full border-2 border-[var(--navy)] bg-[var(--carrot)] px-[0.3rem] text-[0.75rem] font-bold text-white">
-              0
-            </span>
           </div>
         </div>
 
@@ -162,40 +184,43 @@ export function ShopShell({ userName, children }: ShopShellProps) {
         </nav>
       </header>
 
-      {menuOpen ? (
+      {profileOpen ? (
         <button
           type="button"
           aria-label={t("closeMenu")}
           className="fixed inset-0 z-[200] bg-black/45 md:hidden"
-          onClick={() => setMenuOpen(false)}
+          onClick={() => setProfileOpen(false)}
         />
       ) : null}
 
       <div
-        id="shop-mobile-menu"
+        id="shop-mobile-profile"
         className={[
-          "fixed inset-y-0 left-0 z-[210] flex w-[min(300px,88vw)] flex-col overflow-hidden bg-[var(--shop-surface)] text-[var(--text)] shadow-[4px_0_20px_rgba(0,0,0,0.15)] md:hidden",
-          menuOpen ? "flex" : "hidden",
+          "fixed inset-x-0 bottom-0 z-[210] max-h-[min(70vh,calc(100dvh-5rem))] overflow-hidden rounded-t-[16px] bg-[var(--shop-surface)] pb-[env(safe-area-inset-bottom,0)] text-[var(--text)] shadow-[0_-8px_28px_rgba(0,0,0,0.18)] transition-[transform,opacity] duration-200 ease-out md:hidden",
+          profileOpen
+            ? "translate-y-0 opacity-100"
+            : "pointer-events-none invisible translate-y-full opacity-0",
         ].join(" ")}
-        aria-hidden={!menuOpen}
+        aria-hidden={!profileOpen}
       >
-        <div className="relative bg-gradient-to-b from-[var(--navy)] to-[var(--navy-light)] px-4 pt-5 pb-4 text-[var(--cream)]">
-          <p className="m-0 text-base">
-            {t("hello")}, <strong>{firstName}</strong>
-          </p>
+        <div className="flex items-center gap-3 border-b border-[var(--border)] bg-gradient-to-b from-[var(--navy)] to-[var(--navy-light)] px-4 py-4 text-[var(--cream)]">
+          <UserAvatar name={userName} photoUrl={photoUrl} size={44} />
+          <div className="min-w-0 flex-1">
+            <p className="m-0 truncate text-base font-semibold">{userName}</p>
+            <p className="m-0 truncate text-sm opacity-80">
+              {t("hello")}, {firstName}
+            </p>
+          </div>
           <button
             type="button"
-            className="absolute top-[0.65rem] right-[0.65rem] flex h-9 w-9 items-center justify-center rounded-full border-0 bg-white/15 text-[1.4rem] leading-none text-[var(--cream)]"
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-0 bg-white/15 text-[1.4rem] leading-none text-[var(--cream)]"
             aria-label={t("closeMenu")}
-            onClick={() => setMenuOpen(false)}
+            onClick={() => setProfileOpen(false)}
           >
             ×
           </button>
         </div>
         <div className="overflow-y-auto py-2">
-          <p className="mt-4 mb-[0.35rem] px-4 text-[0.72rem] font-bold tracking-wider text-[var(--text-muted)] uppercase">
-            {t("yourAccount")}
-          </p>
           <ul className="m-0 list-none p-0">
             <li>
               <span className="block border-b border-[var(--border)] px-5 py-3 text-[0.95rem] font-medium opacity-60">
@@ -208,26 +233,14 @@ export function ShopShell({ userName, children }: ShopShellProps) {
               </span>
             </li>
             <li>
-              <span className="block border-b border-[var(--border)] px-5 py-3 text-[0.95rem] font-medium opacity-60">
-                {t("notifications")}
-              </span>
-            </li>
-          </ul>
-          <p className="mt-4 mb-[0.35rem] px-4 text-[0.72rem] font-bold tracking-wider text-[var(--text-muted)] uppercase">
-            {t("browse")}
-          </p>
-          <ul className="m-0 list-none p-0">
-            <li>
               <Link
                 href="/"
-                onClick={() => setMenuOpen(false)}
+                onClick={() => setProfileOpen(false)}
                 className="block border-b border-[var(--border)] px-5 py-3 text-[0.95rem] font-medium text-[var(--text)]"
               >
-                {t("home")}
+                {t("landing")}
               </Link>
             </li>
-          </ul>
-          <ul className="m-0 list-none p-0">
             <li className="px-4 py-3">
               <SignOutButton className="w-full rounded-[10px] border border-[var(--border)] bg-white px-3 py-2 text-left text-sm font-medium text-[var(--navy)]" />
             </li>
@@ -244,7 +257,7 @@ export function ShopShell({ userName, children }: ShopShellProps) {
         aria-label={t("mobileNav")}
       >
         <Link
-          href="/"
+          href="/shop"
           className="flex min-w-0 flex-1 flex-col items-center justify-center gap-[0.15rem] px-1 py-[0.35rem] text-[0.65rem] font-semibold text-[var(--navy)]"
         >
           <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[rgba(26,43,76,0.1)] text-[0.85rem] font-bold">
@@ -272,13 +285,23 @@ export function ShopShell({ userName, children }: ShopShellProps) {
         </span>
         <button
           type="button"
-          className="flex min-w-0 flex-1 flex-col items-center justify-center gap-[0.15rem] border-0 bg-transparent px-1 py-[0.35rem] text-[0.65rem] font-semibold text-[var(--text-muted)]"
-          onClick={() => setMenuOpen(true)}
+          className={[
+            "flex min-w-0 flex-1 flex-col items-center justify-center gap-[0.15rem] border-0 bg-transparent px-1 py-[0.35rem] text-[0.65rem] font-semibold",
+            profileOpen ? "text-[var(--navy)]" : "text-[var(--text-muted)]",
+          ].join(" ")}
+          aria-expanded={profileOpen}
+          aria-controls="shop-mobile-profile"
+          onClick={() => setProfileOpen((open) => !open)}
         >
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg text-[0.85rem] font-bold">
-            ☰
+          <span
+            className={[
+              "flex h-7 w-7 items-center justify-center rounded-lg",
+              profileOpen ? "bg-[rgba(26,43,76,0.1)]" : "",
+            ].join(" ")}
+          >
+            <ProfileIcon className="h-[22px] w-[22px]" />
           </span>
-          <span>{t("menu")}</span>
+          <span>{t("account")}</span>
         </button>
       </nav>
     </div>
