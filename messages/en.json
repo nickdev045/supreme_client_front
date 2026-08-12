@@ -173,6 +173,14 @@
     "accountSettings": "Account & settings",
     "yourOrders": "Your orders",
     "notifications": "Notifications",
+    "notificationsSubtitle": "Messages from your company.",
+    "notificationsEmpty": "No notifications yet.",
+    "viewAllNotifications": "View all",
+    "markRead": "Mark as read",
+    "markAllRead": "Mark all as read",
+    "dismiss": "Remove",
+    "read": "Read",
+    "unread": "Unread",
     "browse": "Browse",
     "home": "Home",
     "landing": "Landing",
@@ -194,6 +202,8 @@
     "landingTitle": "Supreme Food Service — Fresh Wholesale Produce",
     "landingDescription": "Premium wholesale produce for restaurants, retailers, and food service operators",
     "homeTitle": "Shop — Supreme Food Service",
-    "homeDescription": "Supreme Food Service client shop"
+    "homeDescription": "Supreme Food Service client shop",
+    "notificationsTitle": "Notifications — Supreme Food Service",
+    "notificationsDescription": "Messages from your company"
   }
 }

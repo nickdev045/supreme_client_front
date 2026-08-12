@@ -173,6 +173,14 @@
     "accountSettings": "Cuenta y ajustes",
     "yourOrders": "Tus pedidos",
     "notifications": "Notificaciones",
+    "notificationsSubtitle": "Mensajes de tu empresa.",
+    "notificationsEmpty": "Aún no hay notificaciones.",
+    "viewAllNotifications": "Ver todas",
+    "markRead": "Marcar como leída",
+    "markAllRead": "Marcar todas como leídas",
+    "dismiss": "Quitar",
+    "read": "Leída",
+    "unread": "No leída",
     "browse": "Explorar",
     "home": "Inicio",
     "landing": "Sitio web",
@@ -194,6 +202,8 @@
     "landingTitle": "Supreme Food Service — Producto fresco al mayoreo",
     "landingDescription": "Producto fresco al mayoreo para restaurantes, comercios y food service",
     "homeTitle": "Tienda — Supreme Food Service",
-    "homeDescription": "Tienda de clientes de Supreme Food Service"
+    "homeDescription": "Tienda de clientes de Supreme Food Service",
+    "notificationsTitle": "Notificaciones — Supreme Food Service",
+    "notificationsDescription": "Mensajes de tu empresa"
   }
 }

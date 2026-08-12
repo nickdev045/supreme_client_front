@@ -68,3 +68,18 @@ export type StoreCatalogListResponse = {
   data: StoreCatalogCard[];
   meta: StoreCatalogListMeta;
 };
+
+export type ApiInboxItem = {
+  pk_multi_tenant_notification: number;
+  fk_multi_tenant: string;
+  fk_notification: number;
+  read_at: string | null;
+  notification: {
+    pk_notification: number;
+    title: string;
+    description: string | null;
+    starts_at?: string | null;
+    ends_at?: string | null;
+    created_at: string | null;
+  };
+};

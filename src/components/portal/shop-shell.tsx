@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 
 import { UserAvatar } from "@/components/landing/user-avatar";
 import { UserMenu } from "@/components/landing/user-menu";
+import { ShopNotificationBell } from "@/components/portal/notification-bell";
 import { SignOutButton } from "@/components/portal/sign-out-button";
 
 type ShopShellProps = {
@@ -146,6 +147,7 @@ export function ShopShell({ userName, photoUrl, children }: ShopShellProps) {
 
           <div className="hidden shrink-0 items-center gap-2 md:flex">
             <UserMenu name={userName} photoUrl={photoUrl} showLandingLink />
+            <ShopNotificationBell />
             <div className="flex flex-col justify-center rounded px-[0.6rem] py-[0.35rem] text-[0.78rem] leading-tight text-[var(--cream)] opacity-70">
               <span className="opacity-85">{t("returns")}</span>
               <span className="text-[0.85rem] font-bold">{t("orders")}</span>
@@ -271,12 +273,7 @@ export function ShopShell({ userName, photoUrl, children }: ShopShellProps) {
           </span>
           <span>{t("favorites")}</span>
         </span>
-        <span className="flex min-w-0 flex-1 flex-col items-center justify-center gap-[0.15rem] px-1 py-[0.35rem] text-[0.65rem] font-semibold text-[var(--text-muted)] opacity-60">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg text-[0.85rem] font-bold">
-            A
-          </span>
-          <span>{t("alerts")}</span>
-        </span>
+        <ShopNotificationBell variant="mobile" />
         <span className="relative flex min-w-0 flex-1 flex-col items-center justify-center gap-[0.15rem] px-1 py-[0.35rem] text-[0.65rem] font-semibold text-[var(--text-muted)] opacity-60">
           <span className="flex h-7 w-7 items-center justify-center rounded-lg">
             <CartIcon className="h-[22px] w-[22px]" />
