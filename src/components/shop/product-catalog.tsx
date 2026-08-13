@@ -5,6 +5,7 @@ import { ProductCatalogList } from "@/components/shop/product-catalog-list";
 import { Alert } from "@/components/ui/alert";
 import { ApiError } from "@/lib/api/client";
 import { fetchStoreCatalog, STORE_CATALOG_PAGE_SIZE } from "@/lib/api/catalog";
+import { cartQuantitiesByProductId, listStoreCarts } from "@/lib/api/cart";
 import type { StoreCatalogOrderBy } from "@/lib/api/types";
 import { getAccessToken } from "@/lib/session";
 
@@ -70,10 +71,15 @@ export async function ProductCatalog({
           sort: "asc",
         });
 
-    const [response, recommendedResponse] = await Promise.all([
+    const cartRequest = listStoreCarts(token).catch(() => []);
+
+    const [response, recommendedResponse, carts] = await Promise.all([
       catalogRequest,
       recommendedRequest,
+      cartRequest,
     ]);
+
+    const cartQuantities = cartQuantitiesByProductId(carts[0] ?? null);
 
     const products = response.data;
     const total = response.meta.total;
@@ -92,7 +98,12 @@ export async function ProductCatalog({
             </h2>
             <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
               {recommended.map((product) => (
-                <ProductCard key={`rec-${product.id}`} product={product} variant="recommended" />
+                <ProductCard
+                  key={`rec-${product.id}`}
+                  product={product}
+                  variant="recommended"
+                  inCartQuantity={cartQuantities[product.id] ?? 0}
+                />
               ))}
             </div>
           </section>
@@ -112,6 +123,7 @@ export async function ProductCatalog({
             total={total}
             hasMore={hasMore}
             filters={filters}
+            cartQuantities={cartQuantities}
           />
         </section>
       </div>

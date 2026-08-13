@@ -4,12 +4,14 @@ import type { ApiEnvelope, ApiErrorBody } from "@/lib/api/types";
 export class ApiError extends Error {
   readonly status: number;
   readonly code?: string;
+  readonly data?: unknown;
 
-  constructor(status: number, message: string, code?: string) {
+  constructor(status: number, message: string, code?: string, data?: unknown) {
     super(message);
     this.name = "ApiError";
     this.status = status;
     this.code = code;
+    this.data = data;
   }
 }
 
@@ -61,6 +63,7 @@ export async function apiRequest<T>(
       response.status,
       err?.message ?? `Request failed (${response.status})`,
       err?.error,
+      err?.data,
     );
   }
 

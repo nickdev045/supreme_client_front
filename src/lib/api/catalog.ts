@@ -1,5 +1,9 @@
-import { apiRequest } from "@/lib/api/client";
-import type { StoreCatalogListResponse, StoreCatalogOrderBy } from "@/lib/api/types";
+import { apiData, apiRequest } from "@/lib/api/client";
+import type {
+  StoreCatalogDetail,
+  StoreCatalogListResponse,
+  StoreCatalogOrderBy,
+} from "@/lib/api/types";
 
 export type FetchStoreCatalogParams = {
   page?: number;
@@ -23,6 +27,13 @@ export async function fetchStoreCatalog(
   if (params.sort) query.set("sort", params.sort);
 
   return apiRequest<StoreCatalogListResponse>(`/api/v1/customer/catalog?${query}`, {
+    method: "GET",
+    token,
+  });
+}
+
+export function fetchStoreProduct(token: string, id: string) {
+  return apiData<StoreCatalogDetail>(`/api/v1/customer/catalog/${id}`, {
     method: "GET",
     token,
   });
