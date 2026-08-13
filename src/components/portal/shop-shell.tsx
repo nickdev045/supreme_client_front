@@ -225,9 +225,13 @@ export function ShopShell({ userName, photoUrl, children }: ShopShellProps) {
         <div className="overflow-y-auto py-2">
           <ul className="m-0 list-none p-0">
             <li>
-              <span className="block border-b border-[var(--border)] px-5 py-3 text-[0.95rem] font-medium opacity-60">
+              <Link
+                href="/shop/profile"
+                onClick={() => setProfileOpen(false)}
+                className="block border-b border-[var(--border)] px-5 py-3 text-[0.95rem] font-medium text-[var(--text)]"
+              >
                 {t("accountSettings")}
-              </span>
+              </Link>
             </li>
             <li>
               <span className="block border-b border-[var(--border)] px-5 py-3 text-[0.95rem] font-medium opacity-60">

@@ -191,7 +191,39 @@
   "Nav": {
     "logout": "Log out",
     "accountMenu": "Account menu",
+    "myProfile": "My profile",
     "backToLanding": "Back to landing"
+  },
+  "Profile": {
+    "title": "My profile",
+    "subtitle": "Update your name and photo. Email is managed by your administrator.",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "emailReadOnlyHint": "Email cannot be changed here. Contact your administrator if it needs updating.",
+    "photo": "Photo",
+    "selectPhoto": "Upload photo",
+    "uploadingPhoto": "Uploading…",
+    "removePhoto": "Remove photo",
+    "photoHint": "JPEG, PNG, or WebP up to 10 MB.",
+    "save": "Save changes",
+    "saving": "Saving…",
+    "successSaved": "Profile updated.",
+    "passwordRequestTitle": "Request a password change",
+    "passwordRequestBody": "We will notify your company administrators. They can reset your password from the admin panel. Your password will not change until they do.",
+    "passwordRequestCta": "Request password change",
+    "passwordRequesting": "Sending request…",
+    "successPasswordRequested": "Your request was sent to the company administrators.",
+    "errors": {
+      "session": "Your session expired. Sign in again.",
+      "validation": "Check your name fields and try again.",
+      "forbidden": "You cannot perform this action.",
+      "rateLimited": "Too many requests. Try again later.",
+      "noAdmins": "No company administrators are available to handle this request.",
+      "uploadForbidden": "You cannot upload photos with this account.",
+      "uploadInvalid": "Choose a valid JPEG, PNG, or WebP image.",
+      "uploadTooLarge": "The file must not exceed 10 MB.",
+      "generic": "Something went wrong. Please try again."
+    }
   },
   "Meta": {
     "appDescription": "Supreme Food Service client portal",
@@ -205,5 +237,7 @@
     "homeDescription": "Supreme Food Service client shop",
     "notificationsTitle": "Notifications — Supreme Food Service",
     "notificationsDescription": "Messages from your company"
+    "profileTitle": "My profile — Supreme Food Service",
+    "profileDescription": "Update your shop profile name and photo"
   }
 }
