@@ -83,6 +83,37 @@ export async function fetchMe(accessToken: string): Promise<ApiMeData> {
   });
 }
 
+export type UpdateMeInput = {
+  firstName?: string;
+  lastName?: string;
+  photoUrl?: string | null;
+};
+
+export async function updateMe(
+  accessToken: string,
+  input: UpdateMeInput,
+): Promise<ApiMeData> {
+  return apiData<ApiMeData>("/api/v1/auth/me", {
+    method: "PATCH",
+    token: accessToken,
+    body: input,
+  });
+}
+
+export type PasswordRequestResult = {
+  requested: true;
+  notificationId: number;
+};
+
+export async function requestPasswordChange(
+  accessToken: string,
+): Promise<PasswordRequestResult> {
+  return apiData<PasswordRequestResult>("/api/v1/auth/me/password-request", {
+    method: "POST",
+    token: accessToken,
+  });
+}
+
 export function toAuthErrorKey(error: unknown): AuthErrorKey {
   if (error instanceof ApiError) {
     if (error.status === 401) return "invalidCredentials";

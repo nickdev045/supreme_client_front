@@ -26,9 +26,7 @@ export type ApiMeData = {
   lastName: string;
   photoUrl: string | null;
   companyId: string;
-  companyName?: string;
   roleId: number;
-  roleName?: string;
   permissions: ApiPermissionEntry[];
 };
 
