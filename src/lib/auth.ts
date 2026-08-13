@@ -132,7 +132,7 @@ export const authOptions: NextAuthOptions = {
     error: "/login",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.sub = user.id;
         token.email = user.email;
@@ -147,6 +147,19 @@ export const authOptions: NextAuthOptions = {
         token.roleId = user.roleId;
         delete token.error;
         return token;
+      }
+
+      if (trigger === "update" && session) {
+        const next = session as {
+          name?: string;
+          firstName?: string;
+          lastName?: string;
+          photoUrl?: string | null;
+        };
+        if (typeof next.name === "string") token.name = next.name;
+        if (typeof next.firstName === "string") token.firstName = next.firstName;
+        if (typeof next.lastName === "string") token.lastName = next.lastName;
+        if ("photoUrl" in next) token.photoUrl = next.photoUrl ?? null;
       }
 
       if (token.accessToken && !isTokenExpired(token)) {

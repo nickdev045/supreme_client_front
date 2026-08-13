@@ -183,7 +183,39 @@
   "Nav": {
     "logout": "Cerrar sesión",
     "accountMenu": "Menú de cuenta",
+    "myProfile": "Mi perfil",
     "backToLanding": "Volver a landing"
+  },
+  "Profile": {
+    "title": "Mi perfil",
+    "subtitle": "Actualiza tu nombre y foto. El correo lo gestiona tu administrador.",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "emailReadOnlyHint": "El correo no se puede cambiar aquí. Contacta a tu administrador si necesita actualizarse.",
+    "photo": "Foto",
+    "selectPhoto": "Subir foto",
+    "uploadingPhoto": "Subiendo…",
+    "removePhoto": "Quitar foto",
+    "photoHint": "JPEG, PNG o WebP de hasta 10 MB.",
+    "save": "Guardar cambios",
+    "saving": "Guardando…",
+    "successSaved": "Perfil actualizado.",
+    "passwordRequestTitle": "Solicitar cambio de contraseña",
+    "passwordRequestBody": "Avisaremos a los administradores de tu empresa. Ellos pueden restablecer tu contraseña desde el panel de administración. Tu contraseña no cambiará hasta que lo hagan.",
+    "passwordRequestCta": "Solicitar cambio de contraseña",
+    "passwordRequesting": "Enviando solicitud…",
+    "successPasswordRequested": "Tu solicitud se envió a los administradores de la empresa.",
+    "errors": {
+      "session": "Tu sesión expiró. Vuelve a iniciar sesión.",
+      "validation": "Revisa los campos de nombre e inténtalo de nuevo.",
+      "forbidden": "No puedes realizar esta acción.",
+      "rateLimited": "Demasiadas solicitudes. Inténtalo más tarde.",
+      "noAdmins": "No hay administradores de la empresa disponibles para atender esta solicitud.",
+      "uploadForbidden": "No puedes subir fotos con esta cuenta.",
+      "uploadInvalid": "Elige una imagen JPEG, PNG o WebP válida.",
+      "uploadTooLarge": "El archivo no debe superar 10 MB.",
+      "generic": "Algo salió mal. Inténtalo de nuevo."
+    }
   },
   "Meta": {
     "appDescription": "Portal de clientes de Supreme Food Service",
@@ -194,6 +226,8 @@
     "landingTitle": "Supreme Food Service — Producto fresco al mayoreo",
     "landingDescription": "Producto fresco al mayoreo para restaurantes, comercios y food service",
     "homeTitle": "Tienda — Supreme Food Service",
-    "homeDescription": "Tienda de clientes de Supreme Food Service"
+    "homeDescription": "Tienda de clientes de Supreme Food Service",
+    "profileTitle": "Mi perfil — Supreme Food Service",
+    "profileDescription": "Actualiza el nombre y la foto de tu perfil en la tienda"
   }
 }

@@ -64,6 +64,14 @@ export function UserMenu({ name, photoUrl, showLandingLink = false }: UserMenuPr
           <p className="truncate border-b border-[var(--border)] px-3 py-2 text-[0.8rem] font-medium text-[var(--text-muted)]">
             {name}
           </p>
+          <Link
+            href="/shop/profile"
+            role="menuitem"
+            className="block w-full px-3 py-2.5 text-left text-sm font-medium text-[var(--navy)] transition hover:bg-[var(--cream)]"
+            onClick={() => setOpen(false)}
+          >
+            {t("myProfile")}
+          </Link>
           {showLandingLink ? (
             <Link
               href="/"
