@@ -186,7 +186,57 @@
     "landing": "Sitio web",
     "mobileNav": "Navegación móvil",
     "alerts": "Alertas",
-    "menu": "Menú"
+    "menu": "Menú",
+    "cartPage": {
+      "title": "Tu carrito",
+      "empty": "Tu carrito está vacío.",
+      "emptyCta": "Ver productos",
+      "add": "Agregar",
+      "adding": "Agregando…",
+      "added": "Agregado",
+      "inCart": "En el carrito: {count}",
+      "viewCart": "Ver carrito",
+      "goToCart": "Ir al carrito",
+      "outOfStock": "Agotado",
+      "remove": "Quitar",
+      "increase": "Aumentar cantidad",
+      "decrease": "Reducir cantidad",
+      "summary": "Resumen",
+      "total": "Total",
+      "pay": "Pagar ahora",
+      "paying": "Procesando…",
+      "loadError": "No se pudo cargar el carrito. Inténtalo de nuevo.",
+      "errors": {
+        "session": "Tu sesión expiró. Vuelve a iniciar sesión.",
+        "forbidden": "No puedes modificar el carrito con esta cuenta.",
+        "stock": "No hay suficiente stock para completar esta compra. Revisa las cantidades.",
+        "empty": "Agrega productos antes de pagar.",
+        "generic": "No se pudo actualizar el carrito. Inténtalo de nuevo."
+      },
+      "priceChanged": {
+        "title": "Precios actualizados",
+        "body": "Algunos precios cambiaron desde que agregaste los productos al carrito. Actualizamos tu carrito con los precios actuales. Revisa el total y vuelve a pagar cuando quieras.",
+        "line": "{previous} → {current}",
+        "confirm": "Entendido"
+      }
+    },
+    "orderPage": {
+      "title": "Compra confirmada",
+      "subtitle": "El pago quedó registrado y se creó el recibo.",
+      "receipt": "Recibo",
+      "paid": "Pagado",
+      "total": "Total",
+      "backToShop": "Seguir comprando"
+    },
+    "productPage": {
+      "back": "Volver al catálogo",
+      "viewDetails": "Ver detalle",
+      "description": "Detalles",
+      "noDescription": "Este producto no tiene más detalles.",
+      "unit": "Unidad",
+      "gallery": "Imágenes del producto",
+      "imageN": "Imagen {n}"
+    }
   },
   "Nav": {
     "logout": "Cerrar sesión",
@@ -236,8 +286,15 @@
     "homeTitle": "Tienda — Supreme Food Service",
     "homeDescription": "Tienda de clientes de Supreme Food Service",
     "notificationsTitle": "Notificaciones — Supreme Food Service",
-    "notificationsDescription": "Mensajes de tu empresa"
+    "notificationsDescription": "Mensajes de tu empresa",
     "profileTitle": "Mi perfil — Supreme Food Service",
-    "profileDescription": "Actualiza el nombre y la foto de tu perfil en la tienda"
+    "profileDescription": "Actualiza el nombre y la foto de tu perfil en la tienda",
+    "cartTitle": "Carrito — Supreme Food Service",
+    "cartDescription": "Revisa tu carrito y completa la compra",
+    "orderTitle": "Pedido — Supreme Food Service",
+    "orderDescription": "Confirmación de compra y recibo",
+    "productTitle": "{name} — Supreme Food Service",
+    "productTitleFallback": "Producto — Supreme Food Service",
+    "productDescription": "Detalle e imágenes del producto"
   }
 }

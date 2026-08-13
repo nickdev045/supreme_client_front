@@ -36,6 +36,14 @@ export type ApiErrorBody = {
   error?: string;
   message?: string;
   statusCode?: number;
+  data?: unknown;
+};
+
+export type StoreCartPriceChange = {
+  product_id: string;
+  name: string;
+  previous_unit_price: number;
+  current_unit_price: number;
 };
 
 /** Storefront catalog card from GET /api/v1/customer/catalog */
@@ -49,6 +57,11 @@ export type StoreCatalogCard = {
   stock: number;
   stock_status: StoreStockStatus;
   price: number;
+};
+
+export type StoreCatalogDetail = StoreCatalogCard & {
+  description: string;
+  images: string[];
 };
 
 export type StoreCatalogOrderBy = "name" | "sale_price" | "created_at";
@@ -65,6 +78,58 @@ export type StoreCatalogListMeta = {
 export type StoreCatalogListResponse = {
   data: StoreCatalogCard[];
   meta: StoreCatalogListMeta;
+};
+
+export type StoreCartProduct = {
+  pk_cart_product: number;
+  fk_product: string;
+  fk_user_cart: number;
+  quantity: string;
+  unit_price: string | number;
+  selected: boolean;
+  product: {
+    pk_product: string;
+    name: string;
+    photo_url: string | null;
+    stock: string | number;
+    sale_price: string | number;
+    meassure?: { name: string } | null;
+  };
+};
+
+export type StoreCart = {
+  pk_user_cart: number;
+  fk_company: string;
+  fk_user: string;
+  cart_products: StoreCartProduct[];
+};
+
+export type StoreOrderLine = {
+  id: number;
+  product_id: string;
+  name: string;
+  image: string | null;
+  quantity: number;
+  unit_price: number;
+  sub_total: number;
+};
+
+export type StoreOrderPayment = {
+  id: number;
+  amount: number;
+  method: string | null;
+  status: string | null;
+};
+
+export type StoreOrder = {
+  id: string;
+  state: string;
+  origin: string;
+  created_at: string | null;
+  delivery: { id: number; state: string | null; delivery_date: string | null } | null;
+  lines: StoreOrderLine[];
+  total: number;
+  payment: StoreOrderPayment | null;
 };
 
 export type ApiInboxItem = {

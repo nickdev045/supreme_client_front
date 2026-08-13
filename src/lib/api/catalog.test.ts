@@ -2,14 +2,16 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 
 vi.mock("@/lib/api/client", () => ({
   apiRequest: vi.fn(),
+  apiData: vi.fn(),
 }));
 
-import { apiRequest } from "@/lib/api/client";
-import { fetchStoreCatalog } from "@/lib/api/catalog";
+import { apiData, apiRequest } from "@/lib/api/client";
+import { fetchStoreCatalog, fetchStoreProduct } from "@/lib/api/catalog";
 
 describe("fetchStoreCatalog", () => {
   beforeEach(() => {
     vi.mocked(apiRequest).mockReset();
+    vi.mocked(apiData).mockReset();
   });
 
   it("calls the store catalog endpoint with query params", async () => {
@@ -48,5 +50,27 @@ describe("fetchStoreCatalog", () => {
     );
     expect(result.data).toHaveLength(1);
     expect(result.data[0]?.price).toBe(24.8);
+  });
+
+  it("loads a product detail by id", async () => {
+    vi.mocked(apiData).mockResolvedValue({
+      id: "p1",
+      name: "Roma Tomatoes",
+      image: "https://example.com/roma.png",
+      images: ["https://example.com/roma.png"],
+      unit: "case",
+      stock: 8,
+      stock_status: "in_stock",
+      price: 24.8,
+      description: "25 lb case",
+    });
+
+    const product = await fetchStoreProduct("token-abc", "p1");
+    expect(apiData).toHaveBeenCalledWith("/api/v1/customer/catalog/p1", {
+      method: "GET",
+      token: "token-abc",
+    });
+    expect(product.description).toBe("25 lb case");
+    expect(product.images).toEqual(["https://example.com/roma.png"]);
   });
 });

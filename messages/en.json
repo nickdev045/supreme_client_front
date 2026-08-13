@@ -186,7 +186,57 @@
     "landing": "Landing",
     "mobileNav": "Mobile navigation",
     "alerts": "Alerts",
-    "menu": "Menu"
+    "menu": "Menu",
+    "cartPage": {
+      "title": "Your cart",
+      "empty": "Your cart is empty.",
+      "emptyCta": "Browse products",
+      "add": "Add to cart",
+      "adding": "Adding…",
+      "added": "Added",
+      "inCart": "In cart: {count}",
+      "viewCart": "View cart",
+      "goToCart": "Go to cart",
+      "outOfStock": "Out of stock",
+      "remove": "Remove",
+      "increase": "Increase quantity",
+      "decrease": "Decrease quantity",
+      "summary": "Summary",
+      "total": "Total",
+      "pay": "Pay now",
+      "paying": "Processing…",
+      "loadError": "Could not load your cart. Please try again.",
+      "errors": {
+        "session": "Your session expired. Sign in again.",
+        "forbidden": "You cannot update the cart with this account.",
+        "stock": "There is not enough stock to complete this purchase. Check quantities and try again.",
+        "empty": "Add products before paying.",
+        "generic": "Could not update the cart. Please try again."
+      },
+      "priceChanged": {
+        "title": "Prices were updated",
+        "body": "Some product prices changed since you added them to the cart. We updated your cart with the current prices. Review the total and pay again when you are ready.",
+        "line": "{previous} → {current}",
+        "confirm": "Got it"
+      }
+    },
+    "orderPage": {
+      "title": "Order confirmed",
+      "subtitle": "Your payment was recorded and a receipt was created.",
+      "receipt": "Receipt",
+      "paid": "Paid",
+      "total": "Total",
+      "backToShop": "Continue shopping"
+    },
+    "productPage": {
+      "back": "Back to catalog",
+      "viewDetails": "View details",
+      "description": "Details",
+      "noDescription": "No additional details for this product.",
+      "unit": "Unit",
+      "gallery": "Product images",
+      "imageN": "Image {n}"
+    }
   },
   "Nav": {
     "logout": "Log out",
@@ -236,8 +286,15 @@
     "homeTitle": "Shop — Supreme Food Service",
     "homeDescription": "Supreme Food Service client shop",
     "notificationsTitle": "Notifications — Supreme Food Service",
-    "notificationsDescription": "Messages from your company"
+    "notificationsDescription": "Messages from your company",
     "profileTitle": "My profile — Supreme Food Service",
-    "profileDescription": "Update your shop profile name and photo"
+    "profileDescription": "Update your shop profile name and photo",
+    "cartTitle": "Cart — Supreme Food Service",
+    "cartDescription": "Review your cart and complete your purchase",
+    "orderTitle": "Order — Supreme Food Service",
+    "orderDescription": "Purchase confirmation and receipt",
+    "productTitle": "{name} — Supreme Food Service",
+    "productTitleFallback": "Product — Supreme Food Service",
+    "productDescription": "Product details and images"
   }
 }

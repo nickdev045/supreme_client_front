@@ -14,6 +14,7 @@ import { SignOutButton } from "@/components/portal/sign-out-button";
 type ShopShellProps = {
   userName: string;
   photoUrl: string | null;
+  cartCount?: number;
   children: ReactNode;
 };
 
@@ -55,7 +56,7 @@ function ProfileIcon({ className }: { className?: string }) {
 }
 
 /** Shop chrome from inventario_proyecto (Amazon / Mercado Libre style). */
-export function ShopShell({ userName, photoUrl, children }: ShopShellProps) {
+export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopShellProps) {
   const t = useTranslations("Shop");
   const tBrand = useTranslations("Brand");
   const router = useRouter();
@@ -152,18 +153,22 @@ export function ShopShell({ userName, photoUrl, children }: ShopShellProps) {
               <span className="opacity-85">{t("returns")}</span>
               <span className="text-[0.85rem] font-bold">{t("orders")}</span>
             </div>
-            <div
-              className="relative flex flex-col items-center justify-center gap-[0.1rem] rounded px-[0.6rem] py-[0.35rem] text-[var(--cream)] opacity-70"
+            <Link
+              href="/shop/cart"
+              className={[
+                "relative flex flex-col items-center justify-center gap-[0.1rem] rounded px-[0.6rem] py-[0.35rem] text-[var(--cream)]",
+                pathname.startsWith("/shop/cart") ? "" : "opacity-90 hover:opacity-100",
+              ].join(" ")}
               aria-label={t("cart")}
             >
               <span className="relative inline-flex">
                 <CartIcon className="h-[26px] w-[26px]" />
                 <span className="absolute -top-1.5 -right-2.5 inline-flex h-[1.35rem] min-w-[1.35rem] items-center justify-center rounded-full border-2 border-[var(--navy)] bg-[var(--carrot)] px-[0.3rem] text-[0.75rem] font-bold text-white">
-                  0
+                  {cartCount > 99 ? "99+" : cartCount}
                 </span>
               </span>
               <span className="text-[0.85rem] font-bold">{t("cart")}</span>
-            </div>
+            </Link>
           </div>
         </div>
 
@@ -278,12 +283,23 @@ export function ShopShell({ userName, photoUrl, children }: ShopShellProps) {
           <span>{t("favorites")}</span>
         </span>
         <ShopNotificationBell variant="mobile" />
-        <span className="relative flex min-w-0 flex-1 flex-col items-center justify-center gap-[0.15rem] px-1 py-[0.35rem] text-[0.65rem] font-semibold text-[var(--text-muted)] opacity-60">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg">
+        <Link
+          href="/shop/cart"
+          className={[
+            "relative flex min-w-0 flex-1 flex-col items-center justify-center gap-[0.15rem] px-1 py-[0.35rem] text-[0.65rem] font-semibold",
+            pathname.startsWith("/shop/cart") ? "text-[var(--navy)]" : "text-[var(--text-muted)]",
+          ].join(" ")}
+        >
+          <span className="relative flex h-7 w-7 items-center justify-center rounded-lg">
             <CartIcon className="h-[22px] w-[22px]" />
+            {cartCount > 0 ? (
+              <span className="absolute -top-1 -right-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--carrot)] px-1 text-[0.65rem] font-bold text-white">
+                {cartCount > 99 ? "99+" : cartCount}
+              </span>
+            ) : null}
           </span>
           <span>{t("cart")}</span>
-        </span>
+        </Link>
         <button
           type="button"
           className={[

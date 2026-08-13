@@ -26,6 +26,7 @@ type ProductCatalogListProps = {
   total: number;
   hasMore: boolean;
   filters: CatalogFilters;
+  cartQuantities?: Record<string, number>;
 };
 
 function buildShopQuery(filters: CatalogFilters) {
@@ -46,6 +47,7 @@ export function ProductCatalogList({
   total,
   hasMore: initialHasMore,
   filters,
+  cartQuantities = {},
 }: ProductCatalogListProps) {
   const t = useTranslations("Shop");
   const router = useRouter();
@@ -148,7 +150,12 @@ export function ProductCatalogList({
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {products.map((product) => (
-            <ProductCard key={product.id} product={product} variant="catalog" />
+            <ProductCard
+              key={product.id}
+              product={product}
+              variant="catalog"
+              inCartQuantity={cartQuantities[product.id] ?? 0}
+            />
           ))}
         </div>
       )}
