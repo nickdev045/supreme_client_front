@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 
 import { AddToCartControls } from "@/components/shop/add-to-cart-controls";
+import { FavouriteToggle } from "@/components/shop/favourite-toggle";
 import { btn } from "@/components/ui/styles";
 import type { StoreCatalogCard } from "@/lib/api/types";
 import { formatMoney } from "@/lib/format-money";
@@ -12,15 +13,22 @@ type ProductCardProps = {
   product: StoreCatalogCard;
   variant: "recommended" | "catalog";
   inCartQuantity?: number;
+  favouriteId?: number | null;
 };
 
-export function ProductCard({ product, variant, inCartQuantity = 0 }: ProductCardProps) {
+export function ProductCard({
+  product,
+  variant,
+  inCartQuantity = 0,
+  favouriteId = null,
+}: ProductCardProps) {
   const t = useTranslations("Shop");
   const available = product.stock_status === "in_stock";
   const href = `/shop/products/${product.id}`;
 
   return (
-    <article className="flex flex-col overflow-hidden rounded-[14px] border border-[#ddd] bg-[var(--shop-surface)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow)]">
+    <article className="relative flex flex-col overflow-hidden rounded-[14px] border border-[#ddd] bg-[var(--shop-surface)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow)]">
+      <FavouriteToggle productId={product.id} favouriteId={favouriteId} />
       <Link href={href} className="block text-inherit no-underline">
         <div className="flex h-[110px] items-center justify-center bg-[var(--shop-surface-muted)] sm:h-[140px]">
           {product.image ? (

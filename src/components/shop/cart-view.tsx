@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useId, useState, useTransition } from "react";
+import { useEffect, useId, useMemo, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 
 import {
@@ -12,13 +12,15 @@ import {
 } from "@/app/(portal)/shop/cart/actions";
 import { QuantityStepper, maxOrderQuantity } from "@/components/shop/quantity-stepper";
 import { Alert } from "@/components/ui/alert";
-import { btn } from "@/components/ui/styles";
+import { btn, fieldClass } from "@/components/ui/styles";
+import { addressLabel, type StoreAddress } from "@/lib/api/addresses";
 import { cartLineTotal, cartTotal } from "@/lib/api/cart";
 import type { StoreCart, StoreCartPriceChange } from "@/lib/api/types";
 import { formatMoney, toMoneyNumber } from "@/lib/format-money";
 
 type CartViewProps = {
   cart: StoreCart | null;
+  addresses: StoreAddress[];
 };
 
 function errorMessage(error: string, t: (key: string) => string) {
@@ -26,19 +28,31 @@ function errorMessage(error: string, t: (key: string) => string) {
   if (error === "forbidden") return t("cartPage.errors.forbidden");
   if (error === "stock") return t("cartPage.errors.stock");
   if (error === "empty") return t("cartPage.errors.empty");
+  if (error === "address") return t("cartPage.errors.address");
   return t("cartPage.errors.generic");
 }
 
-export function CartView({ cart }: CartViewProps) {
+export function CartView({ cart, addresses }: CartViewProps) {
   const t = useTranslations("Shop");
   const router = useRouter();
   const titleId = useId();
   const [error, setError] = useState<string | null>(null);
   const [priceChanges, setPriceChanges] = useState<StoreCartPriceChange[] | null>(null);
   const [pending, startTransition] = useTransition();
+  const [deliveryMode, setDeliveryMode] = useState<"PICKUP" | "DELIVERY">("PICKUP");
+  const [addressChoice, setAddressChoice] = useState<"other" | number>(
+    addresses[0]?.pk_address ?? "other",
+  );
+  const [deliveryAddress, setDeliveryAddress] = useState(
+    addresses[0]?.address?.trim() ?? "",
+  );
 
   const items = cart?.cart_products ?? [];
   const total = cartTotal(cart);
+  const sortedAddresses = useMemo(
+    () => [...addresses].sort((a, b) => b.pk_address - a.pk_address),
+    [addresses],
+  );
 
   useEffect(() => {
     if (!priceChanges) return;
@@ -48,6 +62,24 @@ export function CartView({ cart }: CartViewProps) {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [priceChanges]);
+
+  useEffect(() => {
+    if (sortedAddresses.length === 0) {
+      setAddressChoice("other");
+      return;
+    }
+    if (addressChoice !== "other" && !sortedAddresses.some((row) => row.pk_address === addressChoice)) {
+      const first = sortedAddresses[0];
+      setAddressChoice(first.pk_address);
+      setDeliveryAddress(first.address?.trim() ?? "");
+    }
+  }, [sortedAddresses, addressChoice]);
+
+  function selectSavedAddress(pkAddress: number) {
+    const match = sortedAddresses.find((row) => row.pk_address === pkAddress);
+    setAddressChoice(pkAddress);
+    setDeliveryAddress(match?.address?.trim() ?? "");
+  }
 
   function onQuantity(itemId: number, quantity: number) {
     setError(null);
@@ -73,10 +105,18 @@ export function CartView({ cart }: CartViewProps) {
     });
   }
 
-  function onPay() {
+  function onPlaceOrder() {
     setError(null);
     startTransition(async () => {
-      const result = await checkoutCartAction();
+      const result = await checkoutCartAction({
+        delivery_mode: deliveryMode,
+        address_id:
+          deliveryMode === "DELIVERY" && addressChoice !== "other" ? addressChoice : undefined,
+        delivery_address:
+          deliveryMode === "DELIVERY" && (addressChoice === "other" || sortedAddresses.length === 0)
+            ? deliveryAddress
+            : null,
+      });
       if (!result.ok) {
         if (result.error === "price_changed") {
           setPriceChanges(result.changes);
@@ -96,6 +136,12 @@ export function CartView({ cart }: CartViewProps) {
     router.refresh();
   }
 
+  const canPlaceOrder =
+    items.length > 0
+    && (deliveryMode === "PICKUP"
+      || (addressChoice !== "other" && addressChoice != null)
+      || deliveryAddress.trim().length > 0);
+
   return (
     <section className="space-y-5">
       <div>
@@ -114,7 +160,7 @@ export function CartView({ cart }: CartViewProps) {
           </Link>
         </div>
       ) : (
-        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,20rem)]">
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,22rem)]">
           <ul className="m-0 flex list-none flex-col gap-3 p-0">
             {items.map((item) => {
               const stock = maxOrderQuantity(toMoneyNumber(item.product.stock));
@@ -187,21 +233,123 @@ export function CartView({ cart }: CartViewProps) {
             })}
           </ul>
 
-          <aside className="h-fit rounded-[14px] border border-[#ddd] bg-[var(--shop-surface)] p-4">
-            <h2 className="mt-0 mb-3 text-base font-semibold text-[var(--navy)]">
-              {t("cartPage.summary")}
-            </h2>
-            <p className="mb-4 flex items-center justify-between text-base font-bold text-[var(--navy)]">
-              <span>{t("cartPage.total")}</span>
-              <span>{formatMoney(total)}</span>
-            </p>
+          <aside className="h-fit space-y-4 rounded-[14px] border border-[#ddd] bg-[var(--shop-surface)] p-4">
+            <div>
+              <h2 className="mt-0 mb-3 text-base font-semibold text-[var(--navy)]">
+                {t("cartPage.summary")}
+              </h2>
+              <p className="mb-0 flex items-center justify-between text-base font-bold text-[var(--navy)]">
+                <span>{t("cartPage.total")}</span>
+                <span>{formatMoney(total)}</span>
+              </p>
+            </div>
+
+            <div className="space-y-2 border-t border-[var(--border)] pt-3">
+              <p className="m-0 text-sm font-semibold text-[var(--navy)]">
+                {t("cartPage.fulfillment")}
+              </p>
+              <label className="flex cursor-pointer items-center gap-2 text-sm">
+                <input
+                  type="radio"
+                  name="delivery-mode"
+                  checked={deliveryMode === "PICKUP"}
+                  onChange={() => setDeliveryMode("PICKUP")}
+                />
+                {t("cartPage.pickup")}
+              </label>
+              <label className="flex cursor-pointer items-center gap-2 text-sm">
+                <input
+                  type="radio"
+                  name="delivery-mode"
+                  checked={deliveryMode === "DELIVERY"}
+                  onChange={() => setDeliveryMode("DELIVERY")}
+                />
+                {t("cartPage.delivery")}
+              </label>
+            </div>
+
+            {deliveryMode === "DELIVERY" ? (
+              <div className="space-y-2">
+                <p className="m-0 text-sm font-semibold text-[var(--navy)]">
+                  {t("cartPage.deliveryAddress")}
+                </p>
+                {sortedAddresses.length > 0 ? (
+                  <fieldset className="m-0 space-y-2 rounded-[10px] border border-[var(--border)] p-3">
+                    <legend className="px-1 text-xs font-semibold tracking-wide text-[var(--text-muted)] uppercase">
+                      {t("cartPage.savedAddresses")}
+                    </legend>
+                    {sortedAddresses.map((item) => (
+                      <label
+                        key={item.pk_address}
+                        className="flex cursor-pointer items-start gap-2 text-sm"
+                      >
+                        <input
+                          type="radio"
+                          name="delivery-address-choice"
+                          className="mt-1"
+                          checked={addressChoice === item.pk_address}
+                          onChange={() => selectSavedAddress(item.pk_address)}
+                        />
+                        <span>
+                          <span className="block font-medium text-[var(--navy)]">
+                            {item.description?.trim() || addressLabel(item)}
+                          </span>
+                          {item.description?.trim() ? (
+                            <span className="block text-xs text-[var(--text-muted)]">
+                              {addressLabel(item)}
+                            </span>
+                          ) : null}
+                        </span>
+                      </label>
+                    ))}
+                    <label className="flex cursor-pointer items-start gap-2 text-sm">
+                      <input
+                        type="radio"
+                        name="delivery-address-choice"
+                        className="mt-1"
+                        checked={addressChoice === "other"}
+                        onChange={() => {
+                          setAddressChoice("other");
+                          setDeliveryAddress("");
+                        }}
+                      />
+                      <span className="font-medium text-[var(--navy)]">
+                        {t("cartPage.otherAddress")}
+                      </span>
+                    </label>
+                  </fieldset>
+                ) : (
+                  <p className="m-0 text-xs text-[var(--text-muted)]">
+                    {t("cartPage.noSavedAddresses")}{" "}
+                    <Link href="/shop/profile" className="font-semibold text-[var(--navy)] underline">
+                      {t("cartPage.manageAddresses")}
+                    </Link>
+                  </p>
+                )}
+                {sortedAddresses.length === 0 || addressChoice === "other" ? (
+                  <input
+                    value={deliveryAddress}
+                    onChange={(event) => {
+                      setAddressChoice("other");
+                      setDeliveryAddress(event.target.value);
+                    }}
+                    maxLength={255}
+                    placeholder={t("cartPage.deliveryAddressPlaceholder")}
+                    className={fieldClass}
+                  />
+                ) : null}
+              </div>
+            ) : null}
+
+            <p className="m-0 text-xs text-[var(--text-muted)]">{t("cartPage.pendingHint")}</p>
+
             <button
               type="button"
               className={`${btn.accent} w-full min-h-11`}
-              disabled={pending || items.length === 0}
-              onClick={onPay}
+              disabled={pending || !canPlaceOrder}
+              onClick={onPlaceOrder}
             >
-              {pending ? t("cartPage.paying") : t("cartPage.pay")}
+              {pending ? t("cartPage.placing") : t("cartPage.placeOrder")}
             </button>
           </aside>
         </div>

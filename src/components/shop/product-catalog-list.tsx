@@ -27,6 +27,7 @@ type ProductCatalogListProps = {
   hasMore: boolean;
   filters: CatalogFilters;
   cartQuantities?: Record<string, number>;
+  favouriteIds?: Record<string, number>;
 };
 
 function buildShopQuery(filters: CatalogFilters) {
@@ -48,6 +49,7 @@ export function ProductCatalogList({
   hasMore: initialHasMore,
   filters,
   cartQuantities = {},
+  favouriteIds = {},
 }: ProductCatalogListProps) {
   const t = useTranslations("Shop");
   const router = useRouter();
@@ -155,6 +157,7 @@ export function ProductCatalogList({
               product={product}
               variant="catalog"
               inCartQuantity={cartQuantities[product.id] ?? 0}
+              favouriteId={favouriteIds[product.id] ?? null}
             />
           ))}
         </div>

@@ -149,10 +149,16 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
           <div className="hidden shrink-0 items-center gap-2 md:flex">
             <UserMenu name={userName} photoUrl={photoUrl} showLandingLink />
             <ShopNotificationBell />
-            <div className="flex flex-col justify-center rounded px-[0.6rem] py-[0.35rem] text-[0.78rem] leading-tight text-[var(--cream)] opacity-70">
+            <Link
+              href="/shop/orders"
+              className={[
+                "flex flex-col justify-center rounded px-[0.6rem] py-[0.35rem] text-[0.78rem] leading-tight text-[var(--cream)]",
+                pathname.startsWith("/shop/orders") ? "bg-white/12" : "opacity-90 hover:opacity-100",
+              ].join(" ")}
+            >
               <span className="opacity-85">{t("returns")}</span>
               <span className="text-[0.85rem] font-bold">{t("orders")}</span>
-            </div>
+            </Link>
             <Link
               href="/shop/cart"
               className={[
@@ -176,18 +182,39 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
           className="mx-auto hidden w-[min(1400px,calc(100%-2rem))] gap-1 overflow-x-auto pb-[0.55rem] md:flex"
           aria-label={t("categories")}
         >
-          <span className="whitespace-nowrap rounded bg-white/12 px-3 py-[0.35rem] text-[0.85rem] font-medium text-[var(--cream)]">
+          <Link
+            href="/shop"
+            className={[
+              "whitespace-nowrap rounded px-3 py-[0.35rem] text-[0.85rem] font-medium text-[var(--cream)]",
+              pathname === "/shop" ? "bg-white/12" : "opacity-80 hover:opacity-100",
+            ].join(" ")}
+          >
             {t("allProducts")}
-          </span>
-          <span className="whitespace-nowrap rounded px-3 py-[0.35rem] text-[0.85rem] font-medium text-[var(--cream)] opacity-70">
+          </Link>
+          <Link
+            href="/shop#recommended"
+            className="whitespace-nowrap rounded px-3 py-[0.35rem] text-[0.85rem] font-medium text-[var(--cream)] opacity-80 hover:opacity-100"
+          >
             {t("recommended")}
-          </span>
-          <span className="whitespace-nowrap rounded px-3 py-[0.35rem] text-[0.85rem] font-medium text-[var(--cream)] opacity-70">
+          </Link>
+          <Link
+            href="/shop/favorites"
+            className={[
+              "whitespace-nowrap rounded px-3 py-[0.35rem] text-[0.85rem] font-medium text-[var(--cream)]",
+              pathname.startsWith("/shop/favorites") ? "bg-white/12" : "opacity-80 hover:opacity-100",
+            ].join(" ")}
+          >
             {t("favorites")}
-          </span>
-          <span className="whitespace-nowrap rounded px-3 py-[0.35rem] text-[0.85rem] font-medium text-[var(--cream)] opacity-70">
+          </Link>
+          <Link
+            href="/shop/orders"
+            className={[
+              "whitespace-nowrap rounded px-3 py-[0.35rem] text-[0.85rem] font-medium text-[var(--cream)]",
+              pathname.startsWith("/shop/orders") ? "bg-white/12" : "opacity-80 hover:opacity-100",
+            ].join(" ")}
+          >
             {t("buyAgain")}
-          </span>
+          </Link>
         </nav>
       </header>
 
@@ -239,9 +266,22 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
               </Link>
             </li>
             <li>
-              <span className="block border-b border-[var(--border)] px-5 py-3 text-[0.95rem] font-medium opacity-60">
+              <Link
+                href="/shop/orders"
+                onClick={() => setProfileOpen(false)}
+                className="block border-b border-[var(--border)] px-5 py-3 text-[0.95rem] font-medium text-[var(--text)]"
+              >
                 {t("yourOrders")}
-              </span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/shop/favorites"
+                onClick={() => setProfileOpen(false)}
+                className="block border-b border-[var(--border)] px-5 py-3 text-[0.95rem] font-medium text-[var(--text)]"
+              >
+                {t("favorites")}
+              </Link>
             </li>
             <li>
               <Link
@@ -276,12 +316,23 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
           </span>
           <span>{t("home")}</span>
         </Link>
-        <span className="flex min-w-0 flex-1 flex-col items-center justify-center gap-[0.15rem] px-1 py-[0.35rem] text-[0.65rem] font-semibold text-[var(--text-muted)] opacity-60">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg text-[0.85rem] font-bold">
+        <Link
+          href="/shop/favorites"
+          className={[
+            "flex min-w-0 flex-1 flex-col items-center justify-center gap-[0.15rem] px-1 py-[0.35rem] text-[0.65rem] font-semibold",
+            pathname.startsWith("/shop/favorites") ? "text-[var(--navy)]" : "text-[var(--text-muted)]",
+          ].join(" ")}
+        >
+          <span
+            className={[
+              "flex h-7 w-7 items-center justify-center rounded-lg text-[0.85rem] font-bold",
+              pathname.startsWith("/shop/favorites") ? "bg-[rgba(26,43,76,0.1)]" : "",
+            ].join(" ")}
+          >
             F
           </span>
           <span>{t("favorites")}</span>
-        </span>
+        </Link>
         <ShopNotificationBell variant="mobile" />
         <Link
           href="/shop/cart"

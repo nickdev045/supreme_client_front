@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { ProductDetail } from "@/components/shop/product-detail";
 import { fetchStoreProduct } from "@/lib/api/catalog";
 import { cartQuantitiesByProductId, listStoreCarts } from "@/lib/api/cart";
+import { favouriteIdsByProductId, listStoreFavourites } from "@/lib/api/favourites";
 import { ApiError } from "@/lib/api/client";
 import { getAccessToken } from "@/lib/session";
 
@@ -36,10 +37,12 @@ export default async function ShopProductPage({ params }: ProductPageProps) {
   const { id } = await params;
   let product;
   let carts = [];
+  let favourites = [];
   try {
-    [product, carts] = await Promise.all([
+    [product, carts, favourites] = await Promise.all([
       fetchStoreProduct(token, id),
       listStoreCarts(token).catch(() => []),
+      listStoreFavourites(token).catch(() => []),
     ]);
   } catch (error) {
     if (error instanceof ApiError && (error.status === 404 || error.status === 400)) {
@@ -49,5 +52,12 @@ export default async function ShopProductPage({ params }: ProductPageProps) {
   }
 
   const inCartQuantity = cartQuantitiesByProductId(carts[0] ?? null)[product.id] ?? 0;
-  return <ProductDetail product={product} inCartQuantity={inCartQuantity} />;
+  const favouriteId = favouriteIdsByProductId(favourites)[product.id] ?? null;
+  return (
+    <ProductDetail
+      product={product}
+      inCartQuantity={inCartQuantity}
+      favouriteId={favouriteId}
+    />
+  );
 }

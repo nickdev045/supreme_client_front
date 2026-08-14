@@ -16,6 +16,7 @@ describe("canAccessStorePortal", () => {
 
   it("rejects warehouse-only permissions", () => {
     expect(canAccessStorePortal(["inventory.read", "purchases.read"])).toBe(false);
+    expect(canAccessStorePortal(["notifications.read", "terms.read"])).toBe(false);
   });
 
   it("rejects empty permissions", () => {

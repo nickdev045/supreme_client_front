@@ -13,6 +13,7 @@ import {
   checkoutStoreCart,
   ensureStoreCart,
   listStoreCarts,
+  listStoreOrders,
 } from "@/lib/api/cart";
 import type { StoreCart } from "@/lib/api/types";
 
@@ -97,12 +98,38 @@ describe("store cart API", () => {
       body: { fk_product: "p1", quantity: "1", selected: true },
     });
 
-    const order = await checkoutStoreCart("token-abc");
+    const order = await checkoutStoreCart("token-abc", { delivery_mode: "PICKUP" });
     expect(apiData).toHaveBeenCalledWith("/api/v1/customer/checkout", {
       method: "POST",
       token: "token-abc",
-      body: {},
+      body: { delivery_mode: "PICKUP" },
     });
     expect(order.payment?.status).toBe("COMPLETED");
+  });
+
+  it("lists store orders with pagination query", async () => {
+    vi.mocked(apiRequest).mockResolvedValue({
+      data: [
+        {
+          id: "bill-1",
+          state: "PAID",
+          origin: "ONLINE",
+          created_at: "2026-08-13T00:00:00.000Z",
+          delivery: null,
+          lines: [],
+          total: 25,
+          payment: null,
+        },
+      ],
+      meta: { page: 1, limit: 10, total: 1, state: null, sort: "desc" },
+    });
+
+    const result = await listStoreOrders("token-abc", { page: 1, limit: 10, sort: "desc" });
+    expect(apiRequest).toHaveBeenCalledWith(
+      "/api/v1/customer/orders?page=1&limit=10&sort=desc",
+      { method: "GET", token: "token-abc" },
+    );
+    expect(result.data[0]?.id).toBe("bill-1");
+    expect(result.meta.total).toBe(1);
   });
 });
