@@ -13,11 +13,23 @@ import { ApiError } from "@/lib/api/client";
 import type { StoreCart, StoreCartPriceChange, StoreOrder } from "@/lib/api/types";
 import { getAccessToken } from "@/lib/session";
 
-export type CartActionError = "session" | "forbidden" | "stock" | "empty" | "generic";
+export type CartActionError =
+  | "session"
+  | "forbidden"
+  | "stock"
+  | "empty"
+  | "address"
+  | "generic";
 
 export type CartActionResult =
   | { ok: true; cart: StoreCart }
   | { ok: false; error: CartActionError };
+
+export type CheckoutInput = {
+  delivery_mode: "PICKUP" | "DELIVERY";
+  delivery_address?: string | null;
+  address_id?: number;
+};
 
 export type CheckoutActionResult =
   | { ok: true; order: StoreOrder }
@@ -28,6 +40,9 @@ function revalidateCart() {
   revalidatePath("/shop");
   revalidatePath("/shop/cart");
   revalidatePath("/shop/products", "layout");
+  revalidatePath("/shop/orders");
+  revalidatePath("/shop/favorites");
+  revalidatePath("/shop/profile");
 }
 
 function mapCartError(error: unknown, kind: "mutate" | "checkout"): CartActionError {
@@ -36,6 +51,9 @@ function mapCartError(error: unknown, kind: "mutate" | "checkout"): CartActionEr
     if (error.status === 403) return "forbidden";
     if (error.code === "CartPriceChanged") return "generic";
     if (error.code === "InsufficientStock" || error.status === 409) return "stock";
+    if (error.status === 400 || error.status === 404) {
+      return kind === "checkout" ? "address" : "generic";
+    }
     if (error.status === 422) return kind === "checkout" ? "empty" : "generic";
   }
   return "generic";
@@ -119,11 +137,25 @@ export async function removeCartItemAction(itemId: number): Promise<CartActionRe
   return updateCartItemQuantityAction(itemId, 0);
 }
 
-export async function checkoutCartAction(): Promise<CheckoutActionResult> {
+export async function checkoutCartAction(input: CheckoutInput): Promise<CheckoutActionResult> {
   const token = await getAccessToken();
   if (!token) return { ok: false, error: "session" };
+  if (input.delivery_mode === "DELIVERY") {
+    const hasSaved = input.address_id != null;
+    const hasOther = Boolean(input.delivery_address?.trim());
+    if (!hasSaved && !hasOther) {
+      return { ok: false, error: "address" };
+    }
+  }
   try {
-    const order = await checkoutStoreCart(token);
+    const order = await checkoutStoreCart(token, {
+      delivery_mode: input.delivery_mode,
+      delivery_address:
+        input.delivery_mode === "DELIVERY" && input.address_id == null
+          ? input.delivery_address?.trim() || null
+          : null,
+      address_id: input.delivery_mode === "DELIVERY" ? input.address_id : undefined,
+    });
     revalidateCart();
     revalidatePath(`/shop/orders/${order.id}`);
     return { ok: true, order };

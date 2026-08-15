@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 
 import { CartView } from "@/components/shop/cart-view";
 import { Alert } from "@/components/ui/alert";
+import { listStoreAddresses } from "@/lib/api/addresses";
 import { listStoreCarts } from "@/lib/api/cart";
 import { getAccessToken } from "@/lib/session";
 
@@ -21,10 +22,15 @@ export default async function ShopCartPage() {
   const t = await getTranslations("Shop");
 
   let cart = null;
+  let addresses: Awaited<ReturnType<typeof listStoreAddresses>> = [];
   let loadError = false;
   try {
-    const carts = await listStoreCarts(token);
+    const [carts, savedAddresses] = await Promise.all([
+      listStoreCarts(token),
+      listStoreAddresses(token).catch(() => []),
+    ]);
     cart = carts[0] ?? null;
+    addresses = savedAddresses;
   } catch {
     loadError = true;
   }
@@ -33,5 +39,5 @@ export default async function ShopCartPage() {
     return <Alert tone="error">{t("cartPage.loadError")}</Alert>;
   }
 
-  return <CartView cart={cart} />;
+  return <CartView cart={cart} addresses={addresses} />;
 }

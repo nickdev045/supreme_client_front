@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { ChangeEvent, FormEvent, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useRef, useState, type ReactNode } from "react";
 
 import {
   requestPasswordChangeAction,
@@ -18,9 +18,10 @@ import type { ApiMeData } from "@/lib/api/types";
 
 type ProfileFormProps = {
   profile: ApiMeData;
+  addressesSlot?: ReactNode;
 };
 
-export function ProfileForm({ profile }: ProfileFormProps) {
+export function ProfileForm({ profile, addressesSlot }: ProfileFormProps) {
   const t = useTranslations("Profile");
   const tCommon = useTranslations("Common");
   const router = useRouter();
@@ -242,6 +243,8 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           {passwordBusy ? t("passwordRequesting") : t("passwordRequestCta")}
         </button>
       </section>
+
+      {addressesSlot}
     </div>
   );
 }

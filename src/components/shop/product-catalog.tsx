@@ -6,6 +6,7 @@ import { Alert } from "@/components/ui/alert";
 import { ApiError } from "@/lib/api/client";
 import { fetchStoreCatalog, STORE_CATALOG_PAGE_SIZE } from "@/lib/api/catalog";
 import { cartQuantitiesByProductId, listStoreCarts } from "@/lib/api/cart";
+import { favouriteIdsByProductId, listStoreFavourites } from "@/lib/api/favourites";
 import type { StoreCatalogOrderBy } from "@/lib/api/types";
 import { getAccessToken } from "@/lib/session";
 
@@ -72,14 +73,17 @@ export async function ProductCatalog({
         });
 
     const cartRequest = listStoreCarts(token).catch(() => []);
+    const favouritesRequest = listStoreFavourites(token).catch(() => []);
 
-    const [response, recommendedResponse, carts] = await Promise.all([
+    const [response, recommendedResponse, carts, favourites] = await Promise.all([
       catalogRequest,
       recommendedRequest,
       cartRequest,
+      favouritesRequest,
     ]);
 
     const cartQuantities = cartQuantitiesByProductId(carts[0] ?? null);
+    const favouriteIds = favouriteIdsByProductId(favourites);
 
     const products = response.data;
     const total = response.meta.total;
@@ -103,6 +107,7 @@ export async function ProductCatalog({
                   product={product}
                   variant="recommended"
                   inCartQuantity={cartQuantities[product.id] ?? 0}
+                  favouriteId={favouriteIds[product.id] ?? null}
                 />
               ))}
             </div>
@@ -124,6 +129,7 @@ export async function ProductCatalog({
             hasMore={hasMore}
             filters={filters}
             cartQuantities={cartQuantities}
+            favouriteIds={favouriteIds}
           />
         </section>
       </div>

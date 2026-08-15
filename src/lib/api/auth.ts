@@ -44,9 +44,18 @@ export function normalizePermissionCodes(permissions: unknown): string[] {
     .filter((code): code is string => Boolean(code));
 }
 
+/** Codes that admit a user to the store (mirror backend STORE_ENTRY_PERMISSIONS). */
+const STORE_ENTRY_PERMISSIONS = [
+  "catalog.read",
+  "carts.read",
+  "carts.write",
+  "favourites.read",
+  "favourites.write",
+] as const;
+
 export function canAccessStorePortal(permissions: string[]): boolean {
   return permissions.some((code) =>
-    (STORE_CLIENT_PERMISSIONS as readonly string[]).includes(code),
+    (STORE_ENTRY_PERMISSIONS as readonly string[]).includes(code),
   );
 }
 

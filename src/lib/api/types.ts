@@ -126,10 +126,44 @@ export type StoreOrder = {
   state: string;
   origin: string;
   created_at: string | null;
+  delivery_address?: string | null;
+  requires_delivery?: boolean;
   delivery: { id: number; state: string | null; delivery_date: string | null } | null;
   lines: StoreOrderLine[];
   total: number;
   payment: StoreOrderPayment | null;
+};
+
+export type StoreOrderListMeta = {
+  page: number;
+  limit: number;
+  total: number;
+  state: string | null;
+  sort: "asc" | "desc";
+};
+
+export type StoreOrderListResponse = {
+  data: StoreOrder[];
+  meta: StoreOrderListMeta;
+};
+
+export type StoreFavouriteProduct = {
+  pk_product: string;
+  name: string;
+  photo_url: string | null;
+  stock: string | number;
+  sale_price: string | number;
+  is_active?: boolean;
+  deleted_at?: string | null;
+  description?: string;
+  meassure?: { name: string } | null;
+};
+
+export type StoreFavourite = {
+  pk_user_favourite: number;
+  fk_user: string;
+  fk_product: string;
+  product: StoreFavouriteProduct;
 };
 
 export type ApiInboxItem = {

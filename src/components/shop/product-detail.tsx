@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { AddToCartControls } from "@/components/shop/add-to-cart-controls";
+import { FavouriteToggle } from "@/components/shop/favourite-toggle";
 import { ProductImageGallery } from "@/components/shop/product-image-gallery";
 import type { StoreCatalogDetail } from "@/lib/api/types";
 import { formatMoney } from "@/lib/format-money";
@@ -9,9 +10,14 @@ import { formatMoney } from "@/lib/format-money";
 type ProductDetailProps = {
   product: StoreCatalogDetail;
   inCartQuantity?: number;
+  favouriteId?: number | null;
 };
 
-export async function ProductDetail({ product, inCartQuantity = 0 }: ProductDetailProps) {
+export async function ProductDetail({
+  product,
+  inCartQuantity = 0,
+  favouriteId = null,
+}: ProductDetailProps) {
   const t = await getTranslations("Shop");
   const images = product.images.length > 0
     ? product.images
@@ -67,6 +73,7 @@ export async function ProductDetail({ product, inCartQuantity = 0 }: ProductDeta
             inCartQuantity={inCartQuantity}
             layout="row"
           />
+          <FavouriteToggle productId={product.id} favouriteId={favouriteId} variant="detail" />
         </div>
       </div>
     </section>

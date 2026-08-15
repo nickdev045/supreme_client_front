@@ -72,6 +72,14 @@ export function UserMenu({ name, photoUrl, showLandingLink = false }: UserMenuPr
           >
             {t("myProfile")}
           </Link>
+          <Link
+            href="/shop/orders"
+            role="menuitem"
+            className="block w-full px-3 py-2.5 text-left text-sm font-medium text-[var(--navy)] transition hover:bg-[var(--cream)]"
+            onClick={() => setOpen(false)}
+          >
+            {t("yourOrders")}
+          </Link>
           {showLandingLink ? (
             <Link
               href="/"

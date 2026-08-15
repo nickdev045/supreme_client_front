@@ -1,5 +1,5 @@
 import { apiData, apiRequest } from "@/lib/api/client";
-import type { StoreCart, StoreOrder } from "@/lib/api/types";
+import type { StoreCart, StoreOrder, StoreOrderListResponse } from "@/lib/api/types";
 import { toMoneyNumber } from "@/lib/format-money";
 
 export function listStoreCarts(token: string) {
@@ -62,16 +62,48 @@ export function deleteStoreCartItem(token: string, cartId: number, itemId: numbe
   });
 }
 
-export function checkoutStoreCart(token: string) {
+export function checkoutStoreCart(
+  token: string,
+  input: {
+    delivery_mode: "PICKUP" | "DELIVERY";
+    delivery_address?: string | null;
+    address_id?: number;
+  },
+) {
   return apiData<StoreOrder>("/api/v1/customer/checkout", {
     method: "POST",
     token,
-    body: {},
+    body: input,
   });
 }
 
 export function fetchStoreOrder(token: string, orderId: string) {
   return apiData<StoreOrder>(`/api/v1/customer/orders/${orderId}`, {
+    method: "GET",
+    token,
+  });
+}
+
+export const STORE_ORDERS_PAGE_SIZE = 10;
+
+export type FetchStoreOrdersParams = {
+  page?: number;
+  limit?: number;
+  state?: string;
+  sort?: "asc" | "desc";
+};
+
+export async function listStoreOrders(
+  token: string,
+  params: FetchStoreOrdersParams = {},
+): Promise<StoreOrderListResponse> {
+  const query = new URLSearchParams();
+  query.set("page", String(params.page ?? 1));
+  query.set("limit", String(params.limit ?? STORE_ORDERS_PAGE_SIZE));
+  if (params.state?.trim()) query.set("state", params.state.trim());
+  if (params.sort) query.set("sort", params.sort);
+
+  return apiRequest<StoreOrderListResponse>(`/api/v1/customer/orders?${query}`, {
     method: "GET",
     token,
   });
