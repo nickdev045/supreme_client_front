@@ -215,6 +215,10 @@
       "pendingHint": "Your order will be placed as pending. Payment is confirmed by the company.",
       "placeOrder": "Place order",
       "placing": "Placing order…",
+      "confirmTitle": "Place this order?",
+      "confirmBody": "We will send this order to the company. Total: {total}. You can cancel it later only while it is still pending and not on the way.",
+      "confirmCta": "Yes, place order",
+      "confirmCancel": "Go back",
       "pay": "Place order",
       "paying": "Placing order…",
       "loadError": "Could not load your cart. Please try again.",
@@ -243,7 +247,21 @@
       "deliveryAddress": "Delivery address",
       "pickup": "Pickup",
       "total": "Total",
-      "backToShop": "Continue shopping"
+      "backToShop": "Continue shopping",
+      "cancel": "Cancel order",
+      "canceling": "Canceling…",
+      "cancelTitle": "Cancel this order?",
+      "cancelBody": "The company will be notified and the reserved stock will be returned.",
+      "cancelConfirm": "Yes, cancel order",
+      "cancelKeep": "Keep order",
+      "canceledHint": "This order was canceled.",
+      "errors": {
+        "session": "Your session expired. Sign in again.",
+        "forbidden": "You cannot cancel this order with this account.",
+        "shipping": "This order cannot be canceled because it is already on the way.",
+        "locked": "This order can no longer be canceled.",
+        "generic": "Could not cancel the order. Please try again."
+      }
     },
     "ordersPage": {
       "title": "Your orders",

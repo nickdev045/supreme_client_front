@@ -12,6 +12,7 @@ import {
 } from "@/app/(portal)/shop/cart/actions";
 import { QuantityStepper, maxOrderQuantity } from "@/components/shop/quantity-stepper";
 import { Alert } from "@/components/ui/alert";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { btn, fieldClass } from "@/components/ui/styles";
 import { addressLabel, type StoreAddress } from "@/lib/api/addresses";
 import { cartLineTotal, cartTotal } from "@/lib/api/cart";
@@ -39,6 +40,7 @@ export function CartView({ cart, addresses }: CartViewProps) {
   const [error, setError] = useState<string | null>(null);
   const [priceChanges, setPriceChanges] = useState<StoreCartPriceChange[] | null>(null);
   const [pending, startTransition] = useTransition();
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [deliveryMode, setDeliveryMode] = useState<"PICKUP" | "DELIVERY">("PICKUP");
   const [addressChoice, setAddressChoice] = useState<"other" | number>(
     addresses[0]?.pk_address ?? "other",
@@ -118,6 +120,7 @@ export function CartView({ cart, addresses }: CartViewProps) {
             : null,
       });
       if (!result.ok) {
+        setConfirmOpen(false);
         if (result.error === "price_changed") {
           setPriceChanges(result.changes);
           router.refresh();
@@ -126,6 +129,7 @@ export function CartView({ cart, addresses }: CartViewProps) {
         setError(errorMessage(result.error, t));
         return;
       }
+      setConfirmOpen(false);
       router.push(`/shop/orders/${result.order.id}`);
       router.refresh();
     });
@@ -347,13 +351,29 @@ export function CartView({ cart, addresses }: CartViewProps) {
               type="button"
               className={`${btn.accent} w-full min-h-11`}
               disabled={pending || !canPlaceOrder}
-              onClick={onPlaceOrder}
+              onClick={() => {
+                setError(null);
+                setConfirmOpen(true);
+              }}
             >
               {pending ? t("cartPage.placing") : t("cartPage.placeOrder")}
             </button>
           </aside>
         </div>
       )}
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title={t("cartPage.confirmTitle")}
+        description={t("cartPage.confirmBody", { total: formatMoney(total) })}
+        confirmLabel={pending ? t("cartPage.placing") : t("cartPage.confirmCta")}
+        cancelLabel={t("cartPage.confirmCancel")}
+        pending={pending}
+        onConfirm={onPlaceOrder}
+        onCancel={() => {
+          if (!pending) setConfirmOpen(false);
+        }}
+      />
 
       {priceChanges ? (
         <div
@@ -394,7 +414,7 @@ export function CartView({ cart, addresses }: CartViewProps) {
             ) : null}
             <button
               type="button"
-              className={`${btn.primary} w-full min-h-11`}
+              className={`${btn.primary} ${btn.sm} w-full`}
               onClick={closePriceModal}
             >
               {t("cartPage.priceChanged.confirm")}

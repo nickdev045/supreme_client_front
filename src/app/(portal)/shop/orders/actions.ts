@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import {
   addStoreCartItem,
+  cancelStoreOrder,
   ensureStoreCart,
   listStoreOrders,
   STORE_ORDERS_PAGE_SIZE,
@@ -53,6 +54,40 @@ export async function loadOrdersPageAction(input: {
   } catch (error) {
     if (error instanceof ApiError && error.status === 403) {
       return { ok: false, error: "forbidden" };
+    }
+    return { ok: false, error: "generic" };
+  }
+}
+
+export type CancelOrderResult =
+  | { ok: true; order: StoreOrder }
+  | { ok: false; error: "session" | "forbidden" | "shipping" | "locked" | "generic" };
+
+export async function cancelOrderAction(orderId: string): Promise<CancelOrderResult> {
+  const token = await getAccessToken();
+  if (!token) return { ok: false, error: "session" };
+  if (!orderId.trim()) return { ok: false, error: "generic" };
+
+  try {
+    const order = await cancelStoreOrder(token, orderId);
+    revalidatePath("/shop");
+    revalidatePath("/shop/cart");
+    revalidatePath("/shop/products", "layout");
+    revalidatePath("/shop/orders");
+    revalidatePath(`/shop/orders/${orderId}`);
+    return { ok: true, order };
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 401) {
+      return { ok: false, error: "session" };
+    }
+    if (error instanceof ApiError && error.status === 403) {
+      return { ok: false, error: "forbidden" };
+    }
+    if (error instanceof ApiError && error.code === "OrderAlreadyShipped") {
+      return { ok: false, error: "shipping" };
+    }
+    if (error instanceof ApiError && (error.code === "OrderNotCancellable" || error.status === 409)) {
+      return { ok: false, error: "locked" };
     }
     return { ok: false, error: "generic" };
   }
