@@ -215,6 +215,10 @@
       "pendingHint": "Tu pedido quedará pendiente. El pago lo confirma la empresa.",
       "placeOrder": "Hacer pedido",
       "placing": "Enviando pedido…",
+      "confirmTitle": "¿Confirmar este pedido?",
+      "confirmBody": "Enviaremos el pedido a la empresa. Total: {total}. Podrás cancelarlo después solo si sigue pendiente y aún no va en camino.",
+      "confirmCta": "Sí, hacer pedido",
+      "confirmCancel": "Volver",
       "pay": "Hacer pedido",
       "paying": "Enviando pedido…",
       "loadError": "No se pudo cargar el carrito. Inténtalo de nuevo.",
@@ -243,7 +247,21 @@
       "deliveryAddress": "Dirección de entrega",
       "pickup": "Recoger",
       "total": "Total",
-      "backToShop": "Seguir comprando"
+      "backToShop": "Seguir comprando",
+      "cancel": "Cancelar pedido",
+      "canceling": "Cancelando…",
+      "cancelTitle": "¿Cancelar este pedido?",
+      "cancelBody": "Avisaremos a la empresa y el stock reservado volverá al inventario.",
+      "cancelConfirm": "Sí, cancelar pedido",
+      "cancelKeep": "Mantener pedido",
+      "canceledHint": "Este pedido fue cancelado.",
+      "errors": {
+        "session": "Tu sesión expiró. Vuelve a iniciar sesión.",
+        "forbidden": "No puedes cancelar este pedido con esta cuenta.",
+        "shipping": "No se puede cancelar porque el pedido ya va en camino.",
+        "locked": "Este pedido ya no se puede cancelar.",
+        "generic": "No se pudo cancelar el pedido. Inténtalo de nuevo."
+      }
     },
     "ordersPage": {
       "title": "Tus pedidos",

@@ -132,6 +132,7 @@ export type StoreOrder = {
   lines: StoreOrderLine[];
   total: number;
   payment: StoreOrderPayment | null;
+  cancellable?: boolean;
 };
 
 export type StoreOrderListMeta = {

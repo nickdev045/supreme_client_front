@@ -11,6 +11,8 @@ import {
   cartItemCount,
   cartQuantitiesByProductId,
   checkoutStoreCart,
+  canCancelStoreOrder,
+  cancelStoreOrder,
   ensureStoreCart,
   listStoreCarts,
   listStoreOrders,
@@ -131,5 +133,60 @@ describe("store cart API", () => {
     );
     expect(result.data[0]?.id).toBe("bill-1");
     expect(result.meta.total).toBe(1);
+  });
+
+  it("cancels a store order", async () => {
+    vi.mocked(apiData).mockResolvedValue({
+      id: "bill-1",
+      state: "CANCELED",
+      origin: "ONLINE",
+      created_at: "2026-08-13T00:00:00.000Z",
+      delivery: null,
+      lines: [],
+      total: 25,
+      payment: null,
+      cancellable: false,
+    });
+
+    const order = await cancelStoreOrder("token-abc", "bill-1");
+    expect(apiData).toHaveBeenCalledWith("/api/v1/customer/orders/bill-1/cancel", {
+      method: "POST",
+      token: "token-abc",
+      body: {},
+    });
+    expect(order.state).toBe("CANCELED");
+  });
+
+  it("allows cancel only while pending and not shipped", () => {
+    expect(canCancelStoreOrder({
+      id: "1",
+      state: "PENDING",
+      origin: "ONLINE",
+      created_at: null,
+      delivery: { id: 1, state: null, delivery_date: null },
+      lines: [],
+      total: 10,
+      payment: null,
+    })).toBe(true);
+    expect(canCancelStoreOrder({
+      id: "1",
+      state: "PENDING",
+      origin: "ONLINE",
+      created_at: null,
+      delivery: { id: 1, state: "ON_THE_WAY", delivery_date: null },
+      lines: [],
+      total: 10,
+      payment: null,
+    })).toBe(false);
+    expect(canCancelStoreOrder({
+      id: "1",
+      state: "APPROVED",
+      origin: "ONLINE",
+      created_at: null,
+      delivery: null,
+      lines: [],
+      total: 10,
+      payment: null,
+    })).toBe(false);
   });
 });

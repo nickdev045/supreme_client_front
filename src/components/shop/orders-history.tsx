@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 
-import { buyAgainOrderAction, loadOrdersPageAction } from "@/app/(portal)/shop/orders/actions";
+import { buyAgainOrderAction, cancelOrderAction, loadOrdersPageAction } from "@/app/(portal)/shop/orders/actions";
 import { Alert } from "@/components/ui/alert";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { btn } from "@/components/ui/styles";
+import { canCancelStoreOrder } from "@/lib/api/cart";
 import type { StoreOrder } from "@/lib/api/types";
 import { formatMoney } from "@/lib/format-money";
 
@@ -45,6 +47,15 @@ export function OrdersHistoryList({
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [buyingId, setBuyingId] = useState<string | null>(null);
+  const [cancelingId, setCancelingId] = useState<string | null>(null);
+
+  function cancelErrorMessage(error: string) {
+    if (error === "session") return t("orderPage.errors.session");
+    if (error === "forbidden") return t("orderPage.errors.forbidden");
+    if (error === "shipping") return t("orderPage.errors.shipping");
+    if (error === "locked") return t("orderPage.errors.locked");
+    return t("orderPage.errors.generic");
+  }
 
   function onLoadMore() {
     setError(null);
@@ -86,6 +97,21 @@ export function OrdersHistoryList({
         return;
       }
       router.push("/shop/cart");
+    });
+  }
+
+  function onCancelOrder(orderId: string) {
+    setError(null);
+    startTransition(async () => {
+      const result = await cancelOrderAction(orderId);
+      if (!result.ok) {
+        setCancelingId(null);
+        setError(cancelErrorMessage(result.error));
+        return;
+      }
+      setOrders((prev) => prev.map((item) => (item.id === result.order.id ? result.order : item)));
+      setCancelingId(null);
+      router.refresh();
     });
   }
 
@@ -144,16 +170,16 @@ export function OrdersHistoryList({
                   ) : null}
                 </div>
               </div>
-              <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+              <div className="mt-4 flex flex-wrap gap-2">
                 <Link
                   href={`/shop/orders/${order.id}`}
-                  className={`${btn.outline} ${btn.sm} min-h-11 no-underline sm:flex-1`}
+                  className={`${btn.outline} ${btn.sm} no-underline`}
                 >
                   {t("ordersPage.view")}
                 </Link>
                 <button
                   type="button"
-                  className={`${btn.primary} ${btn.sm} min-h-11 sm:flex-1`}
+                  className={`${btn.primary} ${btn.sm}`}
                   disabled={pending && buyingId === order.id}
                   onClick={() => onBuyAgain(order.id)}
                 >
@@ -161,6 +187,19 @@ export function OrdersHistoryList({
                     ? t("ordersPage.buyingAgain")
                     : t("buyAgain")}
                 </button>
+                {canCancelStoreOrder(order) ? (
+                  <button
+                    type="button"
+                    className={`${btn.outline} ${btn.sm} border-[var(--tomato)] text-[var(--tomato)] hover:bg-[var(--tomato)] hover:text-white`}
+                    disabled={pending}
+                    onClick={() => {
+                      setError(null);
+                      setCancelingId(order.id);
+                    }}
+                  >
+                    {t("orderPage.cancel")}
+                  </button>
+                ) : null}
               </div>
             </li>
           );
@@ -169,10 +208,25 @@ export function OrdersHistoryList({
       {hasMore ? (
         <div className="flex justify-center pt-1">
           <button type="button" disabled={pending} onClick={onLoadMore} className={btn.primary}>
-            {pending && buyingId === null ? t("filters.loadingMore") : t("filters.loadMore")}
+            {pending && buyingId === null && cancelingId === null ? t("filters.loadingMore") : t("filters.loadMore")}
           </button>
         </div>
       ) : null}
+      <ConfirmDialog
+        open={cancelingId != null}
+        title={t("orderPage.cancelTitle")}
+        description={t("orderPage.cancelBody")}
+        confirmLabel={pending ? t("orderPage.canceling") : t("orderPage.cancelConfirm")}
+        cancelLabel={t("orderPage.cancelKeep")}
+        pending={pending}
+        tone="danger"
+        onConfirm={() => {
+          if (cancelingId) onCancelOrder(cancelingId);
+        }}
+        onCancel={() => {
+          if (!pending) setCancelingId(null);
+        }}
+      />
     </div>
   );
 }

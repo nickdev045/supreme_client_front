@@ -28,6 +28,7 @@ export async function OrderConfirmation({ order }: OrderConfirmationProps) {
   const created = order.created_at ? new Date(order.created_at) : null;
   const state = orderStateKey(order.state);
   const isPaid = state === "PAID";
+  const isCanceled = state === "CANCELED";
 
   return (
     <section className="mx-auto max-w-2xl space-y-5">
@@ -39,7 +40,11 @@ export async function OrderConfirmation({ order }: OrderConfirmationProps) {
           {t("orderPage.detailTitle")}
         </h1>
         <p className="m-0 text-sm text-[var(--text-muted)]">
-          {isPaid ? t("orderPage.subtitlePaid") : t("orderPage.subtitle")}
+          {isCanceled
+            ? t("orderPage.canceledHint")
+            : isPaid
+              ? t("orderPage.subtitlePaid")
+              : t("orderPage.subtitle")}
         </p>
         {created ? (
           <p className="mt-1 mb-0 text-sm text-[var(--text-muted)]">
@@ -82,7 +87,7 @@ export async function OrderConfirmation({ order }: OrderConfirmationProps) {
         </p>
       </div>
 
-      <OrderActions orderId={order.id} />
+      <OrderActions order={order} />
     </section>
   );
 }

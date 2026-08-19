@@ -84,6 +84,23 @@ export function fetchStoreOrder(token: string, orderId: string) {
   });
 }
 
+export function cancelStoreOrder(token: string, orderId: string) {
+  return apiData<StoreOrder>(`/api/v1/customer/orders/${orderId}/cancel`, {
+    method: "POST",
+    token,
+    body: {},
+  });
+}
+
+const SHIPPED_DELIVERY_STATES = new Set(["ON_THE_WAY", "DELIVERED"]);
+
+export function canCancelStoreOrder(order: StoreOrder): boolean {
+  if (typeof order.cancellable === "boolean") return order.cancellable;
+  if (order.state.trim().toUpperCase() !== "PENDING") return false;
+  const deliveryState = order.delivery?.state?.trim().toUpperCase() ?? "";
+  return !SHIPPED_DELIVERY_STATES.has(deliveryState);
+}
+
 export const STORE_ORDERS_PAGE_SIZE = 10;
 
 export type FetchStoreOrdersParams = {
