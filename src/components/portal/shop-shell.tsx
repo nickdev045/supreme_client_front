@@ -9,7 +9,7 @@ import { useTranslations } from "next-intl";
 import { UserAvatar } from "@/components/landing/user-avatar";
 import { UserMenu } from "@/components/landing/user-menu";
 import { ShopNotificationBell } from "@/components/portal/notification-bell";
-import { SignOutButton } from "@/components/portal/sign-out-button";
+import { SignOutButton, SignOutConfirmDialog } from "@/components/portal/sign-out-button";
 
 type ShopShellProps = {
   userName: string;
@@ -63,6 +63,7 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [profileOpen, setProfileOpen] = useState(false);
+  const [signOutOpen, setSignOutOpen] = useState(false);
   const [query, setQuery] = useState(searchParams.get("q") ?? "");
   const firstName = userName.split(/\s+/)[0] || userName;
 
@@ -293,7 +294,13 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
               </Link>
             </li>
             <li className="px-4 py-3">
-              <SignOutButton className="w-full rounded-[10px] border border-[var(--border)] bg-white px-3 py-2 text-left text-sm font-medium text-[var(--navy)]" />
+              <SignOutButton
+                className="w-full rounded-[10px] border border-[var(--border)] bg-white px-3 py-2 text-left text-sm font-medium text-[var(--navy)]"
+                onRequestSignOut={() => {
+                  setProfileOpen(false);
+                  setSignOutOpen(true);
+                }}
+              />
             </li>
           </ul>
         </div>
@@ -372,6 +379,8 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
           <span>{t("account")}</span>
         </button>
       </nav>
+
+      <SignOutConfirmDialog open={signOutOpen} onOpenChange={setSignOutOpen} />
     </div>
   );
 }

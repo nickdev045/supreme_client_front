@@ -8,6 +8,7 @@ import { fetchStoreCatalog, STORE_CATALOG_PAGE_SIZE } from "@/lib/api/catalog";
 import { cartQuantitiesByProductId, listStoreCarts } from "@/lib/api/cart";
 import { favouriteIdsByProductId, listStoreFavourites } from "@/lib/api/favourites";
 import type { StoreCatalogOrderBy } from "@/lib/api/types";
+import { handleUnauthorized } from "@/lib/handle-unauthorized";
 import { getAccessToken } from "@/lib/session";
 
 const RECOMMENDED_COUNT = 3;
@@ -135,6 +136,9 @@ export async function ProductCatalog({
       </div>
     );
   } catch (error) {
+    if (error instanceof ApiError && error.status === 401) {
+      handleUnauthorized(error);
+    }
     if (error instanceof ApiError && error.status === 403) {
       return <Alert tone="error">{t("catalogForbidden")}</Alert>;
     }

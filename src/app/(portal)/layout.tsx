@@ -4,12 +4,13 @@ import { Suspense, type ReactNode } from "react";
 
 import { ShopShell } from "@/components/portal/shop-shell";
 import { cartItemCount, listStoreCarts } from "@/lib/api/cart";
+import { handleUnauthorized } from "@/lib/handle-unauthorized";
 import { getAccessToken, getSession } from "@/lib/session";
 
 export default async function PortalLayout({ children }: { children: ReactNode }) {
   const session = await getSession();
   if (!session?.user?.id || session.error) {
-    redirect("/login");
+    redirect("/login?error=SessionExpired");
   }
 
   const t = await getTranslations("Shop");
@@ -20,8 +21,8 @@ export default async function PortalLayout({ children }: { children: ReactNode }
     try {
       const carts = await listStoreCarts(token);
       cartCount = cartItemCount(carts[0] ?? null);
-    } catch {
-      cartCount = 0;
+    } catch (error) {
+      handleUnauthorized(error);
     }
   }
 

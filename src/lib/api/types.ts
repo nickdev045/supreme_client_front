@@ -180,4 +180,8 @@ export type ApiInboxItem = {
     ends_at?: string | null;
     created_at: string | null;
   };
+  password_reset?: {
+    ref: string;
+    expires_at: string;
+  } | null;
 };

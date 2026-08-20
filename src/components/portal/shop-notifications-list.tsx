@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useEffect, useTransition } from "react";
 import { useTranslations } from "next-intl";
 
 import {
@@ -9,17 +10,35 @@ import {
   markAllShopNotificationsReadAction,
   markShopNotificationReadAction,
 } from "@/app/(portal)/shop/notifications/actions";
+import { btn } from "@/components/ui/styles";
 import type { ApiInboxItem } from "@/lib/api/types";
+import {
+  sanitizePasswordResetDescription,
+  shopPasswordResetHref,
+} from "@/lib/password-reset-notification";
 
 function formatDate(value?: string | null) {
   return value ? new Date(value).toLocaleString() : "";
 }
 
-export function ShopNotificationsList({ items }: { items: ApiInboxItem[] }) {
+export function ShopNotificationsList({
+  items,
+  focusId,
+}: {
+  items: ApiInboxItem[];
+  focusId?: number | null;
+}) {
   const t = useTranslations("Shop");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const unreadCount = items.filter((item) => !item.read_at).length;
+
+  useEffect(() => {
+    if (!focusId) return;
+    document
+      .querySelector(`[data-inbox-id="${focusId}"]`)
+      ?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [focusId]);
 
   if (items.length === 0) {
     return (
@@ -51,10 +70,20 @@ export function ShopNotificationsList({ items }: { items: ApiInboxItem[] }) {
       <ul className="space-y-3">
         {items.map((item) => {
           const unread = !item.read_at;
+          const canReset = Boolean(item.password_reset?.ref);
+          const resetHref = shopPasswordResetHref(item.pk_multi_tenant_notification);
+          const focused = focusId === item.pk_multi_tenant_notification;
+          const description = sanitizePasswordResetDescription(
+            item.notification.title,
+            item.notification.description,
+          );
           return (
             <li
               key={item.pk_multi_tenant_notification}
-              className="rounded-[14px] border border-[#ddd] bg-[var(--shop-surface)] p-4 shadow-[0_1px_4px_rgba(0,0,0,0.04)]"
+              data-inbox-id={item.pk_multi_tenant_notification}
+              className={`rounded-[14px] border bg-[var(--shop-surface)] p-4 shadow-[0_1px_4px_rgba(0,0,0,0.04)] ${
+                focused ? "border-[var(--navy)] ring-2 ring-[var(--navy)]" : "border-[#ddd]"
+              }`}
             >
               <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0 flex-1">
@@ -76,18 +105,26 @@ export function ShopNotificationsList({ items }: { items: ApiInboxItem[] }) {
                       {unread ? t("unread") : t("read")}
                     </span>
                   </div>
-                  {item.notification.description ? (
+                  {description ? (
                     <p className="mt-2 break-words whitespace-pre-wrap text-sm text-[var(--text)]">
-                      {item.notification.description}
+                      {description}
                     </p>
                   ) : null}
                   {item.notification.created_at ? (
-                    <p className="mt-2 text-xs text-[var(--text-muted)]">
+                    <p
+                      className="mt-2 text-xs text-[var(--text-muted)]"
+                      suppressHydrationWarning
+                    >
                       {formatDate(item.notification.created_at)}
                     </p>
                   ) : null}
                 </div>
                 <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:self-start">
+                  {canReset ? (
+                    <Link href={resetHref} className={`${btn.primary} w-full sm:w-auto`}>
+                      {t("openResetLink")}
+                    </Link>
+                  ) : null}
                   {unread ? (
                     <button
                       type="button"

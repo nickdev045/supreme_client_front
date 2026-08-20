@@ -33,6 +33,7 @@ export function LoginForm() {
   const searchParams = useSearchParams();
   const callbackUrl = "/shop";
   const urlErrorCode = searchParams.get("error");
+  const passwordResetOk = searchParams.get("passwordReset") === "1";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -143,6 +144,11 @@ export function LoginForm() {
         <p className="mt-1 text-[0.9rem] text-[var(--text-muted)]">{t("loginSubtitle")}</p>
       </div>
 
+      {passwordResetOk && !errorMessage ? (
+        <Alert tone="success" className="mb-4">
+          {t("passwordResetSuccess")}
+        </Alert>
+      ) : null}
       {errorMessage ? (
         <Alert tone="error" className="mb-4">
           {errorMessage}

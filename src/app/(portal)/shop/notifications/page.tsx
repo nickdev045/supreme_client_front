@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 
 import { ShopNotificationsList } from "@/components/portal/shop-notifications-list";
 import { fetchNotificationInbox } from "@/lib/api/notifications";
+import { handleUnauthorized } from "@/lib/handle-unauthorized";
 import { getAccessToken } from "@/lib/session";
 
 export async function generateMetadata() {
@@ -13,11 +14,22 @@ export async function generateMetadata() {
   };
 }
 
-export default async function ShopNotificationsPage() {
+export default async function ShopNotificationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ focus?: string }>;
+}) {
   const token = await getAccessToken();
   if (!token) redirect("/login");
-  const inbox = await fetchNotificationInbox(token);
+  let inbox;
+  try {
+    inbox = await fetchNotificationInbox(token);
+  } catch (error) {
+    handleUnauthorized(error);
+  }
   const t = await getTranslations("Shop");
+  const { focus } = await searchParams;
+  const focusId = Number.parseInt(focus ?? "", 10);
 
   return (
     <section className="space-y-4">
@@ -27,7 +39,10 @@ export default async function ShopNotificationsPage() {
         </h1>
         <p className="mt-1 text-sm text-[var(--text-muted)]">{t("notificationsSubtitle")}</p>
       </div>
-      <ShopNotificationsList items={inbox} />
+      <ShopNotificationsList
+        items={inbox}
+        focusId={Number.isFinite(focusId) && focusId > 0 ? focusId : null}
+      />
     </section>
   );
 }

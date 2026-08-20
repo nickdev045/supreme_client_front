@@ -6,6 +6,7 @@ import { fetchStoreProduct } from "@/lib/api/catalog";
 import { cartQuantitiesByProductId, listStoreCarts } from "@/lib/api/cart";
 import { favouriteIdsByProductId, listStoreFavourites } from "@/lib/api/favourites";
 import { ApiError } from "@/lib/api/client";
+import { handleUnauthorized } from "@/lib/handle-unauthorized";
 import { getAccessToken } from "@/lib/session";
 
 type ProductPageProps = {
@@ -48,7 +49,7 @@ export default async function ShopProductPage({ params }: ProductPageProps) {
     if (error instanceof ApiError && (error.status === 404 || error.status === 400)) {
       notFound();
     }
-    throw error;
+    handleUnauthorized(error);
   }
 
   const inCartQuantity = cartQuantitiesByProductId(carts[0] ?? null)[product.id] ?? 0;
