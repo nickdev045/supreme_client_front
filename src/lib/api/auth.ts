@@ -123,6 +123,34 @@ export async function requestPasswordChange(
   });
 }
 
+export type CredentialChangeType = "EMAIL" | "PASSWORD";
+
+export type PendingCredentialRequest = {
+  pk_credential_change_request: string;
+  type: CredentialChangeType;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  requested_email: string | null;
+  created_at: string;
+} | null;
+
+export function fetchPendingCredentialRequest(token: string) {
+  return apiData<PendingCredentialRequest>("/api/v1/auth/me/credential-requests/pending", {
+    method: "GET",
+    token,
+  });
+}
+
+export function createCredentialChangeRequest(
+  token: string,
+  input: { type: CredentialChangeType; requestedEmail?: string },
+) {
+  return apiData("/api/v1/auth/me/credential-requests", {
+    method: "POST",
+    token,
+    body: input,
+  });
+}
+
 export function toAuthErrorKey(error: unknown): AuthErrorKey {
   if (error instanceof ApiError) {
     if (error.status === 401) return "invalidCredentials";

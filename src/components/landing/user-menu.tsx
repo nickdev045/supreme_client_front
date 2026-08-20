@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useId, useRef, useState } from "react";
 
 import { UserAvatar } from "@/components/landing/user-avatar";
-import { SignOutButton } from "@/components/portal/sign-out-button";
+import { SignOutButton, SignOutConfirmDialog } from "@/components/portal/sign-out-button";
 
 type UserMenuProps = {
   name: string;
@@ -17,6 +17,7 @@ type UserMenuProps = {
 export function UserMenu({ name, photoUrl, showLandingLink = false }: UserMenuProps) {
   const t = useTranslations("Nav");
   const [open, setOpen] = useState(false);
+  const [signOutOpen, setSignOutOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
 
@@ -93,10 +94,14 @@ export function UserMenu({ name, photoUrl, showLandingLink = false }: UserMenuPr
           <SignOutButton
             className="w-full px-3 py-2.5 text-left text-sm font-medium text-[var(--navy)] transition hover:bg-[var(--cream)]"
             role="menuitem"
-            onClick={() => setOpen(false)}
+            onRequestSignOut={() => {
+              setOpen(false);
+              setSignOutOpen(true);
+            }}
           />
         </div>
       ) : null}
+      <SignOutConfirmDialog open={signOutOpen} onOpenChange={setSignOutOpen} />
     </div>
   );
 }

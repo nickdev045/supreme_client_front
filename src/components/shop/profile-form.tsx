@@ -3,9 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { ChangeEvent, FormEvent, useRef, useState, type ReactNode } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 
 import {
+  requestEmailChangeAction,
   requestPasswordChangeAction,
   updateProfileAction,
   uploadProfilePhotoAction,
@@ -13,15 +15,18 @@ import {
 } from "@/app/(portal)/shop/profile/actions";
 import { UserAvatar } from "@/components/landing/user-avatar";
 import { Alert } from "@/components/ui/alert";
+import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { btn, fieldClass, labelClass } from "@/components/ui/styles";
+import type { PendingCredentialRequest } from "@/lib/api/auth";
 import type { ApiMeData } from "@/lib/api/types";
 
 type ProfileFormProps = {
   profile: ApiMeData;
+  pendingRequest?: PendingCredentialRequest;
   addressesSlot?: ReactNode;
 };
 
-export function ProfileForm({ profile, addressesSlot }: ProfileFormProps) {
+export function ProfileForm({ profile, pendingRequest, addressesSlot }: ProfileFormProps) {
   const t = useTranslations("Profile");
   const tCommon = useTranslations("Common");
   const router = useRouter();
@@ -34,10 +39,21 @@ export function ProfileForm({ profile, addressesSlot }: ProfileFormProps) {
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [passwordBusy, setPasswordBusy] = useState(false);
+  const [emailBusy, setEmailBusy] = useState(false);
+  const [requestedEmail, setRequestedEmail] = useState("");
   const [errorKey, setErrorKey] = useState<ProfileActionErrorKey | null>(null);
-  const [successKey, setSuccessKey] = useState<"saved" | "passwordRequested" | null>(null);
+  const [successKey, setSuccessKey] = useState<
+    "saved" | "passwordRequested" | "emailRequested" | null
+  >(null);
   const [uploadErrorKey, setUploadErrorKey] = useState<ProfileActionErrorKey | null>(null);
   const [passwordErrorKey, setPasswordErrorKey] = useState<ProfileActionErrorKey | null>(null);
+  const [emailErrorKey, setEmailErrorKey] = useState<ProfileActionErrorKey | null>(null);
+  const [confirmAction, setConfirmAction] = useState<"email" | "password" | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const displayName = [firstName, lastName].filter(Boolean).join(" ").trim() || profile.email;
 
@@ -96,7 +112,7 @@ export function ProfileForm({ profile, addressesSlot }: ProfileFormProps) {
     }
   }
 
-  async function onPasswordRequest() {
+  async function submitPasswordRequest() {
     setPasswordErrorKey(null);
     setSuccessKey(null);
     setPasswordBusy(true);
@@ -104,13 +120,86 @@ export function ProfileForm({ profile, addressesSlot }: ProfileFormProps) {
       const result = await requestPasswordChangeAction();
       if (!result.ok) {
         setPasswordErrorKey(result.errorKey);
+        setConfirmAction(null);
         return;
       }
       setSuccessKey("passwordRequested");
+      setConfirmAction(null);
+      router.refresh();
+    } catch {
+      setPasswordErrorKey("generic");
+      setConfirmAction(null);
     } finally {
       setPasswordBusy(false);
     }
   }
+
+  async function submitEmailRequest() {
+    setEmailErrorKey(null);
+    setSuccessKey(null);
+    setEmailBusy(true);
+    try {
+      const result = await requestEmailChangeAction(requestedEmail);
+      if (!result.ok) {
+        setEmailErrorKey(result.errorKey);
+        setConfirmAction(null);
+        return;
+      }
+      setRequestedEmail("");
+      setSuccessKey("emailRequested");
+      setConfirmAction(null);
+      router.refresh();
+    } catch {
+      setEmailErrorKey("generic");
+      setConfirmAction(null);
+    } finally {
+      setEmailBusy(false);
+    }
+  }
+
+  function onPasswordRequestClick() {
+    setConfirmAction("password");
+  }
+
+  function onEmailRequest(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setConfirmAction("email");
+  }
+
+  const requestBusy = confirmAction === "email" ? emailBusy : confirmAction === "password" ? passwordBusy : false;
+
+  const confirmModal =
+    confirmAction === "email" ? (
+      <ConfirmModal
+        open
+        title={t("emailRequestConfirmTitle")}
+        description={t("emailRequestConfirmDescription", { email: requestedEmail })}
+        confirmLabel={t("emailRequestCta")}
+        cancelLabel={tCommon("cancel")}
+        pending={requestBusy}
+        onCancel={() => {
+          if (!requestBusy) setConfirmAction(null);
+        }}
+        onConfirm={() => {
+          void submitEmailRequest();
+        }}
+      />
+    ) : confirmAction === "password" ? (
+      <ConfirmModal
+        open
+        title={t("passwordRequestConfirmTitle")}
+        description={t("passwordRequestConfirmDescription")}
+        confirmLabel={t("passwordRequestCta")}
+        cancelLabel={tCommon("cancel")}
+        pending={requestBusy}
+        onCancel={() => {
+          if (!requestBusy) setConfirmAction(null);
+        }}
+        onConfirm={() => {
+          void submitPasswordRequest();
+        }}
+      />
+    ) : null;
 
   return (
     <div className="mx-auto w-full max-w-xl space-y-6">
@@ -122,9 +211,6 @@ export function ProfileForm({ profile, addressesSlot }: ProfileFormProps) {
       </header>
 
       {successKey === "saved" ? <Alert tone="success">{t("successSaved")}</Alert> : null}
-      {successKey === "passwordRequested" ? (
-        <Alert tone="success">{t("successPasswordRequested")}</Alert>
-      ) : null}
       {errorKey ? <Alert tone="error">{t(`errors.${errorKey}`)}</Alert> : null}
 
       <form
@@ -142,7 +228,7 @@ export function ProfileForm({ profile, addressesSlot }: ProfileFormProps) {
             disabled
             className={`${fieldClass} cursor-not-allowed bg-[var(--shop-surface)] opacity-80`}
           />
-          <p className="m-0 text-xs text-[var(--text-muted)]">{t("emailReadOnlyHint")}</p>
+          <p className="m-0 text-xs text-[var(--text-muted)]">{t("emailChangeHint")}</p>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
@@ -224,27 +310,89 @@ export function ProfileForm({ profile, addressesSlot }: ProfileFormProps) {
         </div>
       </form>
 
-      <section className="space-y-3 rounded-[12px] border border-[var(--border)] bg-white p-4 sm:p-5">
-        <div className="space-y-1">
-          <h2 className="m-0 text-base font-semibold text-[var(--navy)]">
-            {t("passwordRequestTitle")}
-          </h2>
-          <p className="m-0 text-sm text-[var(--text-muted)]">{t("passwordRequestBody")}</p>
-        </div>
-        {passwordErrorKey ? (
-          <Alert tone="error">{t(`errors.${passwordErrorKey}`)}</Alert>
-        ) : null}
-        <button
-          type="button"
-          className={btn.outline}
-          disabled={passwordBusy || busy}
-          onClick={onPasswordRequest}
-        >
-          {passwordBusy ? t("passwordRequesting") : t("passwordRequestCta")}
-        </button>
-      </section>
+      {pendingRequest ? (
+        <section className="space-y-1 rounded-[12px] border border-[var(--border)] bg-white p-4 sm:p-5">
+          <h2 className="m-0 text-base font-semibold text-[var(--navy)]">{t("pendingTitle")}</h2>
+          <p className="m-0 text-sm text-[var(--text)]">
+            {pendingRequest.type === "EMAIL"
+              ? t("pendingEmail", { email: pendingRequest.requested_email ?? "" })
+              : t("pendingPassword")}
+          </p>
+        </section>
+      ) : (
+        <>
+          <section className="space-y-3 rounded-[12px] border border-[var(--border)] bg-white p-4 sm:p-5">
+            <div className="space-y-1">
+              <h2 className="m-0 text-base font-semibold text-[var(--navy)]">
+                {t("emailRequestTitle")}
+              </h2>
+              <p className="m-0 text-sm text-[var(--text-muted)]">{t("emailRequestBody")}</p>
+            </div>
+            {successKey === "emailRequested" ? (
+              <Alert tone="success">{t("successEmailRequested")}</Alert>
+            ) : null}
+            {emailErrorKey ? <Alert tone="error">{t(`errors.${emailErrorKey}`)}</Alert> : null}
+            <form onSubmit={onEmailRequest} className="space-y-3">
+              <div className="space-y-1.5">
+                <label className={labelClass} htmlFor="profile-requested-email">
+                  {t("newEmail")}
+                </label>
+                <input
+                  id="profile-requested-email"
+                  type="email"
+                  required
+                  maxLength={255}
+                  value={requestedEmail}
+                  onChange={(event) => setRequestedEmail(event.target.value)}
+                  className={fieldClass}
+                  autoComplete="email"
+                />
+              </div>
+              <button
+                type="submit"
+                className={btn.outline}
+                disabled={emailBusy || busy || successKey === "emailRequested"}
+              >
+                {emailBusy
+                  ? t("emailRequesting")
+                  : successKey === "emailRequested"
+                    ? t("emailRequestSent")
+                    : t("emailRequestCta")}
+              </button>
+            </form>
+          </section>
+
+          <section className="space-y-3 rounded-[12px] border border-[var(--border)] bg-white p-4 sm:p-5">
+            <div className="space-y-1">
+              <h2 className="m-0 text-base font-semibold text-[var(--navy)]">
+                {t("passwordRequestTitle")}
+              </h2>
+              <p className="m-0 text-sm text-[var(--text-muted)]">{t("passwordRequestBody")}</p>
+            </div>
+            {successKey === "passwordRequested" ? (
+              <Alert tone="success">{t("successPasswordRequested")}</Alert>
+            ) : null}
+            {passwordErrorKey ? (
+              <Alert tone="error">{t(`errors.${passwordErrorKey}`)}</Alert>
+            ) : null}
+            <button
+              type="button"
+              className={btn.outline}
+              disabled={passwordBusy || busy || successKey === "passwordRequested"}
+              onClick={onPasswordRequestClick}
+            >
+              {passwordBusy
+                ? t("passwordRequesting")
+                : successKey === "passwordRequested"
+                  ? t("passwordRequestSent")
+                  : t("passwordRequestCta")}
+            </button>
+          </section>
+        </>
+      )}
 
       {addressesSlot}
+      {mounted && confirmModal ? createPortal(confirmModal, document.body) : null}
     </div>
   );
 }

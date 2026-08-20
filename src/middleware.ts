@@ -1,7 +1,9 @@
 import { getToken } from "next-auth/jwt";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_PATHS = new Set(["/", "/login", "/request"]);
+import { clearSessionCookies, loginAfterSessionExpired } from "@/lib/session-cookies";
+
+const PUBLIC_PATHS = new Set(["/", "/login", "/request", "/reset-password"]);
 const AUTH_ENTRY_PATHS = new Set(["/login"]);
 
 function isSecureRequest(req: NextRequest) {
@@ -12,9 +14,21 @@ function isSecureRequest(req: NextRequest) {
   );
 }
 
+function isAccessTokenFresh(token: {
+  accessToken?: unknown;
+  accessTokenExpires?: unknown;
+  error?: unknown;
+} | null) {
+  if (!token?.accessToken || token.error === "AccessTokenExpired") return false;
+  const expiresAt = Number(token.accessTokenExpires);
+  if (!Number.isFinite(expiresAt)) return false;
+  return Date.now() < expiresAt - 30_000;
+}
+
 export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const isPublic = PUBLIC_PATHS.has(path);
+  const sessionExpiredOnLogin = path === "/login" && req.nextUrl.searchParams.get("error") === "SessionExpired";
   const secureCookie = isSecureRequest(req);
 
   const token = await getToken({
@@ -26,15 +40,15 @@ export async function middleware(req: NextRequest) {
       : "next-auth.session-token",
   });
 
-  const signedIn = Boolean(token?.sub) && token?.error !== "AccessTokenExpired";
+  const signedIn = Boolean(token?.sub) && isAccessTokenFresh(token);
 
-  if (token?.error === "AccessTokenExpired" && !isPublic) {
-    const login = new URL("/login", req.url);
-    login.searchParams.set("error", "SessionExpired");
-    const response = NextResponse.redirect(login);
-    response.cookies.set("next-auth.session-token", "", { maxAge: 0 });
-    response.cookies.set("__Secure-next-auth.session-token", "", { maxAge: 0 });
-    return response;
+  if (sessionExpiredOnLogin) {
+    return clearSessionCookies(req, NextResponse.next());
+  }
+
+  if (token?.sub && !isAccessTokenFresh(token) && !isPublic) {
+    const login = loginAfterSessionExpired(req.url);
+    return clearSessionCookies(req, NextResponse.redirect(login));
   }
 
   if (!isPublic && !signedIn) {

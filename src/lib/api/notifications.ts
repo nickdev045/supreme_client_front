@@ -8,6 +8,13 @@ export function fetchNotificationInbox(token: string) {
   });
 }
 
+export function fetchNotificationInboxDetail(token: string, inboxId: number) {
+  return apiData<ApiInboxItem>(`/api/v1/engagement/notifications/inbox/${inboxId}`, {
+    method: "GET",
+    token,
+  });
+}
+
 export function fetchNotificationUnreadCount(token: string) {
   return apiData<{ unread: number }>("/api/v1/engagement/notifications/inbox/unread-count", {
     method: "GET",
