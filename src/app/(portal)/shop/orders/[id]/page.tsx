@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { OrderConfirmation } from "@/components/shop/order-confirmation";
 import { ApiError } from "@/lib/api/client";
 import { fetchStoreOrder } from "@/lib/api/cart";
+import { handleUnauthorized } from "@/lib/handle-unauthorized";
 import { getAccessToken } from "@/lib/session";
 
 export async function generateMetadata() {
@@ -28,7 +29,7 @@ export default async function ShopOrderPage({ params }: ShopOrderPageProps) {
     order = await fetchStoreOrder(token, id);
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) notFound();
-    throw error;
+    handleUnauthorized(error);
   }
 
   return <OrderConfirmation order={order} />;

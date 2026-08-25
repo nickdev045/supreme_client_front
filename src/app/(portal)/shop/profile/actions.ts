@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 
-import { updateMe, requestPasswordChange } from "@/lib/api/auth";
+import { updateMe, requestPasswordChange, createCredentialChangeRequest } from "@/lib/api/auth";
 import { ApiError } from "@/lib/api/client";
 import type { ApiMeData } from "@/lib/api/types";
 import { uploadImage } from "@/lib/api/uploads";
@@ -22,6 +22,8 @@ export type ProfileActionErrorKey =
   | "forbidden"
   | "rateLimited"
   | "noAdmins"
+  | "alreadyPending"
+  | "duplicate"
   | "uploadForbidden"
   | "uploadInvalid"
   | "uploadTooLarge"
@@ -47,6 +49,10 @@ function mapApiError(error: unknown, upload = false): ProfileActionErrorKey {
     if (error.status === 415) return "uploadInvalid";
     if (error.status === 422) return "noAdmins";
     if (error.status === 429) return "rateLimited";
+    if (error.status === 409) {
+      if (error.message.toLowerCase().includes("pending")) return "alreadyPending";
+      return "duplicate";
+    }
     if (error.status === 400) return upload ? "uploadInvalid" : "validation";
   }
   return "generic";
@@ -110,6 +116,26 @@ export async function requestPasswordChangeAction(): Promise<PasswordRequestActi
 
   try {
     await requestPasswordChange(token);
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, errorKey: mapApiError(error) };
+  }
+}
+
+export async function requestEmailChangeAction(
+  requestedEmail: string,
+): Promise<PasswordRequestActionResult> {
+  const token = await getAccessToken();
+  if (!token) return { ok: false, errorKey: "session" };
+
+  const parsed = z.string().trim().email().max(255).safeParse(requestedEmail);
+  if (!parsed.success) return { ok: false, errorKey: "validation" };
+
+  try {
+    await createCredentialChangeRequest(token, {
+      type: "EMAIL",
+      requestedEmail: parsed.data,
+    });
     return { ok: true };
   } catch (error) {
     return { ok: false, errorKey: mapApiError(error) };

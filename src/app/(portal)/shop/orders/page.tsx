@@ -5,6 +5,7 @@ import { OrdersHistoryList } from "@/components/shop/orders-history";
 import { Alert } from "@/components/ui/alert";
 import { listStoreOrders, STORE_ORDERS_PAGE_SIZE } from "@/lib/api/cart";
 import { ApiError } from "@/lib/api/client";
+import { handleUnauthorized } from "@/lib/handle-unauthorized";
 import { getAccessToken } from "@/lib/session";
 
 export async function generateMetadata() {
@@ -46,6 +47,9 @@ export default async function ShopOrdersPage() {
       </section>
     );
   } catch (error) {
+    if (error instanceof ApiError && error.status === 401) {
+      handleUnauthorized(error);
+    }
     if (error instanceof ApiError && error.status === 403) {
       return <Alert tone="error">{t("ordersPage.forbidden")}</Alert>;
     }

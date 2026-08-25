@@ -10,6 +10,7 @@ import {
   favouriteToCatalogCard,
   listStoreFavourites,
 } from "@/lib/api/favourites";
+import { handleUnauthorized } from "@/lib/handle-unauthorized";
 import { getAccessToken } from "@/lib/session";
 import Link from "next/link";
 
@@ -69,6 +70,9 @@ export default async function ShopFavoritesPage() {
       </section>
     );
   } catch (error) {
+    if (error instanceof ApiError && error.status === 401) {
+      handleUnauthorized(error);
+    }
     if (error instanceof ApiError && error.status === 403) {
       return <Alert tone="error">{t("favoritesPage.forbidden")}</Alert>;
     }
