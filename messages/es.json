@@ -183,7 +183,6 @@
     "dismiss": "Quitar",
     "openResetLink": "Abrir enlace",
     "resetPasswordTitle": "Nueva contraseña",
-    "resetPasswordSubtitle": "Este enlace caduca a las 24 horas y solo puede usarse una vez.",
     "resetNewPassword": "Nueva contraseña",
     "resetConfirmPassword": "Confirmar contraseña",
     "resetPasswordHint": "Mínimo 8 caracteres, con mayúscula, minúscula, número y símbolo.",

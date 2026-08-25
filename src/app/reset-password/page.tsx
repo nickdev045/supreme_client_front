@@ -13,14 +13,13 @@ export async function generateMetadata() {
 export default async function ShopResetPasswordPage({
   searchParams,
 }: {
-  searchParams: Promise<{ inbox?: string; ref?: string; token?: string }>;
+  searchParams: Promise<{ inbox?: string; ref?: string }>;
 }) {
-  const { inbox, ref, token } = await searchParams;
+  const { inbox, ref } = await searchParams;
   const inboxId = Number.parseInt(inbox ?? "", 10);
   let resolvedRef = ref?.trim();
-  const resetToken = token?.trim();
 
-  if (!resolvedRef && !resetToken && Number.isFinite(inboxId) && inboxId > 0) {
+  if (!resolvedRef && Number.isFinite(inboxId) && inboxId > 0) {
     const accessToken = await getAccessToken();
     if (!accessToken) {
       redirect(`/login?callbackUrl=${encodeURIComponent(`/reset-password?inbox=${inboxId}`)}`);
@@ -37,9 +36,8 @@ export default async function ShopResetPasswordPage({
         <h1 className="font-[family-name:var(--font-display)] text-xl font-bold text-[var(--navy)]">
           {t("resetPasswordTitle")}
         </h1>
-        <p className="mt-1 mb-6 text-sm text-[var(--text-muted)]">{t("resetPasswordSubtitle")}</p>
-        {resolvedRef || resetToken ? (
-          <ShopResetPasswordForm refId={resolvedRef} token={resetToken} />
+        {resolvedRef ? (
+          <ShopResetPasswordForm refId={resolvedRef} />
         ) : (
           <p className="text-sm text-[var(--text-muted)]">{t("resetInvalidLink")}</p>
         )}

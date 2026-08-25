@@ -183,7 +183,6 @@
     "dismiss": "Remove",
     "openResetLink": "Open link",
     "resetPasswordTitle": "New password",
-    "resetPasswordSubtitle": "This link expires in 24 hours and can only be used once.",
     "resetNewPassword": "New password",
     "resetConfirmPassword": "Confirm password",
     "resetPasswordHint": "At least 8 characters, with uppercase, lowercase, a number, and a symbol.",

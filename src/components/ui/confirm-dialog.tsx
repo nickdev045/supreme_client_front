@@ -1,10 +1,13 @@
 "use client";
 
-import { useEffect, useId, useRef, type ReactNode } from "react";
+import { useEffect, useId, useRef, useSyncExternalStore, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 
 import { btn } from "@/components/ui/styles";
 
-type ConfirmDialogProps = {
+const subscribeToClientRender = () => () => {};
+
+export type ConfirmDialogProps = {
   open: boolean;
   title: string;
   description?: string;
@@ -30,6 +33,9 @@ export function ConfirmDialog({
   children,
 }: ConfirmDialogProps) {
   const titleId = useId();
+  const descriptionId = useId();
+  const mounted = useSyncExternalStore(subscribeToClientRender, () => true, () => false);
+  const cancelButtonRef = useRef<HTMLButtonElement>(null);
   const onCancelRef = useRef(onCancel);
   const pendingRef = useRef(pending);
 
@@ -39,45 +45,54 @@ export function ConfirmDialog({
   }, [onCancel, pending]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!mounted || !open) return;
+    const previouslyFocusedElement = document.activeElement as HTMLElement | null;
+
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape" && !pendingRef.current) onCancelRef.current();
     }
-    window.addEventListener("keydown", onKeyDown);
+
+    document.addEventListener("keydown", onKeyDown);
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    cancelButtonRef.current?.focus();
+
     return () => {
-      window.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = previous;
+      previouslyFocusedElement?.focus();
     };
-  }, [open]);
+  }, [mounted, open]);
 
-  if (!open) return null;
+  if (!mounted || !open) return null;
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-[rgba(15,23,42,0.45)] p-4 sm:items-center"
+      className="fixed inset-0 z-[300] flex items-end justify-center bg-black/45 p-4 sm:items-center"
       role="presentation"
-      onClick={() => {
-        if (!pending) onCancel();
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget && !pending) onCancel();
       }}
     >
       <div
-        role="dialog"
+        role="alertdialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="w-full max-w-md rounded-[14px] border border-[#ddd] bg-[var(--shop-surface)] p-5 shadow-[var(--shadow)]"
-        onClick={(event) => event.stopPropagation()}
+        aria-describedby={description ? descriptionId : undefined}
+        className="w-full max-w-md rounded-[14px] border border-[var(--border)] bg-white p-5 shadow-[var(--shadow)]"
       >
         <h2 id={titleId} className="mt-0 mb-2 text-lg font-bold text-[var(--navy)]">
           {title}
         </h2>
         {description ? (
-          <p className="mt-0 mb-4 text-sm text-[var(--text-muted)]">{description}</p>
+          <p id={descriptionId} className="mt-0 mb-4 text-sm text-[var(--text-muted)]">
+            {description}
+          </p>
         ) : null}
         {children}
         <div className="mt-5 flex flex-wrap justify-end gap-2">
           <button
+            ref={cancelButtonRef}
             type="button"
             className={`${btn.outline} ${btn.sm}`}
             disabled={pending}
@@ -95,6 +110,7 @@ export function ConfirmDialog({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

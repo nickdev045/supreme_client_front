@@ -27,7 +27,7 @@ function RequirementIcon({ met }: { met: boolean }) {
   );
 }
 
-export function ShopResetPasswordForm({ refId, token }: { refId?: string; token?: string }) {
+export function ShopResetPasswordForm({ refId }: { refId: string }) {
   const t = useTranslations("Shop");
   const confirmationRef = useRef<HTMLInputElement>(null);
   const [newPassword, setNewPassword] = useState("");
@@ -67,7 +67,6 @@ export function ShopResetPasswordForm({ refId, token }: { refId?: string; token?
     try {
       const result = await confirmShopPasswordResetAction({
         ref: refId,
-        token,
         newPassword,
         confirmPassword,
       });

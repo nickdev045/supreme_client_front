@@ -3,8 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { ChangeEvent, FormEvent, useEffect, useRef, useState, type ReactNode } from "react";
-import { createPortal } from "react-dom";
+import { ChangeEvent, FormEvent, useRef, useState, type ReactNode } from "react";
 
 import {
   requestEmailChangeAction,
@@ -15,7 +14,7 @@ import {
 } from "@/app/(portal)/shop/profile/actions";
 import { UserAvatar } from "@/components/landing/user-avatar";
 import { Alert } from "@/components/ui/alert";
-import { ConfirmModal } from "@/components/ui/confirm-modal";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { btn, fieldClass, labelClass } from "@/components/ui/styles";
 import type { PendingCredentialRequest } from "@/lib/api/auth";
 import type { ApiMeData } from "@/lib/api/types";
@@ -49,11 +48,6 @@ export function ProfileForm({ profile, pendingRequest, addressesSlot }: ProfileF
   const [passwordErrorKey, setPasswordErrorKey] = useState<ProfileActionErrorKey | null>(null);
   const [emailErrorKey, setEmailErrorKey] = useState<ProfileActionErrorKey | null>(null);
   const [confirmAction, setConfirmAction] = useState<"email" | "password" | null>(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const displayName = [firstName, lastName].filter(Boolean).join(" ").trim() || profile.email;
 
@@ -170,7 +164,7 @@ export function ProfileForm({ profile, pendingRequest, addressesSlot }: ProfileF
 
   const confirmModal =
     confirmAction === "email" ? (
-      <ConfirmModal
+      <ConfirmDialog
         open
         title={t("emailRequestConfirmTitle")}
         description={t("emailRequestConfirmDescription", { email: requestedEmail })}
@@ -185,7 +179,7 @@ export function ProfileForm({ profile, pendingRequest, addressesSlot }: ProfileF
         }}
       />
     ) : confirmAction === "password" ? (
-      <ConfirmModal
+      <ConfirmDialog
         open
         title={t("passwordRequestConfirmTitle")}
         description={t("passwordRequestConfirmDescription")}
@@ -392,7 +386,7 @@ export function ProfileForm({ profile, pendingRequest, addressesSlot }: ProfileF
       )}
 
       {addressesSlot}
-      {mounted && confirmModal ? createPortal(confirmModal, document.body) : null}
+      {confirmModal}
     </div>
   );
 }

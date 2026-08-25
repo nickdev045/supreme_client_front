@@ -11,6 +11,7 @@ import {
   type AddressActionErrorKey,
 } from "@/app/(portal)/shop/profile/address-actions";
 import { Alert } from "@/components/ui/alert";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { btn, fieldClass, labelClass } from "@/components/ui/styles";
 import { addressLabel, type StoreAddress } from "@/lib/api/addresses";
 
@@ -29,6 +30,7 @@ export function ProfileAddresses({ addresses }: ProfileAddressesProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [errorKey, setErrorKey] = useState<AddressActionErrorKey | null>(null);
   const [success, setSuccess] = useState(false);
@@ -74,17 +76,20 @@ export function ProfileAddresses({ addresses }: ProfileAddressesProps) {
     });
   }
 
-  function onDelete(addressId: number) {
-    if (!window.confirm(t("addresses.confirmDelete"))) return;
+  function onDelete() {
+    if (deletingId == null) return;
+
     setErrorKey(null);
     setSuccess(false);
     startTransition(async () => {
-      const result = await deleteAddressAction(addressId);
+      const result = await deleteAddressAction(deletingId);
       if (!result.ok) {
         setErrorKey(result.errorKey);
+        setDeletingId(null);
         return;
       }
-      if (editingId === addressId) reset();
+      if (editingId === deletingId) reset();
+      setDeletingId(null);
       setSuccess(true);
       router.refresh();
     });
@@ -136,7 +141,7 @@ export function ProfileAddresses({ addresses }: ProfileAddressesProps) {
                     type="button"
                     className="font-semibold text-[var(--tomato)]"
                     disabled={pending}
-                    onClick={() => onDelete(address.pk_address)}
+                    onClick={() => setDeletingId(address.pk_address)}
                   >
                     {t("addresses.delete")}
                   </button>
@@ -212,6 +217,18 @@ export function ProfileAddresses({ addresses }: ProfileAddressesProps) {
           ) : null}
         </div>
       </form>
+      <ConfirmDialog
+        open={deletingId != null}
+        title={t("addresses.confirmDelete")}
+        confirmLabel={t("addresses.delete")}
+        cancelLabel={t("addresses.cancel")}
+        pending={pending}
+        tone="danger"
+        onConfirm={onDelete}
+        onCancel={() => {
+          if (!pending) setDeletingId(null);
+        }}
+      />
     </section>
   );
 }

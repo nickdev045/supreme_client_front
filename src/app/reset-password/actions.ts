@@ -3,7 +3,8 @@
 import { z } from "zod";
 
 import { ApiError } from "@/lib/api/client";
-import { confirmPasswordReset } from "@/lib/api/credentials";
+import { confirmPasswordReset, exchangePasswordResetRef } from "@/lib/api/credentials";
+import { requireAccessToken } from "@/lib/session";
 import { secureUserPasswordSchema } from "@/lib/user-password";
 
 export type ResetPasswordResult =
@@ -15,25 +16,22 @@ export async function confirmShopPasswordResetAction(
 ): Promise<ResetPasswordResult> {
   const parsed = z
     .object({
-      ref: z.string().uuid().optional(),
-      token: z.string().trim().min(1).optional(),
+      ref: z.string().uuid(),
       newPassword: secureUserPasswordSchema,
       confirmPassword: z.string().min(1),
     })
     .refine((value) => value.newPassword === value.confirmPassword, {
       path: ["confirmPassword"],
     })
-    .refine((value) => Boolean(value.ref || value.token), {
-      path: ["ref"],
-    })
     .safeParse(input);
 
   if (!parsed.success) return { ok: false, error: "validation" };
 
   try {
+    const accessToken = await requireAccessToken();
+    const reset = await exchangePasswordResetRef(accessToken, parsed.data.ref);
     await confirmPasswordReset({
-      ref: parsed.data.ref,
-      token: parsed.data.token,
+      token: reset.token,
       newPassword: parsed.data.newPassword,
     });
     return { ok: true };

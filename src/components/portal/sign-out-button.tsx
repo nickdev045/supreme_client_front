@@ -2,10 +2,9 @@
 
 import { signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { useEffect, useState, type ButtonHTMLAttributes } from "react";
-import { createPortal } from "react-dom";
+import { useState, type ButtonHTMLAttributes } from "react";
 
-import { ConfirmModal } from "@/components/ui/confirm-modal";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 type SignOutConfirmDialogProps = {
   open: boolean;
@@ -21,18 +20,9 @@ export function SignOutConfirmDialog({
   const t = useTranslations("Nav");
   const tCommon = useTranslations("Common");
   const [pending, setPending] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!open) setPending(false);
-  }, [open]);
-
-  const modal = (
-    <ConfirmModal
+  return (
+    <ConfirmDialog
       open={open}
       title={t("logoutConfirmTitle")}
       description={t("logoutConfirmDescription")}
@@ -40,7 +30,10 @@ export function SignOutConfirmDialog({
       cancelLabel={tCommon("cancel")}
       pending={pending}
       onCancel={() => {
-        if (!pending) onOpenChange(false);
+        if (!pending) {
+          setPending(false);
+          onOpenChange(false);
+        }
       }}
       onConfirm={() => {
         setPending(true);
@@ -50,9 +43,6 @@ export function SignOutConfirmDialog({
       }}
     />
   );
-
-  if (!mounted) return null;
-  return createPortal(modal, document.body);
 }
 
 type SignOutButtonProps = {
