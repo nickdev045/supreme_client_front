@@ -85,7 +85,7 @@ export function CatalogSortMenu({ orderBy, sort, onChange }: CatalogSortMenuProp
           id={menuId}
           role="listbox"
           aria-label={t("sortBy")}
-          className="absolute top-[calc(100%+0.35rem)] left-0 z-[40] min-w-[220px] overflow-hidden rounded-[10px] border border-[var(--border)] bg-white shadow-[var(--shadow)] divide-y divide-[var(--border)]"
+          className="absolute top-[calc(100%+0.35rem)] left-0 z-[40] w-[min(220px,calc(100vw-2rem))] overflow-hidden rounded-[10px] border border-[var(--border)] bg-white shadow-[var(--shadow)] divide-y divide-[var(--border)]"
         >
           {SORT_OPTIONS.map((option) => {
             const active = option === selected;

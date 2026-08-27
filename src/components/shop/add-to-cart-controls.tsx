@@ -68,6 +68,7 @@ export function AddToCartControls({
           max={remaining}
           disabled={pending}
           fullWidth={layout === "stack"}
+          compact={layout === "stack"}
           onChange={(next) => {
             setStatus("idle");
             setQuantity(next);
@@ -80,14 +81,14 @@ export function AddToCartControls({
       {alreadyInCart ? (
         <Link
           href="/shop/cart"
-          className={`${btn.primary} ${layout === "stack" ? `${btn.sm} w-full` : ""} min-h-11 no-underline`}
+          className={`${btn.primary} ${layout === "stack" ? `${btn.sm} w-full px-2 text-center leading-tight` : ""} min-h-11 no-underline`}
         >
           {t("cartPage.goToCart")}
         </Link>
       ) : canAdd ? (
         <button
           type="button"
-          className={`${btn.primary} ${layout === "stack" ? `${btn.sm} w-full` : ""} min-h-11`}
+          className={`${btn.primary} ${layout === "stack" ? `${btn.sm} w-full px-2 text-center leading-tight` : ""} min-h-11`}
           disabled={pending}
           onClick={onAdd}
         >
@@ -100,7 +101,7 @@ export function AddToCartControls({
       ) : (
         <button
           type="button"
-          className={`${btn.primary} ${layout === "stack" ? `${btn.sm} w-full` : ""} min-h-11`}
+          className={`${btn.primary} ${layout === "stack" ? `${btn.sm} w-full px-2 text-center leading-tight` : ""} min-h-11`}
           disabled
         >
           {t("cartPage.outOfStock")}

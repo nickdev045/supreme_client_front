@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 
 import { UserAvatar } from "@/components/landing/user-avatar";
 import { UserMenu } from "@/components/landing/user-menu";
+import { LanguageSwitcher } from "@/components/i18n/language-switcher";
 import { ShopNotificationBell } from "@/components/portal/notification-bell";
 import { SignOutButton, SignOutConfirmDialog } from "@/components/portal/sign-out-button";
 
@@ -55,7 +56,66 @@ function ProfileIcon({ className }: { className?: string }) {
   );
 }
 
-/** Shop chrome from inventario_proyecto (Amazon / Mercado Libre style). */
+function SearchIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.3-4.3" />
+    </svg>
+  );
+}
+
+function HomeIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M3 11.5 12 4l9 7.5" />
+      <path d="M5 10.5V20h14v-9.5" />
+    </svg>
+  );
+}
+
+function HeartNavIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+    </svg>
+  );
+}
+
+function navLinkClass(active: boolean) {
+  return [
+    "whitespace-nowrap rounded px-3 py-[0.35rem] text-[0.85rem] font-medium text-[var(--cream)]",
+    active ? "bg-white/12" : "opacity-80 hover:opacity-100",
+  ].join(" ");
+}
+
 export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopShellProps) {
   const t = useTranslations("Shop");
   const tBrand = useTranslations("Brand");
@@ -141,13 +201,16 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
             />
             <button
               type="submit"
-              className="shrink-0 whitespace-nowrap border-0 bg-[var(--carrot)] px-3 text-[0.85rem] font-semibold text-white transition hover:brightness-105 sm:px-[1.1rem] sm:text-[0.88rem]"
+              className="inline-flex shrink-0 items-center justify-center border-0 bg-[var(--carrot)] px-3 text-[0.85rem] font-semibold text-white transition hover:brightness-105 sm:px-[1.1rem] sm:text-[0.88rem]"
             >
-              {t("search")}
+              <SearchIcon className="h-5 w-5 sm:hidden" />
+              <span className="hidden sm:inline">{t("search")}</span>
+              <span className="sr-only sm:hidden">{t("search")}</span>
             </button>
           </form>
 
           <div className="hidden shrink-0 items-center gap-2 md:flex">
+            <LanguageSwitcher variant="dark" />
             <UserMenu name={userName} photoUrl={photoUrl} showLandingLink />
             <ShopNotificationBell />
             <Link
@@ -180,39 +243,27 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
         </div>
 
         <nav
-          className="mx-auto hidden w-[min(1400px,calc(100%-2rem))] gap-1 overflow-x-auto pb-[0.55rem] md:flex"
+          className="mx-auto flex w-[min(1400px,calc(100%-1rem))] gap-1 overflow-x-auto pb-[0.55rem] sm:w-[min(1400px,calc(100%-2rem))]"
           aria-label={t("categories")}
         >
-          <Link
-            href="/shop"
-            className={[
-              "whitespace-nowrap rounded px-3 py-[0.35rem] text-[0.85rem] font-medium text-[var(--cream)]",
-              pathname === "/shop" ? "bg-white/12" : "opacity-80 hover:opacity-100",
-            ].join(" ")}
-          >
+          <Link href="/shop" className={navLinkClass(pathname === "/shop")}>
             {t("allProducts")}
           </Link>
           <Link
             href="/shop#recommended"
-            className="whitespace-nowrap rounded px-3 py-[0.35rem] text-[0.85rem] font-medium text-[var(--cream)] opacity-80 hover:opacity-100"
+            className={navLinkClass(false)}
           >
             {t("recommended")}
           </Link>
           <Link
             href="/shop/favorites"
-            className={[
-              "whitespace-nowrap rounded px-3 py-[0.35rem] text-[0.85rem] font-medium text-[var(--cream)]",
-              pathname.startsWith("/shop/favorites") ? "bg-white/12" : "opacity-80 hover:opacity-100",
-            ].join(" ")}
+            className={navLinkClass(pathname.startsWith("/shop/favorites"))}
           >
             {t("favorites")}
           </Link>
           <Link
             href="/shop/orders"
-            className={[
-              "whitespace-nowrap rounded px-3 py-[0.35rem] text-[0.85rem] font-medium text-[var(--cream)]",
-              pathname.startsWith("/shop/orders") ? "bg-white/12" : "opacity-80 hover:opacity-100",
-            ].join(" ")}
+            className={navLinkClass(pathname.startsWith("/shop/orders"))}
           >
             {t("buyAgain")}
           </Link>
@@ -293,6 +344,10 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
                 {t("landing")}
               </Link>
             </li>
+            <li className="flex items-center justify-between gap-3 border-b border-[var(--border)] px-5 py-3">
+              <span className="text-[0.95rem] font-medium text-[var(--text)]">{t("language")}</span>
+              <LanguageSwitcher variant="light" />
+            </li>
             <li className="px-4 py-3">
               <SignOutButton
                 className="w-full rounded-[10px] border border-[var(--border)] bg-white px-3 py-2 text-left text-sm font-medium text-[var(--navy)]"
@@ -316,52 +371,67 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
       >
         <Link
           href="/shop"
-          className="flex min-w-0 flex-1 flex-col items-center justify-center gap-[0.15rem] px-1 py-[0.35rem] text-[0.65rem] font-semibold text-[var(--navy)]"
+          className={[
+            "flex min-w-0 flex-1 flex-col items-center justify-center gap-[0.15rem] px-0.5 py-[0.35rem] text-[0.6rem] font-semibold",
+            pathname === "/shop" ? "text-[var(--navy)]" : "text-[var(--text-muted)]",
+          ].join(" ")}
         >
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[rgba(26,43,76,0.1)] text-[0.85rem] font-bold">
-            H
+          <span
+            className={[
+              "flex h-7 w-7 items-center justify-center rounded-lg",
+              pathname === "/shop" ? "bg-[rgba(26,43,76,0.1)]" : "",
+            ].join(" ")}
+          >
+            <HomeIcon className="h-[20px] w-[20px]" />
           </span>
-          <span>{t("home")}</span>
+          <span className="truncate">{t("home")}</span>
         </Link>
         <Link
           href="/shop/favorites"
           className={[
-            "flex min-w-0 flex-1 flex-col items-center justify-center gap-[0.15rem] px-1 py-[0.35rem] text-[0.65rem] font-semibold",
+            "flex min-w-0 flex-1 flex-col items-center justify-center gap-[0.15rem] px-0.5 py-[0.35rem] text-[0.6rem] font-semibold",
             pathname.startsWith("/shop/favorites") ? "text-[var(--navy)]" : "text-[var(--text-muted)]",
           ].join(" ")}
         >
           <span
             className={[
-              "flex h-7 w-7 items-center justify-center rounded-lg text-[0.85rem] font-bold",
+              "flex h-7 w-7 items-center justify-center rounded-lg",
               pathname.startsWith("/shop/favorites") ? "bg-[rgba(26,43,76,0.1)]" : "",
             ].join(" ")}
           >
-            F
+            <HeartNavIcon className="h-[20px] w-[20px]" />
           </span>
-          <span>{t("favorites")}</span>
+          <span className="truncate">{t("favorites")}</span>
         </Link>
-        <ShopNotificationBell variant="mobile" />
         <Link
           href="/shop/cart"
           className={[
-            "relative flex min-w-0 flex-1 flex-col items-center justify-center gap-[0.15rem] px-1 py-[0.35rem] text-[0.65rem] font-semibold",
+            "relative flex min-w-0 flex-1 flex-col items-center justify-center gap-[0.15rem] px-0.5 py-[0.35rem] text-[0.6rem] font-semibold",
             pathname.startsWith("/shop/cart") ? "text-[var(--navy)]" : "text-[var(--text-muted)]",
           ].join(" ")}
         >
-          <span className="relative flex h-7 w-7 items-center justify-center rounded-lg">
-            <CartIcon className="h-[22px] w-[22px]" />
+          <span
+            className={[
+              "relative flex h-9 w-9 items-center justify-center rounded-full",
+              pathname.startsWith("/shop/cart")
+                ? "bg-[var(--navy)] text-[var(--cream)]"
+                : "bg-[var(--carrot)] text-white",
+            ].join(" ")}
+          >
+            <CartIcon className="h-[20px] w-[20px]" />
             {cartCount > 0 ? (
-              <span className="absolute -top-1 -right-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--carrot)] px-1 text-[0.65rem] font-bold text-white">
+              <span className="absolute -top-1 -right-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full border-2 border-[var(--shop-surface)] bg-[var(--navy)] px-1 text-[0.6rem] font-bold text-white">
                 {cartCount > 99 ? "99+" : cartCount}
               </span>
             ) : null}
           </span>
-          <span>{t("cart")}</span>
+          <span className="truncate">{t("cart")}</span>
         </Link>
+        <ShopNotificationBell variant="mobile" />
         <button
           type="button"
           className={[
-            "flex min-w-0 flex-1 flex-col items-center justify-center gap-[0.15rem] border-0 bg-transparent px-1 py-[0.35rem] text-[0.65rem] font-semibold",
+            "flex min-w-0 flex-1 flex-col items-center justify-center gap-[0.15rem] border-0 bg-transparent px-0.5 py-[0.35rem] text-[0.6rem] font-semibold",
             profileOpen ? "text-[var(--navy)]" : "text-[var(--text-muted)]",
           ].join(" ")}
           aria-expanded={profileOpen}
