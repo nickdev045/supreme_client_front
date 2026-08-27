@@ -27,10 +27,10 @@ export function ProductCard({
   const href = `/shop/products/${product.id}`;
 
   return (
-    <article className="relative flex flex-col overflow-hidden rounded-[14px] border border-[#ddd] bg-[var(--shop-surface)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow)]">
+    <article className="relative flex flex-col rounded-[14px] border border-[#ddd] bg-[var(--shop-surface)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow)]">
       <FavouriteToggle productId={product.id} favouriteId={favouriteId} />
       <Link href={href} className="block text-inherit no-underline">
-        <div className="flex h-[110px] items-center justify-center bg-[var(--shop-surface-muted)] sm:h-[140px]">
+        <div className="flex h-[110px] items-center justify-center overflow-hidden rounded-t-[14px] bg-[var(--shop-surface-muted)] sm:h-[140px]">
           {product.image ? (
             // Product image hosts vary by upload/CDN config.
             // eslint-disable-next-line @next/next/no-img-element
@@ -48,14 +48,14 @@ export function ProductCard({
             </span>
           )}
         </div>
-        <div className="px-3 pt-3 sm:px-4 sm:pt-4">
+        <div className="px-2.5 pt-3 sm:px-4 sm:pt-4">
           <h3 className="m-0 line-clamp-2 text-sm font-semibold text-[var(--navy)] sm:text-base">
             {product.name}
           </h3>
         </div>
       </Link>
 
-      <div className="flex flex-1 flex-col px-3 pt-2 pb-3 sm:px-4 sm:pb-4">
+      <div className="flex min-w-0 flex-1 flex-col px-2.5 pt-2 pb-3 sm:px-4 sm:pb-4">
         <p className="m-0 text-[0.8rem] text-[var(--text-muted)]">
           {t("stock.quantity", { count: product.stock })}
         </p>
@@ -86,7 +86,7 @@ export function ProductCard({
           />
           <Link
             href={href}
-            className={`${btn.outline} ${btn.sm} min-h-11 w-full no-underline`}
+            className={`${btn.outline} ${btn.sm} min-h-11 w-full px-2 text-center leading-tight no-underline`}
           >
             {t("productPage.viewDetails")}
           </Link>

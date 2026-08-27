@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 
@@ -33,6 +34,7 @@ function BellIcon({ className }: { className?: string }) {
 
 export function ShopNotificationBell({ variant = "header" }: { variant?: "header" | "mobile" }) {
   const t = useTranslations("Shop");
+  const pathname = usePathname();
   const menuId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
@@ -72,12 +74,21 @@ export function ShopNotificationBell({ variant = "header" }: { variant?: "header
   const badge = unread > 0 ? (unread > 99 ? "99+" : String(unread)) : null;
 
   if (variant === "mobile") {
+    const active = pathname.startsWith("/shop/notifications");
     return (
       <Link
         href="/shop/notifications"
-        className="relative flex min-w-0 flex-1 flex-col items-center justify-center gap-[0.15rem] px-1 py-[0.35rem] text-[0.65rem] font-semibold text-[var(--navy)]"
+        className={[
+          "relative flex min-w-0 flex-1 flex-col items-center justify-center gap-[0.15rem] px-0.5 py-[0.35rem] text-[0.6rem] font-semibold",
+          active ? "text-[var(--navy)]" : "text-[var(--text-muted)]",
+        ].join(" ")}
       >
-        <span className="relative flex h-7 w-7 items-center justify-center rounded-lg bg-[rgba(26,43,76,0.1)]">
+        <span
+          className={[
+            "relative flex h-7 w-7 items-center justify-center rounded-lg",
+            active ? "bg-[rgba(26,43,76,0.1)]" : "",
+          ].join(" ")}
+        >
           <BellIcon className="h-[20px] w-[20px]" />
           {badge ? (
             <span className="absolute -top-1 -right-1 inline-flex min-w-[1rem] items-center justify-center rounded-full bg-[var(--carrot)] px-1 text-[0.6rem] font-bold text-white">
@@ -85,7 +96,7 @@ export function ShopNotificationBell({ variant = "header" }: { variant?: "header
             </span>
           ) : null}
         </span>
-        <span>{t("alerts")}</span>
+        <span className="truncate">{t("alerts")}</span>
       </Link>
     );
   }
