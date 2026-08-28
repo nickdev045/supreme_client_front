@@ -3,11 +3,14 @@
 :root {
   --navy: #1a2b4c;
   --navy-light: #243a5e;
+  --navy-hover: #3d5c8a;
   --cream: #f5f0e8;
   --cream-dark: #e8e0d4;
   --white: #ffffff;
   --tomato: #c73e2e;
+  --tomato-hover: #a83326;
   --carrot: #e07b24;
+  --carrot-hover: #c56a1c;
   --leaf: #3d7a4a;
   --text: #1a2332;
   --text-muted: #5c6478;
@@ -36,4 +39,14 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+button:not(:disabled),
+a[href],
+[role="button"]:not([aria-disabled="true"]),
+[role="menuitem"],
+[role="option"],
+select,
+summary {
+  cursor: pointer;
 }

@@ -1,6 +1,6 @@
 import { apiData, apiRequest } from "@/lib/api/client";
 import type { StoreCart, StoreOrder, StoreOrderListResponse } from "@/lib/api/types";
-import { toMoneyNumber } from "@/lib/format-money";
+import { hasSellablePrice, toMoneyNumber } from "@/lib/format-money";
 
 export function listStoreCarts(token: string) {
   return apiData<StoreCart[]>("/api/v1/customer/carts", {
@@ -132,12 +132,18 @@ export function cartItemCount(cart: StoreCart | null | undefined): number {
 }
 
 export function cartLineTotal(item: StoreCart["cart_products"][number]): number {
+  if (!hasSellablePrice(item.product.sale_price)) return 0;
   return toMoneyNumber(Number(item.quantity) * toMoneyNumber(item.unit_price));
 }
 
 export function cartTotal(cart: StoreCart | null | undefined): number {
   if (!cart) return 0;
   return toMoneyNumber(cart.cart_products.reduce((sum, item) => sum + cartLineTotal(item), 0));
+}
+
+export function cartHasUnpricedItems(cart: StoreCart | null | undefined): boolean {
+  if (!cart) return false;
+  return cart.cart_products.some((item) => !hasSellablePrice(item.product.sale_price));
 }
 
 export function cartQuantitiesByProductId(

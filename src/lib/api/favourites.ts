@@ -1,12 +1,13 @@
 import { apiData, apiRequest } from "@/lib/api/client";
 import type { StoreCatalogCard, StoreFavourite } from "@/lib/api/types";
-import { toMoneyNumber } from "@/lib/format-money";
+import { hasSellablePrice, toMoneyNumber } from "@/lib/format-money";
 
-export function listStoreFavourites(token: string) {
-  return apiData<StoreFavourite[]>("/api/v1/customer/favourites", {
+export async function listStoreFavourites(token: string) {
+  const favourites = await apiData<StoreFavourite[]>("/api/v1/customer/favourites", {
     method: "GET",
     token,
   });
+  return favourites.filter((favourite) => hasSellablePrice(favourite.product.sale_price));
 }
 
 export function addStoreFavourite(token: string, productId: string) {

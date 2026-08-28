@@ -79,9 +79,9 @@ export function FavouriteToggle({
           aria-pressed={saved}
           aria-label={label}
           className={[
-            "inline-flex min-h-11 items-center gap-2 rounded-[10px] border-2 px-4 py-2 text-sm font-semibold transition",
+            "inline-flex min-h-11 items-center gap-2 rounded-[10px] border-2 px-4 py-2 text-sm font-semibold transition-[color,background-color,border-color] duration-200",
             saved
-              ? "border-[var(--tomato)] bg-[var(--tomato)] text-white"
+              ? "border-[var(--tomato)] bg-[var(--tomato)] text-white hover:bg-white hover:text-[var(--tomato)]"
               : "border-[var(--navy)] bg-transparent text-[var(--navy)] hover:bg-[var(--navy)] hover:text-[var(--cream)]",
             pending ? "opacity-60" : "",
           ].join(" ")}
@@ -107,10 +107,10 @@ export function FavouriteToggle({
         aria-pressed={saved}
         aria-label={label}
         className={[
-          "inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#ddd] shadow-sm transition",
+          "inline-flex h-9 w-9 items-center justify-center rounded-full border shadow-sm transition-[color,background-color,border-color,transform] duration-200 hover:scale-110",
           saved
-            ? "bg-[var(--tomato)] text-white"
-            : "bg-white/95 text-[var(--navy)] hover:bg-white",
+            ? "border-[var(--tomato)] bg-[var(--tomato)] text-white hover:bg-white hover:text-[var(--tomato)]"
+            : "border-[#ddd] bg-white/95 text-[var(--navy)] hover:border-[var(--tomato)] hover:bg-[var(--tomato)] hover:text-white",
           pending ? "opacity-60" : "",
         ].join(" ")}
       >

@@ -8,12 +8,8 @@
     "password": "Contraseña",
     "company": "Empresa",
     "continue": "Continuar",
-    "cancel": "Cancelar"
-  },
-  "Language": {
-    "label": "Idioma",
-    "en": "English",
-    "es": "Español"
+    "cancel": "Cancelar",
+    "ok": "Aceptar"
   },
   "Auth": {
     "loginTitle": "Inicio de sesión",
@@ -43,7 +39,6 @@
   "Request": {
     "title": "Solicitar acceso",
     "subtitle": "Pide ser miembro mayorista. Nuestro equipo te asignará el correo de la cuenta.",
-    "notice": "No hay registro público. Envía esta solicitud y nuestro equipo te contactará.",
     "businessName": "Nombre del negocio",
     "businessNamePlaceholder": "Restaurante o comercio",
     "contactName": "Nombre de contacto",
@@ -226,6 +221,7 @@
       "viewCart": "Ver carrito",
       "goToCart": "Ir al carrito",
       "outOfStock": "Agotado",
+      "noPrice": "Sin precio",
       "remove": "Quitar",
       "increase": "Aumentar cantidad",
       "decrease": "Reducir cantidad",
@@ -256,6 +252,8 @@
         "stock": "No hay suficiente stock para completar esta compra. Revisa las cantidades.",
         "empty": "Agrega productos antes de hacer el pedido.",
         "address": "Ingresa una dirección de entrega o elige una guardada.",
+        "noPrice": "Este producto no tiene precio y no se puede agregar al carrito.",
+        "unpriced": "Quita los productos sin precio antes de hacer el pedido.",
         "generic": "No se pudo actualizar el carrito. Inténtalo de nuevo."
       },
       "priceChanged": {
@@ -371,6 +369,7 @@
     "passwordRequestCta": "Solicitar cambio de contraseña",
     "passwordRequestConfirmTitle": "¿Solicitar cambio de contraseña?",
     "passwordRequestConfirmDescription": "Avisaremos a los administradores de tu empresa. Tu contraseña no cambiará hasta que la autoricen.",
+    "passwordRequestSuccessTitle": "Cambio de contraseña solicitado",
     "passwordRequesting": "Enviando solicitud…",
     "passwordRequestSent": "Solicitud enviada",
     "successPasswordRequested": "Listo. Tu solicitud se envió a los administradores. Te avisarán cuando autoricen el cambio.",

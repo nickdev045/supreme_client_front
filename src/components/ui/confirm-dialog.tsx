@@ -12,7 +12,7 @@ export type ConfirmDialogProps = {
   title: string;
   description?: string;
   confirmLabel: string;
-  cancelLabel: string;
+  cancelLabel?: string;
   pending?: boolean;
   tone?: "default" | "danger";
   onConfirm: () => void;
@@ -35,7 +35,7 @@ export function ConfirmDialog({
   const titleId = useId();
   const descriptionId = useId();
   const mounted = useSyncExternalStore(subscribeToClientRender, () => true, () => false);
-  const cancelButtonRef = useRef<HTMLButtonElement>(null);
+  const initialFocusRef = useRef<HTMLButtonElement>(null);
   const onCancelRef = useRef(onCancel);
   const pendingRef = useRef(pending);
 
@@ -55,7 +55,7 @@ export function ConfirmDialog({
     document.addEventListener("keydown", onKeyDown);
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    cancelButtonRef.current?.focus();
+    initialFocusRef.current?.focus();
 
     return () => {
       document.removeEventListener("keydown", onKeyDown);
@@ -91,16 +91,19 @@ export function ConfirmDialog({
         ) : null}
         {children}
         <div className="mt-5 flex flex-wrap justify-end gap-2">
+          {cancelLabel ? (
+            <button
+              ref={cancelLabel ? initialFocusRef : undefined}
+              type="button"
+              className={`${btn.outline} ${btn.sm}`}
+              disabled={pending}
+              onClick={onCancel}
+            >
+              {cancelLabel}
+            </button>
+          ) : null}
           <button
-            ref={cancelButtonRef}
-            type="button"
-            className={`${btn.outline} ${btn.sm}`}
-            disabled={pending}
-            onClick={onCancel}
-          >
-            {cancelLabel}
-          </button>
-          <button
+            ref={cancelLabel ? undefined : initialFocusRef}
             type="button"
             className={`${tone === "danger" ? btn.accent : btn.primary} ${btn.sm}`}
             disabled={pending}

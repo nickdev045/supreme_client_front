@@ -68,7 +68,7 @@ export function CatalogSortMenu({ orderBy, sort, onChange }: CatalogSortMenuProp
       <span className="font-semibold text-[var(--text)]">{t("sortBy")}</span>
       <button
         type="button"
-        className="inline-flex items-center gap-2 rounded-[10px] border-2 border-[var(--navy)] bg-[var(--navy)] px-3.5 py-2 text-sm font-semibold text-[var(--cream)] transition hover:bg-[var(--navy-light)] hover:border-[var(--navy-light)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--navy)]"
+        className="inline-flex items-center gap-2 rounded-[10px] border-2 border-[var(--navy)] bg-[var(--navy)] px-3.5 py-2 text-sm font-semibold text-[var(--cream)] transition-[color,background-color,border-color] duration-200 hover:border-[var(--navy-hover)] hover:bg-[var(--navy-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--navy)]"
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={menuId}

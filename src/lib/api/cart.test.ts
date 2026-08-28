@@ -8,6 +8,7 @@ vi.mock("@/lib/api/client", () => ({
 import { apiData, apiRequest } from "@/lib/api/client";
 import {
   addStoreCartItem,
+  cartHasUnpricedItems,
   cartItemCount,
   cartQuantitiesByProductId,
   checkoutStoreCart,
@@ -66,6 +67,19 @@ describe("store cart API", () => {
       }),
     ).toBe(2);
     expect(cartQuantitiesByProductId(result[0])).toEqual({ p1: 2 });
+    expect(cartHasUnpricedItems(result[0])).toBe(false);
+    expect(
+      cartHasUnpricedItems({
+        ...cart,
+        cart_products: [
+          {
+            ...cart.cart_products[0],
+            unit_price: "0",
+            product: { ...cart.cart_products[0].product, sale_price: "0" },
+          },
+        ],
+      }),
+    ).toBe(true);
   });
 
   it("creates a cart when none exist", async () => {

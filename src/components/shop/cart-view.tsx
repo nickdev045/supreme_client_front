@@ -13,11 +13,12 @@ import {
 import { QuantityStepper, maxOrderQuantity } from "@/components/shop/quantity-stepper";
 import { Alert } from "@/components/ui/alert";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { TrashIcon } from "@/components/ui/icons";
 import { btn, fieldClass } from "@/components/ui/styles";
 import { addressLabel, type StoreAddress } from "@/lib/api/addresses";
-import { cartLineTotal, cartTotal } from "@/lib/api/cart";
+import { cartHasUnpricedItems, cartLineTotal, cartTotal } from "@/lib/api/cart";
 import type { StoreCart, StoreCartPriceChange } from "@/lib/api/types";
-import { formatMoney, toMoneyNumber } from "@/lib/format-money";
+import { formatMoney, hasSellablePrice, toMoneyNumber } from "@/lib/format-money";
 
 type CartViewProps = {
   cart: StoreCart | null;
@@ -30,6 +31,7 @@ function errorMessage(error: string, t: (key: string) => string) {
   if (error === "stock") return t("cartPage.errors.stock");
   if (error === "empty") return t("cartPage.errors.empty");
   if (error === "address") return t("cartPage.errors.address");
+  if (error === "noPrice") return t("cartPage.errors.unpriced");
   return t("cartPage.errors.generic");
 }
 
@@ -51,6 +53,7 @@ export function CartView({ cart, addresses }: CartViewProps) {
 
   const items = cart?.cart_products ?? [];
   const total = cartTotal(cart);
+  const hasUnpricedItems = cartHasUnpricedItems(cart);
   const sortedAddresses = useMemo(
     () => [...addresses].sort((a, b) => b.pk_address - a.pk_address),
     [addresses],
@@ -109,6 +112,11 @@ export function CartView({ cart, addresses }: CartViewProps) {
 
   function onPlaceOrder() {
     setError(null);
+    if (hasUnpricedItems) {
+      setConfirmOpen(false);
+      setError(t("cartPage.errors.unpriced"));
+      return;
+    }
     startTransition(async () => {
       const result = await checkoutCartAction({
         delivery_mode: deliveryMode,
@@ -142,6 +150,7 @@ export function CartView({ cart, addresses }: CartViewProps) {
 
   const canPlaceOrder =
     items.length > 0
+    && !hasUnpricedItems
     && (deliveryMode === "PICKUP"
       || (addressChoice !== "other" && addressChoice != null)
       || deliveryAddress.trim().length > 0);
@@ -149,12 +158,15 @@ export function CartView({ cart, addresses }: CartViewProps) {
   return (
     <section className="space-y-5">
       <div>
-        <h1 className="mt-0 mb-1 font-[family-name:var(--font-display)] text-xl font-bold text-[var(--navy)] sm:text-2xl">
+        <h1 className="mt-0 mb-1 text-xl font-bold text-[var(--navy)] sm:text-2xl">
           {t("cartPage.title")}
         </h1>
       </div>
 
       {error ? <Alert tone="error">{error}</Alert> : null}
+      {!error && hasUnpricedItems ? (
+        <Alert tone="warning">{t("cartPage.errors.unpriced")}</Alert>
+      ) : null}
 
       {items.length === 0 ? (
         <div className="rounded-[14px] border border-[#ddd] bg-[var(--shop-surface)] p-6">
@@ -170,6 +182,7 @@ export function CartView({ cart, addresses }: CartViewProps) {
               const stock = maxOrderQuantity(toMoneyNumber(item.product.stock));
               const quantity = Number(item.quantity);
               const unit = item.product.meassure?.name;
+              const priced = hasSellablePrice(item.product.sale_price);
               return (
                 <li
                   key={item.pk_cart_product}
@@ -200,8 +213,8 @@ export function CartView({ cart, addresses }: CartViewProps) {
                       </Link>
                     </h2>
                     <p className="m-0 text-sm text-[var(--text-muted)]">
-                      {formatMoney(toMoneyNumber(item.unit_price))}
-                      {unit ? ` / ${unit}` : ""}
+                      {priced ? formatMoney(toMoneyNumber(item.unit_price)) : "—"}
+                      {priced && unit ? ` / ${unit}` : ""}
                     </p>
                     <p className="mt-1 mb-0 text-[0.8rem] text-[var(--text-muted)]">
                       {t("stock.quantity", { count: stock })}
@@ -221,15 +234,15 @@ export function CartView({ cart, addresses }: CartViewProps) {
                   <div className="flex shrink-0 flex-col items-end justify-between self-stretch">
                     <button
                       type="button"
-                      className="inline-flex h-11 w-11 items-center justify-center rounded-full border-0 bg-transparent text-2xl leading-none font-semibold text-[var(--tomato)] transition hover:bg-[rgba(199,62,46,0.12)] disabled:opacity-50"
+                      className={btn.iconDanger}
                       aria-label={t("cartPage.remove")}
                       disabled={pending}
                       onClick={() => onRemove(item.pk_cart_product)}
                     >
-                      −
+                      <TrashIcon className="h-5 w-5" />
                     </button>
                     <p className="m-0 text-sm font-bold text-[var(--navy)] sm:text-base">
-                      {formatMoney(cartLineTotal(item))}
+                      {priced ? formatMoney(cartLineTotal(item)) : "—"}
                     </p>
                   </div>
                 </li>

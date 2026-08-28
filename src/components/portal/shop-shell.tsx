@@ -8,9 +8,9 @@ import { useTranslations } from "next-intl";
 
 import { UserAvatar } from "@/components/landing/user-avatar";
 import { UserMenu } from "@/components/landing/user-menu";
-import { LanguageSwitcher } from "@/components/i18n/language-switcher";
 import { ShopNotificationBell } from "@/components/portal/notification-bell";
 import { SignOutButton, SignOutConfirmDialog } from "@/components/portal/sign-out-button";
+import { HeartIcon, HomeIcon, LogoutIcon, OrdersIcon, UserIcon } from "@/components/ui/icons";
 
 type ShopShellProps = {
   userName: string;
@@ -74,50 +74,16 @@ function SearchIcon({ className }: { className?: string }) {
   );
 }
 
-function HomeIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M3 11.5 12 4l9 7.5" />
-      <path d="M5 10.5V20h14v-9.5" />
-    </svg>
-  );
-}
-
-function HeartNavIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-    </svg>
-  );
-}
-
 function navLinkClass(active: boolean) {
   return [
-    "whitespace-nowrap rounded px-3 py-[0.35rem] text-[0.85rem] font-medium text-[var(--cream)]",
-    active ? "bg-white/12" : "opacity-80 hover:opacity-100",
+    "whitespace-nowrap rounded px-3 py-[0.35rem] text-[0.85rem] font-medium text-[var(--cream)] transition-colors duration-200 hover:bg-white/15",
+    active ? "bg-white/12" : "",
   ].join(" ");
 }
 
 export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopShellProps) {
   const t = useTranslations("Shop");
+  const tNav = useTranslations("Nav");
   const tBrand = useTranslations("Brand");
   const router = useRouter();
   const pathname = usePathname();
@@ -180,13 +146,13 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
               className="h-9 w-9 shrink-0 rounded-full object-cover"
               priority
             />
-            <span className="hidden whitespace-nowrap font-[family-name:var(--font-display)] text-[0.9rem] font-bold leading-tight md:inline">
+            <span className="hidden whitespace-nowrap text-[0.9rem] font-bold leading-tight md:inline">
               {tBrand("name")}
             </span>
           </Link>
 
           <form
-            className="flex min-w-0 flex-1 overflow-hidden rounded-lg shadow-[0_2px_6px_rgba(0,0,0,0.2)]"
+            className="flex min-w-0 flex-1 rounded-lg shadow-[0_2px_6px_rgba(0,0,0,0.2)]"
             role="search"
             onSubmit={onSearchSubmit}
           >
@@ -197,11 +163,11 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
               onChange={(event) => setQuery(event.target.value)}
               placeholder={t("searchPlaceholder")}
               aria-label={t("searchLabel")}
-              className="min-w-0 flex-1 border-0 bg-[var(--shop-surface)] px-3 py-2.5 text-base text-[var(--text)] outline-none sm:px-[0.85rem] sm:text-[0.9rem]"
+              className="min-w-0 flex-1 appearance-none rounded-l-lg border-0 bg-[var(--shop-surface)] px-3 py-2.5 text-base text-[var(--text)] outline-none sm:px-[0.85rem] sm:text-[0.9rem]"
             />
             <button
               type="submit"
-              className="inline-flex shrink-0 items-center justify-center border-0 bg-[var(--carrot)] px-3 text-[0.85rem] font-semibold text-white transition hover:brightness-105 sm:px-[1.1rem] sm:text-[0.88rem]"
+              className="inline-flex shrink-0 items-center justify-center rounded-r-lg border-2 border-[var(--carrot)] bg-[var(--carrot)] px-3 text-[0.85rem] font-semibold text-white transition-[color,background-color] duration-200 hover:bg-white hover:text-[var(--carrot)] sm:px-[1.1rem] sm:text-[0.88rem]"
             >
               <SearchIcon className="h-5 w-5 sm:hidden" />
               <span className="hidden sm:inline">{t("search")}</span>
@@ -210,14 +176,13 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
           </form>
 
           <div className="hidden shrink-0 items-center gap-2 md:flex">
-            <LanguageSwitcher variant="dark" />
             <UserMenu name={userName} photoUrl={photoUrl} showLandingLink />
             <ShopNotificationBell />
             <Link
               href="/shop/orders"
               className={[
-                "flex flex-col justify-center rounded px-[0.6rem] py-[0.35rem] text-[0.78rem] leading-tight text-[var(--cream)]",
-                pathname.startsWith("/shop/orders") ? "bg-white/12" : "opacity-90 hover:opacity-100",
+                "flex flex-col justify-center rounded px-[0.6rem] py-[0.35rem] text-[0.78rem] leading-tight text-[var(--cream)] transition-colors duration-200 hover:bg-white/15",
+                pathname.startsWith("/shop/orders") ? "bg-white/12" : "",
               ].join(" ")}
             >
               <span className="opacity-85">{t("returns")}</span>
@@ -226,8 +191,8 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
             <Link
               href="/shop/cart"
               className={[
-                "relative flex flex-col items-center justify-center gap-[0.1rem] rounded px-[0.6rem] py-[0.35rem] text-[var(--cream)]",
-                pathname.startsWith("/shop/cart") ? "" : "opacity-90 hover:opacity-100",
+                "relative flex flex-col items-center justify-center gap-[0.1rem] rounded px-[0.6rem] py-[0.35rem] text-[var(--cream)] transition-colors duration-200 hover:bg-white/15",
+                pathname.startsWith("/shop/cart") ? "bg-white/12" : "",
               ].join(" ")}
               aria-label={t("cart")}
             >
@@ -249,22 +214,13 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
           <Link href="/shop" className={navLinkClass(pathname === "/shop")}>
             {t("allProducts")}
           </Link>
-          <Link
-            href="/shop#recommended"
-            className={navLinkClass(false)}
-          >
+          <Link href="/shop#recommended" className={navLinkClass(false)}>
             {t("recommended")}
           </Link>
-          <Link
-            href="/shop/favorites"
-            className={navLinkClass(pathname.startsWith("/shop/favorites"))}
-          >
+          <Link href="/shop/favorites" className={navLinkClass(pathname.startsWith("/shop/favorites"))}>
             {t("favorites")}
           </Link>
-          <Link
-            href="/shop/orders"
-            className={navLinkClass(pathname.startsWith("/shop/orders"))}
-          >
+          <Link href="/shop/orders" className={navLinkClass(pathname.startsWith("/shop/orders"))}>
             {t("buyAgain")}
           </Link>
         </nav>
@@ -299,7 +255,7 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
           </div>
           <button
             type="button"
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-0 bg-white/15 text-[1.4rem] leading-none text-[var(--cream)]"
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-0 bg-white/15 text-[1.4rem] leading-none text-[var(--cream)] transition-colors duration-200 hover:bg-white/30"
             aria-label={t("closeMenu")}
             onClick={() => setProfileOpen(false)}
           >
@@ -312,8 +268,9 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
               <Link
                 href="/shop/profile"
                 onClick={() => setProfileOpen(false)}
-                className="block border-b border-[var(--border)] px-5 py-3 text-[0.95rem] font-medium text-[var(--text)]"
+                className="flex items-center gap-3 border-b border-[var(--border)] px-5 py-3 text-[0.95rem] font-medium text-[var(--text)] transition-colors duration-200 hover:bg-[var(--cream)]"
               >
+                <UserIcon />
                 {t("accountSettings")}
               </Link>
             </li>
@@ -321,8 +278,9 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
               <Link
                 href="/shop/orders"
                 onClick={() => setProfileOpen(false)}
-                className="block border-b border-[var(--border)] px-5 py-3 text-[0.95rem] font-medium text-[var(--text)]"
+                className="flex items-center gap-3 border-b border-[var(--border)] px-5 py-3 text-[0.95rem] font-medium text-[var(--text)] transition-colors duration-200 hover:bg-[var(--cream)]"
               >
+                <OrdersIcon />
                 {t("yourOrders")}
               </Link>
             </li>
@@ -330,8 +288,9 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
               <Link
                 href="/shop/favorites"
                 onClick={() => setProfileOpen(false)}
-                className="block border-b border-[var(--border)] px-5 py-3 text-[0.95rem] font-medium text-[var(--text)]"
+                className="flex items-center gap-3 border-b border-[var(--border)] px-5 py-3 text-[0.95rem] font-medium text-[var(--text)] transition-colors duration-200 hover:bg-[var(--cream)]"
               >
+                <HeartIcon />
                 {t("favorites")}
               </Link>
             </li>
@@ -339,23 +298,23 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
               <Link
                 href="/"
                 onClick={() => setProfileOpen(false)}
-                className="block border-b border-[var(--border)] px-5 py-3 text-[0.95rem] font-medium text-[var(--text)]"
+                className="flex items-center gap-3 border-b border-[var(--border)] px-5 py-3 text-[0.95rem] font-medium text-[var(--text)] transition-colors duration-200 hover:bg-[var(--cream)]"
               >
+                <HomeIcon />
                 {t("landing")}
               </Link>
             </li>
-            <li className="flex items-center justify-between gap-3 border-b border-[var(--border)] px-5 py-3">
-              <span className="text-[0.95rem] font-medium text-[var(--text)]">{t("language")}</span>
-              <LanguageSwitcher variant="light" />
-            </li>
             <li className="px-4 py-3">
               <SignOutButton
-                className="w-full rounded-[10px] border border-[var(--border)] bg-white px-3 py-2 text-left text-sm font-medium text-[var(--navy)]"
+                className="flex w-full items-center gap-3 rounded-[10px] border border-[var(--border)] bg-white px-3 py-2 text-left text-sm font-medium text-[var(--navy)] transition-colors duration-200 hover:bg-[var(--cream)]"
                 onRequestSignOut={() => {
                   setProfileOpen(false);
                   setSignOutOpen(true);
                 }}
-              />
+              >
+                <LogoutIcon />
+                {tNav("logout")}
+              </SignOutButton>
             </li>
           </ul>
         </div>
@@ -399,7 +358,7 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
               pathname.startsWith("/shop/favorites") ? "bg-[rgba(26,43,76,0.1)]" : "",
             ].join(" ")}
           >
-            <HeartNavIcon className="h-[20px] w-[20px]" />
+            <HeartIcon className="h-[20px] w-[20px]" />
           </span>
           <span className="truncate">{t("favorites")}</span>
         </Link>

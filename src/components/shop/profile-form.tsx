@@ -48,6 +48,7 @@ export function ProfileForm({ profile, pendingRequest, addressesSlot }: ProfileF
   const [passwordErrorKey, setPasswordErrorKey] = useState<ProfileActionErrorKey | null>(null);
   const [emailErrorKey, setEmailErrorKey] = useState<ProfileActionErrorKey | null>(null);
   const [confirmAction, setConfirmAction] = useState<"email" | "password" | null>(null);
+  const [passwordSuccessOpen, setPasswordSuccessOpen] = useState(false);
 
   const displayName = [firstName, lastName].filter(Boolean).join(" ").trim() || profile.email;
 
@@ -119,6 +120,7 @@ export function ProfileForm({ profile, pendingRequest, addressesSlot }: ProfileF
       }
       setSuccessKey("passwordRequested");
       setConfirmAction(null);
+      setPasswordSuccessOpen(true);
       router.refresh();
     } catch {
       setPasswordErrorKey("generic");
@@ -198,7 +200,7 @@ export function ProfileForm({ profile, pendingRequest, addressesSlot }: ProfileF
   return (
     <div className="mx-auto w-full max-w-xl space-y-6">
       <header className="space-y-1">
-        <h1 className="m-0 font-[family-name:var(--font-display)] text-2xl font-bold text-[var(--navy)]">
+        <h1 className="m-0 text-2xl font-bold text-[var(--navy)]">
           {t("title")}
         </h1>
         <p className="m-0 text-sm text-[var(--text-muted)]">{t("subtitle")}</p>
@@ -282,7 +284,7 @@ export function ProfileForm({ profile, pendingRequest, addressesSlot }: ProfileF
               {photoUrl ? (
                 <button
                   type="button"
-                  className="text-sm font-medium text-[var(--navy)] underline-offset-2 hover:underline"
+                  className="text-sm font-medium text-[var(--navy)] underline-offset-2 transition-colors duration-200 hover:text-[var(--tomato)] hover:underline"
                   disabled={uploading || busy}
                   onClick={() => setPhotoUrl(null)}
                 >
@@ -387,6 +389,14 @@ export function ProfileForm({ profile, pendingRequest, addressesSlot }: ProfileF
 
       {addressesSlot}
       {confirmModal}
+      <ConfirmDialog
+        open={passwordSuccessOpen}
+        title={t("passwordRequestSuccessTitle")}
+        description={t("successPasswordRequested")}
+        confirmLabel={tCommon("ok")}
+        onConfirm={() => setPasswordSuccessOpen(false)}
+        onCancel={() => setPasswordSuccessOpen(false)}
+      />
     </div>
   );
 }

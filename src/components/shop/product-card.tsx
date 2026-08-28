@@ -7,7 +7,7 @@ import { AddToCartControls } from "@/components/shop/add-to-cart-controls";
 import { FavouriteToggle } from "@/components/shop/favourite-toggle";
 import { btn } from "@/components/ui/styles";
 import type { StoreCatalogCard } from "@/lib/api/types";
-import { formatMoney } from "@/lib/format-money";
+import { formatMoney, hasSellablePrice } from "@/lib/format-money";
 
 type ProductCardProps = {
   product: StoreCatalogCard;
@@ -24,6 +24,7 @@ export function ProductCard({
 }: ProductCardProps) {
   const t = useTranslations("Shop");
   const available = product.stock_status === "in_stock";
+  const priced = hasSellablePrice(product.price);
   const href = `/shop/products/${product.id}`;
 
   return (
@@ -60,7 +61,7 @@ export function ProductCard({
           {t("stock.quantity", { count: product.stock })}
         </p>
 
-        {product.stock_status === "out_of_stock" && variant === "catalog" ? (
+        {!priced || (product.stock_status === "out_of_stock" && variant === "catalog") ? (
           <p className="mt-2 mb-0 font-bold text-[var(--navy)]">—</p>
         ) : variant === "recommended" ? (
           <p className="mt-2 mb-0 font-bold text-[var(--navy)]">
@@ -81,6 +82,7 @@ export function ProductCard({
             productId={product.id}
             stock={product.stock}
             available={available}
+            hasPrice={priced}
             inCartQuantity={inCartQuantity}
             layout="stack"
           />

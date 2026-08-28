@@ -6,7 +6,6 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 import { UserMenu } from "@/components/landing/user-menu";
-import { LanguageSwitcher } from "@/components/i18n/language-switcher";
 import { btn } from "@/components/ui/styles";
 
 export type LandingUser = {
@@ -19,6 +18,9 @@ type LandingHeaderProps = {
 };
 
 const NAV_IDS = ["hero", "catalog", "delivery", "about", "contact"] as const;
+
+const navLinkClassName =
+  "inline-flex min-h-11 cursor-pointer items-center rounded-md border border-transparent px-3 text-[0.9rem] font-medium text-[var(--cream)]/90 transition-[color,background-color,border-color] duration-200 hover:border-[var(--cream)] hover:bg-[var(--cream)]/10 hover:text-[var(--cream)] focus-visible:border-[var(--cream)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--cream)]";
 
 export function LandingHeader({ user }: LandingHeaderProps) {
   const t = useTranslations("Landing");
@@ -90,23 +92,17 @@ export function LandingHeader({ user }: LandingHeaderProps) {
 
           <div className="ml-auto hidden flex-1 items-center justify-end gap-6 md:flex">
             <nav aria-label={t("navLabel")}>
-              <ul className="m-0 flex list-none items-center gap-6 p-0">
+              <ul className="m-0 flex list-none items-center gap-2 p-0">
                 {NAV_IDS.map((id) => (
                   <li key={id}>
-                    <a
-                      href={`#${id}`}
-                      className="text-[0.9rem] font-medium text-[var(--cream)]/90 transition hover:text-[var(--cream)]"
-                    >
+                    <a href={`#${id}`} className={navLinkClassName}>
                       {t(`nav.${id}`)}
                     </a>
                   </li>
                 ))}
               </ul>
             </nav>
-            <div className="flex items-center gap-3">
-              <LanguageSwitcher variant="dark" />
-              {authActions}
-            </div>
+            <div className="flex items-center gap-3">{authActions}</div>
           </div>
         </div>
       </header>
@@ -128,13 +124,13 @@ export function LandingHeader({ user }: LandingHeaderProps) {
         ].join(" ")}
         aria-hidden={!menuOpen}
       >
-        <nav aria-label={t("navLabel")} className="flex flex-col px-4 pt-2 pb-2">
+        <nav aria-label={t("navLabel")} className="flex flex-col gap-1 px-4 pt-2 pb-2">
           {NAV_IDS.map((id) => (
             <a
               key={id}
               href={`#${id}`}
               onClick={() => setMenuOpen(false)}
-              className="block py-[0.65rem] text-[0.9rem] font-medium text-[var(--cream)]/90 transition hover:text-[var(--cream)]"
+              className={`${navLinkClassName} w-full`}
             >
               {t(`nav.${id}`)}
             </a>
@@ -142,7 +138,6 @@ export function LandingHeader({ user }: LandingHeaderProps) {
         </nav>
 
         <div className="mt-auto flex flex-col gap-3 border-t border-[var(--cream)]/15 px-4 py-4">
-          <LanguageSwitcher variant="dark" />
           <div className="flex items-center justify-between gap-3">{authActions}</div>
         </div>
       </div>

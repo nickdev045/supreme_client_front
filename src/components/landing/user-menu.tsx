@@ -6,6 +6,7 @@ import { useEffect, useId, useRef, useState } from "react";
 
 import { UserAvatar } from "@/components/landing/user-avatar";
 import { SignOutButton, SignOutConfirmDialog } from "@/components/portal/sign-out-button";
+import { HomeIcon, LogoutIcon, OrdersIcon, UserIcon } from "@/components/ui/icons";
 
 type UserMenuProps = {
   name: string;
@@ -46,7 +47,7 @@ export function UserMenu({ name, photoUrl, showLandingLink = false }: UserMenuPr
     <div ref={rootRef} className="relative">
       <button
         type="button"
-        className="rounded-full outline-none ring-offset-2 ring-offset-[var(--navy)] focus-visible:ring-2 focus-visible:ring-[var(--cream)]"
+        className="rounded-full outline-none ring-2 ring-transparent ring-offset-2 ring-offset-[var(--navy)] transition-[transform,box-shadow,filter] duration-200 hover:scale-105 hover:ring-[var(--cream)] hover:brightness-110 focus-visible:ring-[var(--cream)]"
         aria-label={t("accountMenu")}
         aria-haspopup="menu"
         aria-expanded={open}
@@ -68,37 +69,43 @@ export function UserMenu({ name, photoUrl, showLandingLink = false }: UserMenuPr
           <Link
             href="/shop/profile"
             role="menuitem"
-            className="block w-full px-3 py-2.5 text-left text-sm font-medium text-[var(--navy)] transition hover:bg-[var(--cream)]"
+            className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-sm font-medium text-[var(--navy)] transition-colors duration-200 hover:bg-[var(--cream)]"
             onClick={() => setOpen(false)}
           >
+            <UserIcon />
             {t("myProfile")}
           </Link>
           <Link
             href="/shop/orders"
             role="menuitem"
-            className="block w-full px-3 py-2.5 text-left text-sm font-medium text-[var(--navy)] transition hover:bg-[var(--cream)]"
+            className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-sm font-medium text-[var(--navy)] transition-colors duration-200 hover:bg-[var(--cream)]"
             onClick={() => setOpen(false)}
           >
+            <OrdersIcon />
             {t("yourOrders")}
           </Link>
           {showLandingLink ? (
             <Link
               href="/"
               role="menuitem"
-              className="block w-full px-3 py-2.5 text-left text-sm font-medium text-[var(--navy)] transition hover:bg-[var(--cream)]"
+              className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-sm font-medium text-[var(--navy)] transition-colors duration-200 hover:bg-[var(--cream)]"
               onClick={() => setOpen(false)}
             >
+              <HomeIcon />
               {t("backToLanding")}
             </Link>
           ) : null}
           <SignOutButton
-            className="w-full px-3 py-2.5 text-left text-sm font-medium text-[var(--navy)] transition hover:bg-[var(--cream)]"
+            className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-sm font-medium text-[var(--navy)] transition-colors duration-200 hover:bg-[var(--cream)]"
             role="menuitem"
             onRequestSignOut={() => {
               setOpen(false);
               setSignOutOpen(true);
             }}
-          />
+          >
+            <LogoutIcon />
+            {t("logout")}
+          </SignOutButton>
         </div>
       ) : null}
       <SignOutConfirmDialog open={signOutOpen} onOpenChange={setSignOutOpen} />

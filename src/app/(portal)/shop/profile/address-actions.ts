@@ -17,7 +17,13 @@ const addressSchema = z
   .object({
     address: z.string().trim().min(1).max(45),
     description: z.string().trim().max(45).optional().nullable(),
-    phone_number: z.string().trim().max(25).optional().nullable(),
+    phone_number: z
+      .string()
+      .trim()
+      .max(25)
+      .regex(/^\d*$/)
+      .optional()
+      .nullable(),
   })
   .strict();
 

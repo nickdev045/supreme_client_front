@@ -4,8 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 
-import { LanguageSwitcher } from "@/components/i18n/language-switcher";
-
 /** Public-style navy header used on auth screens (matches inventario_proyecto login). */
 export function SiteHeader() {
   const tBrand = useTranslations("Brand");
@@ -26,7 +24,6 @@ export function SiteHeader() {
             {tBrand("name")}
           </span>
         </Link>
-        <LanguageSwitcher variant="dark" />
       </div>
     </header>
   );
