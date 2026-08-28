@@ -13,6 +13,7 @@ type AddToCartControlsProps = {
   productId: string;
   stock: number;
   available: boolean;
+  hasPrice: boolean;
   inCartQuantity?: number;
   layout?: "stack" | "row";
 };
@@ -21,6 +22,7 @@ export function AddToCartControls({
   productId,
   stock,
   available,
+  hasPrice,
   inCartQuantity = 0,
   layout = "stack",
 }: AddToCartControlsProps) {
@@ -28,10 +30,10 @@ export function AddToCartControls({
   const router = useRouter();
   const alreadyInCart = inCartQuantity > 0;
   const remaining = maxOrderQuantity(stock);
-  const canAdd = available && !alreadyInCart && remaining >= 1;
+  const canAdd = hasPrice && available && !alreadyInCart && remaining >= 1;
   const [quantity, setQuantity] = useState(canAdd ? 1 : 0);
   const [pending, startTransition] = useTransition();
-  const [status, setStatus] = useState<"idle" | "added" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "added" | "error" | "noPrice">("idle");
 
   function onAdd() {
     if (!canAdd || pending || quantity < 1) return;
@@ -39,7 +41,7 @@ export function AddToCartControls({
     startTransition(async () => {
       const result = await addToCartAction(productId, quantity);
       if (!result.ok) {
-        setStatus("error");
+        setStatus(result.error === "noPrice" ? "noPrice" : "error");
         return;
       }
       setStatus("added");
@@ -104,13 +106,13 @@ export function AddToCartControls({
           className={`${btn.primary} ${layout === "stack" ? `${btn.sm} w-full px-2 text-center leading-tight` : ""} min-h-11`}
           disabled
         >
-          {t("cartPage.outOfStock")}
+          {t(hasPrice ? "cartPage.outOfStock" : "cartPage.noPrice")}
         </button>
       )}
 
-      {status === "error" ? (
+      {status === "error" || status === "noPrice" ? (
         <p className="m-0 text-[0.75rem] text-[var(--tomato)]" role="alert">
-          {t("cartPage.errors.stock")}
+          {t(status === "noPrice" ? "cartPage.errors.noPrice" : "cartPage.errors.stock")}
         </p>
       ) : null}
     </div>

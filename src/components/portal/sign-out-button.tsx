@@ -2,7 +2,7 @@
 
 import { signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { useState, type ButtonHTMLAttributes } from "react";
+import { useState, type ButtonHTMLAttributes, type ReactNode } from "react";
 
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
@@ -50,6 +50,7 @@ type SignOutButtonProps = {
   onClick?: ButtonHTMLAttributes<HTMLButtonElement>["onClick"];
   role?: ButtonHTMLAttributes<HTMLButtonElement>["role"];
   callbackPath?: string;
+  children?: ReactNode;
   /** When set, the parent owns the confirm dialog (e.g. to keep it mounted outside a dropdown). */
   onRequestSignOut?: () => void;
 };
@@ -59,6 +60,7 @@ export function SignOutButton({
   onClick,
   role,
   callbackPath = "/login",
+  children,
   onRequestSignOut,
 }: SignOutButtonProps) {
   const t = useTranslations("Nav");
@@ -80,7 +82,7 @@ export function SignOutButton({
           onClick?.(event);
         }}
       >
-        {t("logout")}
+        {children ?? t("logout")}
       </button>
       {onRequestSignOut ? null : (
         <SignOutConfirmDialog open={open} onOpenChange={setOpen} callbackPath={callbackPath} />

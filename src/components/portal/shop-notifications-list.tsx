@@ -54,7 +54,7 @@ export function ShopNotificationsList({
         <div className="flex justify-stretch sm:justify-end">
           <button
             type="button"
-            className="w-full rounded-[10px] border border-[var(--border)] bg-white px-3 py-2.5 text-sm font-semibold text-[var(--navy)] disabled:opacity-50 sm:w-auto"
+            className={`${btn.quiet} w-full sm:w-auto`}
             disabled={pending}
             onClick={() => {
               startTransition(async () => {
@@ -128,7 +128,7 @@ export function ShopNotificationsList({
                   {unread ? (
                     <button
                       type="button"
-                      className="w-full rounded-[10px] border border-[var(--border)] bg-white px-3 py-2 text-sm font-semibold text-[var(--navy)] disabled:opacity-50 sm:w-auto"
+                      className={`${btn.quiet} w-full sm:w-auto`}
                       disabled={pending}
                       onClick={() => {
                         startTransition(async () => {
@@ -142,7 +142,7 @@ export function ShopNotificationsList({
                   ) : null}
                   <button
                     type="button"
-                    className="w-full rounded-[10px] border border-red-300 bg-white px-3 py-2 text-sm font-semibold text-red-700 disabled:opacity-50 sm:w-auto"
+                    className={`${btn.dangerQuiet} w-full sm:w-auto`}
                     disabled={pending}
                     onClick={() => {
                       startTransition(async () => {

@@ -34,7 +34,7 @@ export default async function ShopNotificationsPage({
   return (
     <section className="space-y-4">
       <div className="min-w-0">
-        <h1 className="break-words font-[family-name:var(--font-display)] text-xl font-bold text-[var(--navy)] sm:text-2xl">
+        <h1 className="break-words text-xl font-bold text-[var(--navy)] sm:text-2xl">
           {t("notifications")}
         </h1>
         <p className="mt-1 text-sm text-[var(--text-muted)]">{t("notificationsSubtitle")}</p>

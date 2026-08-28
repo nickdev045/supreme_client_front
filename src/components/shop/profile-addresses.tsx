@@ -12,6 +12,7 @@ import {
 } from "@/app/(portal)/shop/profile/address-actions";
 import { Alert } from "@/components/ui/alert";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { PencilIcon, TrashIcon } from "@/components/ui/icons";
 import { btn, fieldClass, labelClass } from "@/components/ui/styles";
 import { addressLabel, type StoreAddress } from "@/lib/api/addresses";
 
@@ -24,6 +25,10 @@ const emptyForm = {
   description: "",
   phone_number: "",
 };
+
+function digitsOnly(value: string) {
+  return value.replace(/\D/g, "").slice(0, 25);
+}
 
 export function ProfileAddresses({ addresses }: ProfileAddressesProps) {
   const t = useTranslations("Profile");
@@ -128,22 +133,26 @@ export function ProfileAddresses({ addresses }: ProfileAddressesProps) {
                     </p>
                   ) : null}
                 </div>
-                <div className="flex shrink-0 gap-2 text-sm">
+                <div className="flex shrink-0 gap-1">
                   <button
                     type="button"
-                    className="font-semibold text-[var(--navy)]"
+                    className={btn.icon}
                     disabled={pending}
+                    aria-label={t("addresses.edit")}
+                    title={t("addresses.edit")}
                     onClick={() => edit(address)}
                   >
-                    {t("addresses.edit")}
+                    <PencilIcon />
                   </button>
                   <button
                     type="button"
-                    className="font-semibold text-[var(--tomato)]"
+                    className={btn.iconDanger}
                     disabled={pending}
+                    aria-label={t("addresses.delete")}
+                    title={t("addresses.delete")}
                     onClick={() => setDeletingId(address.pk_address)}
                   >
-                    {t("addresses.delete")}
+                    <TrashIcon />
                   </button>
                 </div>
               </div>
@@ -192,13 +201,15 @@ export function ProfileAddresses({ addresses }: ProfileAddressesProps) {
             </label>
             <input
               id="profile-address-phone"
+              type="tel"
+              inputMode="numeric"
+              autoComplete="tel"
               maxLength={25}
               value={form.phone_number}
               onChange={(event) =>
-                setForm((prev) => ({ ...prev, phone_number: event.target.value }))
+                setForm((prev) => ({ ...prev, phone_number: digitsOnly(event.target.value) }))
               }
               className={fieldClass}
-              autoComplete="tel"
             />
           </div>
         </div>

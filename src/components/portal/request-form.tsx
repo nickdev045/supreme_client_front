@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { FormEvent, useState } from "react";
 
-import { Alert } from "@/components/ui/alert";
 import { btn, fieldClass, labelClass } from "@/components/ui/styles";
 
 export function RequestForm() {
@@ -63,10 +62,6 @@ export function RequestForm() {
         </h1>
         <p className="mt-1 text-[0.9rem] text-[var(--text-muted)]">{t("subtitle")}</p>
       </div>
-
-      <Alert tone="info" className="mb-4">
-        {t("notice")}
-      </Alert>
 
       <form onSubmit={onSubmit} className="space-y-4" noValidate>
         <div>

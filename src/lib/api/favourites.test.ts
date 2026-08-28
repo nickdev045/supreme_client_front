@@ -55,6 +55,26 @@ describe("store favourites API", () => {
     });
   });
 
+  it("omits favourites whose product has no sale price", async () => {
+    vi.mocked(apiData).mockResolvedValue([
+      favourite,
+      {
+        ...favourite,
+        pk_user_favourite: 5,
+        fk_product: "p0",
+        product: {
+          ...favourite.product,
+          pk_product: "p0",
+          name: "Unpriced Case",
+          sale_price: "0",
+        },
+      },
+    ]);
+    const result = await listStoreFavourites("token-abc");
+    expect(result).toHaveLength(1);
+    expect(result[0]?.fk_product).toBe("p1");
+  });
+
   it("adds and deletes a favourite", async () => {
     vi.mocked(apiData).mockResolvedValue({
       pk_user_favourite: 4,

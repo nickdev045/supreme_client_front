@@ -32,7 +32,7 @@ export function QuantityStepper({
     >
       <button
         type="button"
-        className={`inline-flex ${controlSize} shrink-0 items-center justify-center border-0 bg-transparent text-lg leading-none font-semibold text-[var(--navy)] disabled:opacity-50`}
+        className={`inline-flex ${controlSize} shrink-0 items-center justify-center border-0 bg-transparent text-lg leading-none font-semibold text-[var(--navy)] transition-colors duration-200 hover:bg-[var(--cream)] disabled:opacity-50`}
         aria-label={decreaseLabel}
         disabled={disabled || value <= min}
         onClick={() => onChange(Math.max(min, value - 1))}
@@ -44,7 +44,7 @@ export function QuantityStepper({
       </span>
       <button
         type="button"
-        className={`inline-flex ${controlSize} shrink-0 items-center justify-center border-0 bg-transparent text-lg leading-none font-semibold text-[var(--navy)] disabled:opacity-50`}
+        className={`inline-flex ${controlSize} shrink-0 items-center justify-center border-0 bg-transparent text-lg leading-none font-semibold text-[var(--navy)] transition-colors duration-200 hover:bg-[var(--cream)] disabled:opacity-50`}
         aria-label={increaseLabel}
         disabled={disabled || value >= max}
         onClick={() => onChange(Math.min(max, value + 1))}

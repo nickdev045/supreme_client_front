@@ -103,10 +103,10 @@ export function ShopNotificationBell({ variant = "header" }: { variant?: "header
 
   return (
     <div ref={rootRef} className="relative">
-      <button
-        type="button"
-        className="relative flex flex-col items-center justify-center gap-[0.1rem] rounded px-[0.6rem] py-[0.35rem] text-[var(--cream)]"
-        aria-label={t("notifications")}
+          <button
+            type="button"
+            className="relative flex flex-col items-center justify-center gap-[0.1rem] rounded px-[0.6rem] py-[0.35rem] text-[var(--cream)] transition-colors duration-200 hover:bg-white/15"
+            aria-label={t("notifications")}
         aria-expanded={open}
         aria-controls={menuId}
         onClick={() => {
@@ -134,7 +134,7 @@ export function ShopNotificationBell({ variant = "header" }: { variant?: "header
             {unread > 0 ? (
               <button
                 type="button"
-                className="text-xs font-semibold underline disabled:opacity-50"
+                className="rounded px-1.5 py-1 text-xs font-semibold text-[var(--navy)] transition-colors duration-200 hover:bg-[var(--cream)] disabled:opacity-50"
                 disabled={pending}
                 onClick={() => {
                   startTransition(async () => {
@@ -156,17 +156,17 @@ export function ShopNotificationBell({ variant = "header" }: { variant?: "header
                   <div className="flex items-start gap-1">
                     <Link
                       href={`/shop/notifications?focus=${item.pk_multi_tenant_notification}`}
-                      className="min-w-0 flex-1 px-3 py-2.5 text-left hover:bg-black/5"
+                      className="group min-w-0 flex-1 px-3 py-2.5 text-left transition-colors duration-200 hover:bg-[var(--navy)]"
                       onClick={() => {
                         setOpen(false);
                         void markShopNotificationReadAction(item.fk_notification);
                       }}
                     >
-                      <p className={`break-words text-sm ${item.read_at ? "font-medium" : "font-semibold text-[var(--navy)]"}`}>
+                      <p className={`break-words text-sm group-hover:text-[var(--cream)] ${item.read_at ? "font-medium" : "font-semibold text-[var(--navy)]"}`}>
                         {item.notification.title}
                       </p>
                       {item.notification.description ? (
-                        <p className="mt-0.5 line-clamp-2 break-words text-xs opacity-70">
+                        <p className="mt-0.5 line-clamp-2 break-words text-xs opacity-70 group-hover:text-[var(--cream)] group-hover:opacity-90">
                           {item.notification.description}
                         </p>
                       ) : null}
@@ -182,7 +182,7 @@ export function ShopNotificationBell({ variant = "header" }: { variant?: "header
                     ) : null}
                     <button
                       type="button"
-                      className="mt-1.5 mr-2 shrink-0 rounded-[8px] px-2 py-1 text-xs font-semibold opacity-70 hover:bg-black/5 hover:opacity-100 disabled:opacity-50"
+                      className="mt-1.5 mr-2 shrink-0 rounded-[8px] px-2 py-1 text-xs font-semibold text-[var(--navy)] opacity-80 transition-colors duration-200 hover:bg-[var(--cream)] hover:opacity-100 disabled:opacity-50"
                       disabled={pending}
                       aria-label={t("dismiss")}
                       title={t("dismiss")}
@@ -203,7 +203,7 @@ export function ShopNotificationBell({ variant = "header" }: { variant?: "header
           <div className="border-t border-[var(--border)] px-3 py-2">
             <Link
               href="/shop/notifications"
-              className="text-xs font-semibold underline"
+              className="inline-flex rounded px-1 py-1 text-xs font-semibold text-[var(--navy)] transition-colors duration-200 hover:bg-[var(--cream)]"
               onClick={() => setOpen(false)}
             >
               {t("viewAllNotifications")}

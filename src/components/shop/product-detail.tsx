@@ -5,7 +5,7 @@ import { AddToCartControls } from "@/components/shop/add-to-cart-controls";
 import { FavouriteToggle } from "@/components/shop/favourite-toggle";
 import { ProductImageGallery } from "@/components/shop/product-image-gallery";
 import type { StoreCatalogDetail } from "@/lib/api/types";
-import { formatMoney } from "@/lib/format-money";
+import { formatMoney, hasSellablePrice } from "@/lib/format-money";
 
 type ProductDetailProps = {
   product: StoreCatalogDetail;
@@ -25,12 +25,13 @@ export async function ProductDetail({
       ? [product.image]
       : [];
   const available = product.stock_status === "in_stock";
+  const priced = hasSellablePrice(product.price);
 
   return (
     <section className="space-y-5">
       <Link
         href="/shop"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--navy)]"
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--navy)] transition-colors duration-200 hover:text-[var(--navy-hover)]"
       >
         ← {t("productPage.back")}
       </Link>
@@ -40,7 +41,7 @@ export async function ProductDetail({
 
         <div className="space-y-4">
           <div>
-            <h1 className="mt-0 mb-2 font-[family-name:var(--font-display)] text-2xl font-bold text-[var(--navy)]">
+            <h1 className="mt-0 mb-2 text-2xl font-bold text-[var(--navy)]">
               {product.name}
             </h1>
             <p className="m-0 text-sm text-[var(--text-muted)]">
@@ -53,7 +54,7 @@ export async function ProductDetail({
           </p>
 
           <p className="m-0 text-2xl font-bold text-[var(--navy)]">
-            {available ? `${formatMoney(product.price)} / ${product.unit}` : "—"}
+            {available && priced ? `${formatMoney(product.price)} / ${product.unit}` : "—"}
           </p>
 
           <div>
@@ -70,6 +71,7 @@ export async function ProductDetail({
             productId={product.id}
             stock={product.stock}
             available={available}
+            hasPrice={priced}
             inCartQuantity={inCartQuantity}
             layout="row"
           />

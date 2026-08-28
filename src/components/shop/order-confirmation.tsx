@@ -36,7 +36,7 @@ export async function OrderConfirmation({ order }: OrderConfirmationProps) {
         <p className="m-0 text-sm font-semibold tracking-wide text-[var(--leaf)] uppercase">
           {t(`ordersPage.states.${state}` as "ordersPage.states.PAID")}
         </p>
-        <h1 className="mt-1 mb-1 font-[family-name:var(--font-display)] text-xl font-bold text-[var(--navy)] sm:text-2xl">
+        <h1 className="mt-1 mb-1 text-xl font-bold text-[var(--navy)] sm:text-2xl">
           {t("orderPage.detailTitle")}
         </h1>
         <p className="m-0 text-sm text-[var(--text-muted)]">

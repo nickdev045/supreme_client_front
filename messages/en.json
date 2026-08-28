@@ -8,12 +8,8 @@
     "password": "Password",
     "company": "Company",
     "continue": "Continue",
-    "cancel": "Cancel"
-  },
-  "Language": {
-    "label": "Language",
-    "en": "English",
-    "es": "Español"
+    "cancel": "Cancel",
+    "ok": "OK"
   },
   "Auth": {
     "loginTitle": "Sign in",
@@ -43,7 +39,6 @@
   "Request": {
     "title": "Request access",
     "subtitle": "Ask to become a wholesale member. Our team will assign your account email.",
-    "notice": "There is no public registration. Submit this request and our team will contact you.",
     "businessName": "Business name",
     "businessNamePlaceholder": "Restaurant or retailer name",
     "contactName": "Contact name",
@@ -226,6 +221,7 @@
       "viewCart": "View cart",
       "goToCart": "Go to cart",
       "outOfStock": "Out of stock",
+      "noPrice": "Price unavailable",
       "remove": "Remove",
       "increase": "Increase quantity",
       "decrease": "Decrease quantity",
@@ -256,6 +252,8 @@
         "stock": "There is not enough stock to complete this purchase. Check quantities and try again.",
         "empty": "Add products before placing an order.",
         "address": "Enter a delivery address or choose a saved one.",
+        "noPrice": "This product has no price and cannot be added to the cart.",
+        "unpriced": "Remove products without a price before placing the order.",
         "generic": "Could not update the cart. Please try again."
       },
       "priceChanged": {
@@ -371,6 +369,7 @@
     "passwordRequestCta": "Request password change",
     "passwordRequestConfirmTitle": "Request password change?",
     "passwordRequestConfirmDescription": "We'll notify your company administrators. Your password won't change until they authorize it.",
+    "passwordRequestSuccessTitle": "Password change requested",
     "passwordRequesting": "Sending request…",
     "passwordRequestSent": "Request sent",
     "successPasswordRequested": "Done. Your request was sent to the company administrators. They will notify you when the change is authorized.",

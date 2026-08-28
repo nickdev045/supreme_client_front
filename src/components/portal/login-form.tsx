@@ -233,7 +233,10 @@ export function LoginForm() {
 
       <p className="mt-4 mb-0 text-center text-[0.88rem] text-[var(--text-muted)]">
         {t("noAccount")}{" "}
-        <Link href="/request" className="font-semibold text-[var(--navy)]">
+        <Link
+          href="/request"
+          className="font-semibold text-[var(--navy)] transition-colors duration-200 hover:text-[var(--tomato)]"
+        >
           {t("becomeMember")}
         </Link>
       </p>

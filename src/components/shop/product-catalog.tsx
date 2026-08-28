@@ -97,7 +97,7 @@ export async function ProductCatalog({
           <section id="recommended" aria-labelledby="recommended-title">
             <h2
               id="recommended-title"
-              className="mt-0 mb-4 font-[family-name:var(--font-display)] text-[1.35rem] font-bold text-[var(--navy)]"
+              className="mt-0 mb-4 text-[1.35rem] font-bold text-[var(--navy)]"
             >
               {t("recommendedForYou")}
             </h2>
@@ -118,7 +118,7 @@ export async function ProductCatalog({
         <section id="search" aria-labelledby="all-products-title">
           <h2
             id="all-products-title"
-            className="mt-0 mb-4 font-[family-name:var(--font-display)] text-[1.35rem] font-bold text-[var(--navy)]"
+            className="mt-0 mb-4 text-[1.35rem] font-bold text-[var(--navy)]"
           >
             {t("allProducts")}
           </h2>

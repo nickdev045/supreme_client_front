@@ -1,9 +1,10 @@
-import { apiData, apiRequest } from "@/lib/api/client";
+import { apiData, apiRequest, ApiError } from "@/lib/api/client";
 import type {
   StoreCatalogDetail,
   StoreCatalogListResponse,
   StoreCatalogOrderBy,
 } from "@/lib/api/types";
+import { hasSellablePrice } from "@/lib/format-money";
 
 export type FetchStoreCatalogParams = {
   page?: number;
@@ -26,15 +27,23 @@ export async function fetchStoreCatalog(
   if (params.orderBy) query.set("orderBy", params.orderBy);
   if (params.sort) query.set("sort", params.sort);
 
-  return apiRequest<StoreCatalogListResponse>(`/api/v1/customer/catalog?${query}`, {
+  const response = await apiRequest<StoreCatalogListResponse>(`/api/v1/customer/catalog?${query}`, {
     method: "GET",
     token,
   });
+  return {
+    ...response,
+    data: response.data.filter((product) => hasSellablePrice(product.price)),
+  };
 }
 
-export function fetchStoreProduct(token: string, id: string) {
-  return apiData<StoreCatalogDetail>(`/api/v1/customer/catalog/${id}`, {
+export async function fetchStoreProduct(token: string, id: string) {
+  const product = await apiData<StoreCatalogDetail>(`/api/v1/customer/catalog/${id}`, {
     method: "GET",
     token,
   });
+  if (!hasSellablePrice(product.price)) {
+    throw new ApiError(404, "Product not found.");
+  }
+  return product;
 }

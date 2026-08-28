@@ -19,6 +19,7 @@ export type CartActionError =
   | "stock"
   | "empty"
   | "address"
+  | "noPrice"
   | "generic";
 
 export type CartActionResult =
@@ -49,6 +50,7 @@ function mapCartError(error: unknown, kind: "mutate" | "checkout"): CartActionEr
   if (error instanceof ApiError) {
     if (error.status === 401) return "session";
     if (error.status === 403) return "forbidden";
+    if (error.code === "ProductHasNoPrice") return "noPrice";
     if (error.code === "CartPriceChanged") return "generic";
     if (error.code === "InsufficientStock" || error.status === 409) return "stock";
     if (error.status === 400 || error.status === 404) {
