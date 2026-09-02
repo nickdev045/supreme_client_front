@@ -6,10 +6,12 @@ import { z } from "zod";
 import {
   canAccessStorePortal,
   fetchMe,
+  fetchTenants,
   loginWithCompany,
   normalizePermissionCodes,
   toAuthErrorMessage,
 } from "@/lib/api/auth";
+import { brandFromTenants } from "@/lib/store-company-brand";
 const credentialsSchema = z.object({
   email: z.string().trim().email(),
   password: z.string().min(1),
@@ -28,6 +30,8 @@ declare module "next-auth" {
       lastName: string;
       photoUrl: string | null;
       companyId: string;
+      companyName: string;
+      companyPhotoUrl: string | null;
       roleId: number;
     } & DefaultSession["user"];
     error?: "AccessTokenExpired" | "RefreshAccessTokenError";
@@ -41,6 +45,8 @@ declare module "next-auth" {
     lastName: string;
     photoUrl: string | null;
     companyId: string;
+    companyName: string;
+    companyPhotoUrl: string | null;
     roleId: number;
     permissions: string[];
     accessToken: string;
@@ -57,6 +63,8 @@ declare module "next-auth/jwt" {
     lastName?: string;
     photoUrl?: string | null;
     companyId?: string;
+    companyName?: string;
+    companyPhotoUrl?: string | null;
     roleId?: number;
     error?: "AccessTokenExpired" | "RefreshAccessTokenError";
   }
@@ -97,6 +105,14 @@ export const authOptions: NextAuthOptions = {
 
           const me = await fetchMe(login.accessToken);
           const name = [me.firstName, me.lastName].filter(Boolean).join(" ").trim();
+          let companyName = me.companyName?.trim() || "";
+          let companyPhotoUrl = me.companyPhotoUrl?.trim() || null;
+          if (!companyName || !companyPhotoUrl) {
+            const tenants = await fetchTenants(parsed.data.email);
+            const brand = brandFromTenants(tenants, me.companyId);
+            companyName = companyName || brand?.name || "";
+            companyPhotoUrl = companyPhotoUrl || brand?.photoUrl || null;
+          }
 
           return {
             id: me.userId,
@@ -106,6 +122,8 @@ export const authOptions: NextAuthOptions = {
             lastName: me.lastName,
             photoUrl: me.photoUrl,
             companyId: me.companyId,
+            companyName,
+            companyPhotoUrl,
             roleId: me.roleId,
             permissions: [],
             accessToken: login.accessToken,
@@ -144,6 +162,8 @@ export const authOptions: NextAuthOptions = {
         token.lastName = user.lastName;
         token.photoUrl = user.photoUrl;
         token.companyId = user.companyId;
+        token.companyName = user.companyName;
+        token.companyPhotoUrl = user.companyPhotoUrl;
         token.roleId = user.roleId;
         delete token.error;
         return token;
@@ -185,6 +205,8 @@ export const authOptions: NextAuthOptions = {
           lastName: "",
           photoUrl: null,
           companyId: "",
+          companyName: "",
+          companyPhotoUrl: null,
           roleId: 0,
         };
         return session;
@@ -200,6 +222,8 @@ export const authOptions: NextAuthOptions = {
         lastName: token.lastName ?? "",
         photoUrl: token.photoUrl ?? null,
         companyId: token.companyId ?? "",
+        companyName: token.companyName ?? "",
+        companyPhotoUrl: token.companyPhotoUrl ?? null,
         roleId: token.roleId ?? 0,
       };
       return session;

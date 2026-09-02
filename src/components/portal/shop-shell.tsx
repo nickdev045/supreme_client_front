@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useEffect, useState, type ReactNode } from "react";
@@ -8,6 +7,7 @@ import { useTranslations } from "next-intl";
 
 import { UserAvatar } from "@/components/landing/user-avatar";
 import { UserMenu } from "@/components/landing/user-menu";
+import { CompanyBrandLogo } from "@/components/portal/company-brand-logo";
 import { ShopNotificationBell } from "@/components/portal/notification-bell";
 import { SignOutButton, SignOutConfirmDialog } from "@/components/portal/sign-out-button";
 import { HeartIcon, HomeIcon, LogoutIcon, OrdersIcon, UserIcon } from "@/components/ui/icons";
@@ -15,6 +15,8 @@ import { HeartIcon, HomeIcon, LogoutIcon, OrdersIcon, UserIcon } from "@/compone
 type ShopShellProps = {
   userName: string;
   photoUrl: string | null;
+  companyName?: string;
+  companyPhotoUrl?: string | null;
   cartCount?: number;
   children: ReactNode;
 };
@@ -81,7 +83,14 @@ function navLinkClass(active: boolean) {
   ].join(" ");
 }
 
-export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopShellProps) {
+export function ShopShell({
+  userName,
+  photoUrl,
+  companyName,
+  companyPhotoUrl = null,
+  cartCount = 0,
+  children,
+}: ShopShellProps) {
   const t = useTranslations("Shop");
   const tNav = useTranslations("Nav");
   const tBrand = useTranslations("Brand");
@@ -92,6 +101,7 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
   const [signOutOpen, setSignOutOpen] = useState(false);
   const [query, setQuery] = useState(searchParams.get("q") ?? "");
   const firstName = userName.split(/\s+/)[0] || userName;
+  const brandName = companyName?.trim() || tBrand("name");
 
   useEffect(() => {
     setQuery(searchParams.get("q") ?? "");
@@ -136,18 +146,18 @@ export function ShopShell({ userName, photoUrl, cartCount = 0, children }: ShopS
           <Link
             href="/shop"
             className="flex shrink-0 items-center gap-2 text-[var(--cream)]"
-            aria-label={tBrand("name")}
+            aria-label={brandName}
           >
-            <Image
-              src="/logo.png"
-              alt=""
-              width={36}
-              height={36}
-              className="h-9 w-9 shrink-0 rounded-full object-cover"
+            <CompanyBrandLogo
+              name={brandName}
+              photoUrl={companyPhotoUrl}
+              size={36}
+              className="h-9 w-9 shrink-0 rounded-full bg-white/10 object-contain p-0.5"
               priority
+              decorative
             />
             <span className="hidden whitespace-nowrap text-[0.9rem] font-bold leading-tight md:inline">
-              {tBrand("name")}
+              {brandName}
             </span>
           </Link>
 
