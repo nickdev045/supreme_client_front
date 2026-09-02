@@ -38,6 +38,13 @@ describe("toAuthErrorKey / toAuthErrorMessage", () => {
     expect(toAuthErrorKey(new ApiError(403, "no"))).toBe("accessDenied");
     expect(toAuthErrorKey(new ApiError(429, "no"))).toBe("tooManyAttempts");
     expect(toAuthErrorKey(new ApiError(400, "no"))).toBe("checkEmail");
+    expect(toAuthErrorKey(new ApiError(502, "bad gateway"))).toBe("apiUnreachable");
+    expect(toAuthErrorKey(new Error("Invalid environment: API_URL: Required"))).toBe(
+      "Configuration",
+    );
+    expect(toAuthErrorKey(new Error("The operation was aborted due to timeout"))).toBe(
+      "apiUnreachable",
+    );
     expect(toAuthErrorMessage(new ApiError(403, "no"))).toMatch(/client portal/i);
   });
 });

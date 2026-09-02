@@ -70,10 +70,17 @@ export async function apiRequest<T>(
   return payload as T;
 }
 
+function isEnvelope<T>(payload: unknown): payload is ApiEnvelope<T> {
+  return typeof payload === "object" && payload !== null && "data" in payload;
+}
+
 export async function apiData<T>(
   path: string,
   options?: RequestOptions,
 ): Promise<T> {
   const envelope = await apiRequest<ApiEnvelope<T>>(path, options);
+  if (!isEnvelope<T>(envelope)) {
+    throw new ApiError(502, "Invalid API response");
+  }
   return envelope.data;
 }

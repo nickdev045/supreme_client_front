@@ -5,6 +5,10 @@ import { LoginForm } from "@/components/portal/login-form";
 import { LoginFormFallback } from "@/components/portal/login-form-fallback";
 import { SiteHeader } from "@/components/portal/site-header";
 
+export const dynamic = "force-dynamic";
+/** Render free-tier cold starts can exceed the default serverless budget. */
+export const maxDuration = 30;
+
 export async function generateMetadata() {
   const t = await getTranslations("Meta");
   return {

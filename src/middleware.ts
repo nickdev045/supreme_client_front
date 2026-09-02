@@ -26,6 +26,11 @@ function isAccessTokenFresh(token: {
 }
 
 export async function middleware(req: NextRequest) {
+  // Server Actions POST to the page URL; do not redirect those requests.
+  if (req.headers.has("next-action")) {
+    return NextResponse.next();
+  }
+
   const path = req.nextUrl.pathname;
   const isPublic = PUBLIC_PATHS.has(path);
   const sessionExpiredOnLogin = path === "/login" && req.nextUrl.searchParams.get("error") === "SessionExpired";
