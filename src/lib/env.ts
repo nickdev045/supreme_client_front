@@ -10,18 +10,13 @@ export type ServerEnv = z.infer<typeof serverSchema>;
 
 let cached: ServerEnv | null = null;
 
-/** Bracket access so Next.js does not inline `undefined` at build time. */
-function readEnv(key: keyof ServerEnv): string | undefined {
-  return process.env[key];
-}
-
 /** Validated server env. Call only from server code. */
 export function getServerEnv(): ServerEnv {
   if (cached) return cached;
   const parsed = serverSchema.safeParse({
-    API_URL: readEnv("API_URL"),
-    NEXTAUTH_URL: readEnv("NEXTAUTH_URL"),
-    NEXTAUTH_SECRET: readEnv("NEXTAUTH_SECRET"),
+    API_URL: process.env.API_URL,
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   });
   if (!parsed.success) {
     throw new Error(

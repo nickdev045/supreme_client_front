@@ -23,12 +23,7 @@ export type AuthErrorKey =
   | "invalidEmail"
   | "apiUnreachable"
   | "accessDenied"
-  | "generic"
-  | "Configuration";
-
-export type DiscoverTenantsResult =
-  | { ok: true; tenants: ApiTenant[] }
-  | { ok: false; errorKey: AuthErrorKey };
+  | "generic";
 
 /** Normalize /login and /me permission payloads (string[] or { code }[]). */
 export function normalizePermissionCodes(permissions: unknown): string[] {
@@ -156,44 +151,19 @@ export function createCredentialChangeRequest(
   });
 }
 
-function isApiError(error: unknown): error is ApiError {
-  return (
-    error instanceof ApiError ||
-    (typeof error === "object" &&
-      error !== null &&
-      (error as { name?: string }).name === "ApiError" &&
-      typeof (error as { status?: unknown }).status === "number")
-  );
-}
-
-function isUnreachableError(error: Error): boolean {
-  const message = error.message.toLowerCase();
-  return (
-    error.name === "TimeoutError" ||
-    error.name === "AbortError" ||
-    message.includes("fetch") ||
-    message.includes("timeout") ||
-    message.includes("aborted") ||
-    message.includes("econnrefused") ||
-    message.includes("enotfound")
-  );
-}
-
 export function toAuthErrorKey(error: unknown): AuthErrorKey {
-  if (isApiError(error)) {
+  if (error instanceof ApiError) {
     if (error.status === 401) return "invalidCredentials";
     if (error.status === 403) return "accessDenied";
     if (error.status === 429) return "tooManyAttempts";
     if (error.status === 400) return "checkEmail";
-    if (error.status === 404 || error.status >= 500) return "apiUnreachable";
     return "generic";
   }
   if (error instanceof z.ZodError) {
     return "invalidEmail";
   }
-  if (error instanceof Error) {
-    if (error.message.startsWith("Invalid environment")) return "Configuration";
-    if (isUnreachableError(error)) return "apiUnreachable";
+  if (error instanceof Error && error.message.includes("fetch")) {
+    return "apiUnreachable";
   }
   return "generic";
 }
@@ -208,7 +178,6 @@ export function toAuthErrorMessage(error: unknown): string {
     apiUnreachable: "Cannot reach the API. Is the backend running?",
     accessDenied: "This account cannot access the client portal.",
     generic: "Something went wrong. Please try again.",
-    Configuration: "Authentication is not configured. Check environment variables.",
   };
   return messages[key];
 }

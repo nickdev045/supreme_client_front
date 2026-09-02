@@ -33,7 +33,6 @@ const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
       bodySizeLimit: "12mb",
-      allowedOrigins: ["supreme-client-front.vercel.app", "*.vercel.app"],
     },
   },
 };

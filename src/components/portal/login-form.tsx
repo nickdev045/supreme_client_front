@@ -7,9 +7,10 @@ import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { FormEvent, useState } from "react";
 
+import { discoverTenantsAction } from "@/app/login/actions";
 import { Alert } from "@/components/ui/alert";
 import { btn, fieldClass, labelClass } from "@/components/ui/styles";
-import type { AuthErrorKey, DiscoverTenantsResult } from "@/lib/api/auth";
+import type { AuthErrorKey } from "@/lib/api/auth";
 import type { ApiTenant } from "@/lib/api/types";
 
 const AUTH_ERROR_CODES = [
@@ -56,7 +57,6 @@ export function LoginForm() {
       "apiUnreachable",
       "accessDenied",
       "generic",
-      "Configuration",
     ];
     if (apiKeys.includes(key as AuthErrorKey)) {
       return t(`errors.${key as AuthErrorKey}`);
@@ -98,14 +98,9 @@ export function LoginForm() {
         return;
       }
 
-      const discoveryResponse = await fetch("/api/auth/tenants", {
-        method: "POST",
-        headers: { Accept: "application/json", "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      const discovery = (await discoveryResponse.json().catch(() => null)) as DiscoverTenantsResult | null;
-      if (!discovery || !discovery.ok) {
-        setErrorKey(discovery && "errorKey" in discovery ? discovery.errorKey : "generic");
+      const discovery = await discoverTenantsAction(email);
+      if (!discovery.ok) {
+        setErrorKey(discovery.errorKey);
         return;
       }
       if (discovery.tenants.length === 0) {
