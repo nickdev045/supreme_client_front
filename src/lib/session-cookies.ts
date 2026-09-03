@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const FALLBACK_AUTH_COOKIE_NAMES = [
-  "next-auth.session-token",
-  "__Secure-next-auth.session-token",
-  "next-auth.callback-url",
-  "__Secure-next-auth.callback-url",
-  "next-auth.csrf-token",
-  "__Host-next-auth.csrf-token",
-] as const;
+import { AUTH_COOKIE_CLEAR_NAMES } from "@/lib/auth-cookies";
 
 function isAuthCookie(name: string) {
-  return name.includes("next-auth");
+  return (
+    name.includes("next-auth")
+    || name.includes("supreme-client.session-token")
+    || name.includes("supreme-admin.session-token")
+  );
 }
 
 function expireCookie(response: NextResponse, name: string) {
@@ -31,7 +28,7 @@ export function clearSessionCookies(req: NextRequest, response: NextResponse) {
     expireCookie(response, cookie.name);
   }
 
-  for (const name of FALLBACK_AUTH_COOKIE_NAMES) {
+  for (const name of AUTH_COOKIE_CLEAR_NAMES) {
     if (seen.has(name)) continue;
     expireCookie(response, name);
   }
