@@ -438,5 +438,14 @@
     "productTitle": "{name} — Supreme Food Service",
     "productTitleFallback": "Producto — Supreme Food Service",
     "productDescription": "Detalle e imágenes del producto"
+  },
+  "Terms": {
+    "acceptTitle": "Revisa y acepta los términos",
+    "acceptSubtitle": "Revisa los documentos aplicables a tu compañía antes de usar el portal de tienda.",
+    "acceptCheckbox": "He leído y acepto el/los {count} documento(s) listados arriba.",
+    "acceptCta": "Acepto",
+    "mustCheck": "Marca la casilla para confirmar la aceptación.",
+    "nonePending": "No hay documentos pendientes.",
+    "accepting": "Guardando…"
   }
 }

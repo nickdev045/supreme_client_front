@@ -1,6 +1,7 @@
 import { getToken } from "next-auth/jwt";
 import { NextResponse, type NextRequest } from "next/server";
 
+import { sessionCookieName } from "@/lib/auth-cookies";
 import { clearSessionCookies, loginAfterSessionExpired } from "@/lib/session-cookies";
 
 const PUBLIC_PATHS = new Set(["/", "/login", "/request", "/reset-password"]);
@@ -35,9 +36,7 @@ export async function middleware(req: NextRequest) {
     req,
     secret: process.env.NEXTAUTH_SECRET,
     secureCookie,
-    cookieName: secureCookie
-      ? "__Secure-next-auth.session-token"
-      : "next-auth.session-token",
+    cookieName: sessionCookieName(secureCookie),
   });
 
   const signedIn = Boolean(token?.sub) && isAccessTokenFresh(token);
@@ -61,7 +60,11 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/shop", req.url));
   }
 
-  return NextResponse.next();
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set("x-pathname", path);
+  return NextResponse.next({
+    request: { headers: requestHeaders },
+  });
 }
 
 export const config = {

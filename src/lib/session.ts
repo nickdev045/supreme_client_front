@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { getServerSession } from "next-auth";
 import { getToken } from "next-auth/jwt";
 
+import { sessionCookieName } from "@/lib/auth-cookies";
 import { authOptions } from "@/lib/auth";
 import { getServerEnv } from "@/lib/env";
 
@@ -23,7 +24,7 @@ export async function getAccessToken(): Promise<string | null> {
   const secureCookie =
     process.env.VERCEL === "1" ||
     process.env.NODE_ENV === "production" ||
-    Boolean(cookieMap["__Secure-next-auth.session-token"]);
+    Boolean(cookieMap[sessionCookieName(true)]);
 
   const token = await getToken({
     req: {
@@ -32,9 +33,7 @@ export async function getAccessToken(): Promise<string | null> {
     } as unknown as Parameters<typeof getToken>[0]["req"],
     secret: getServerEnv().NEXTAUTH_SECRET,
     secureCookie,
-    cookieName: secureCookie
-      ? "__Secure-next-auth.session-token"
-      : "next-auth.session-token",
+    cookieName: sessionCookieName(secureCookie),
   });
 
   if (!token?.accessToken || token.error) {
