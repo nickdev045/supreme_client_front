@@ -1,7 +1,7 @@
 import { getToken } from "next-auth/jwt";
 import { NextResponse, type NextRequest } from "next/server";
 
-import { sessionCookieName } from "@/lib/auth-cookies";
+import { SESSION_COOKIE_BASE, sessionCookieName } from "@/lib/auth-cookies";
 import { clearSessionCookies, loginAfterSessionExpired } from "@/lib/session-cookies";
 
 const PUBLIC_PATHS = new Set(["/", "/login", "/request", "/reset-password"]);
@@ -24,6 +24,17 @@ function isAccessTokenFresh(token: {
   const expiresAt = Number(token.accessTokenExpires);
   if (!Number.isFinite(expiresAt)) return false;
   return Date.now() < expiresAt - 30_000;
+}
+
+/** Drop the pre-fix cookie so middleware and NextAuth do not disagree. */
+function clearLegacySessionCookie(response: NextResponse, secureCookie: boolean) {
+  if (secureCookie) {
+    response.cookies.set(SESSION_COOKIE_BASE, "", {
+      maxAge: 0,
+      path: "/",
+    });
+  }
+  return response;
 }
 
 export async function middleware(req: NextRequest) {
@@ -53,18 +64,24 @@ export async function middleware(req: NextRequest) {
   if (!isPublic && !signedIn) {
     const login = new URL("/login", req.url);
     login.searchParams.set("callbackUrl", path);
-    return NextResponse.redirect(login);
+    return clearLegacySessionCookie(NextResponse.redirect(login), secureCookie);
   }
 
   if (AUTH_ENTRY_PATHS.has(path) && signedIn) {
-    return NextResponse.redirect(new URL("/shop", req.url));
+    return clearLegacySessionCookie(
+      NextResponse.redirect(new URL("/shop", req.url)),
+      secureCookie,
+    );
   }
 
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set("x-pathname", path);
-  return NextResponse.next({
-    request: { headers: requestHeaders },
-  });
+  return clearLegacySessionCookie(
+    NextResponse.next({
+      request: { headers: requestHeaders },
+    }),
+    secureCookie,
+  );
 }
 
 export const config = {

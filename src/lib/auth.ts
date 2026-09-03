@@ -11,6 +11,7 @@ import {
   normalizePermissionCodes,
   toAuthErrorMessage,
 } from "@/lib/api/auth";
+import { clientSessionCookie, isSecureAuthCookie } from "@/lib/auth-cookies";
 import { brandFromTenants } from "@/lib/store-company-brand";
 const credentialsSchema = z.object({
   email: z.string().trim().email(),
@@ -230,15 +231,8 @@ export const authOptions: NextAuthOptions = {
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
+  useSecureCookies: isSecureAuthCookie(),
   cookies: {
-    sessionToken: {
-      name: "supreme-client.session-token",
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: process.env.NODE_ENV === "production" || process.env.VERCEL === "1",
-      },
-    },
+    sessionToken: clientSessionCookie(),
   },
 };
