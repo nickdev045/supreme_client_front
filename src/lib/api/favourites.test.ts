@@ -55,6 +55,33 @@ describe("store favourites API", () => {
     });
   });
 
+  it("maps the API net price onto catalog cards when a group discount applies", async () => {
+    vi.mocked(apiData).mockResolvedValue([
+      {
+        ...favourite,
+        product: {
+          ...favourite.product,
+          sale_price: "100",
+          price: "90",
+          list_price: "100",
+          discount_percent: 10,
+        },
+      },
+    ]);
+    const result = await listStoreFavourites("token-abc");
+    expect(favouriteToCatalogCard(result[0]!)).toEqual({
+      id: "p1",
+      name: "Roma Tomatoes",
+      image: null,
+      unit: "case",
+      stock: 8,
+      stock_status: "in_stock",
+      price: 90,
+      list_price: 100,
+      discount_percent: 10,
+    });
+  });
+
   it("omits favourites whose product has no sale price", async () => {
     vi.mocked(apiData).mockResolvedValue([
       favourite,

@@ -59,6 +59,8 @@ export type StoreCatalogCard = {
   stock: number;
   stock_status: StoreStockStatus;
   price: number;
+  list_price?: number;
+  discount_percent?: number;
 };
 
 export type StoreCatalogDetail = StoreCatalogCard & {
@@ -156,6 +158,9 @@ export type StoreFavouriteProduct = {
   photo_url: string | null;
   stock: string | number;
   sale_price: string | number;
+  price?: string | number;
+  list_price?: string | number;
+  discount_percent?: string | number;
   is_active?: boolean;
   deleted_at?: string | null;
   description?: string;

@@ -65,6 +65,11 @@ export function ProductCard({
           <p className="mt-2 mb-0 font-bold text-[var(--navy)]">—</p>
         ) : variant === "recommended" ? (
           <p className="mt-2 mb-0 font-bold text-[var(--navy)]">
+            {product.list_price != null && product.list_price > product.price ? (
+              <span className="mr-1 text-[0.8rem] font-normal text-[var(--text-muted)] line-through">
+                {formatMoney(product.list_price)}
+              </span>
+            ) : null}
             {formatMoney(product.price)}{" "}
             <span className="text-[0.8rem] font-normal text-[var(--text-muted)]">
               / {product.unit}
@@ -72,6 +77,11 @@ export function ProductCard({
           </p>
         ) : (
           <p className="mt-2 mb-0 font-bold text-[var(--navy)]">
+            {product.list_price != null && product.list_price > product.price ? (
+              <span className="mr-1 text-[0.8rem] font-normal text-[var(--text-muted)] line-through">
+                {formatMoney(product.list_price)}
+              </span>
+            ) : null}
             {formatMoney(product.price)} / {product.unit}
           </p>
         )}
