@@ -54,7 +54,18 @@ export async function ProductDetail({
           </p>
 
           <p className="m-0 text-2xl font-bold text-[var(--navy)]">
-            {available && priced ? `${formatMoney(product.price)} / ${product.unit}` : "—"}
+            {available && priced ? (
+              <>
+                {product.list_price != null && product.list_price > product.price ? (
+                  <span className="mr-2 text-base font-normal text-[var(--text-muted)] line-through">
+                    {formatMoney(product.list_price)}
+                  </span>
+                ) : null}
+                {`${formatMoney(product.price)} / ${product.unit}`}
+              </>
+            ) : (
+              "—"
+            )}
           </p>
 
           <div>

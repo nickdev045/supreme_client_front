@@ -1,13 +1,17 @@
 import { apiData, apiRequest } from "@/lib/api/client";
-import type { StoreCatalogCard, StoreFavourite } from "@/lib/api/types";
+import type { StoreCatalogCard, StoreFavourite, StoreFavouriteProduct } from "@/lib/api/types";
 import { hasSellablePrice, toMoneyNumber } from "@/lib/format-money";
+
+function favouriteNetPrice(product: StoreFavouriteProduct) {
+  return product.price ?? product.sale_price;
+}
 
 export async function listStoreFavourites(token: string) {
   const favourites = await apiData<StoreFavourite[]>("/api/v1/customer/favourites", {
     method: "GET",
     token,
   });
-  return favourites.filter((favourite) => hasSellablePrice(favourite.product.sale_price));
+  return favourites.filter((favourite) => hasSellablePrice(favouriteNetPrice(favourite.product)));
 }
 
 export function addStoreFavourite(token: string, productId: string) {
@@ -41,6 +45,15 @@ export function favouriteIdsByProductId(
 
 export function favouriteToCatalogCard(favourite: StoreFavourite): StoreCatalogCard {
   const stock = Math.round(Number(favourite.product.stock) * 100) / 100;
+  const price = toMoneyNumber(favouriteNetPrice(favourite.product));
+  const listPrice =
+    favourite.product.list_price != null
+      ? toMoneyNumber(favourite.product.list_price)
+      : undefined;
+  const discountPercent =
+    favourite.product.discount_percent != null
+      ? Number(favourite.product.discount_percent)
+      : undefined;
   return {
     id: favourite.product.pk_product,
     name: favourite.product.name,
@@ -48,6 +61,8 @@ export function favouriteToCatalogCard(favourite: StoreFavourite): StoreCatalogC
     unit: favourite.product.meassure?.name ?? "",
     stock: Number.isFinite(stock) ? stock : 0,
     stock_status: stock > 0 && favourite.product.is_active !== false ? "in_stock" : "out_of_stock",
-    price: toMoneyNumber(favourite.product.sale_price),
+    price,
+    ...(listPrice != null && listPrice > price ? { list_price: listPrice } : {}),
+    ...(discountPercent && discountPercent > 0 ? { discount_percent: discountPercent } : {}),
   };
 }
