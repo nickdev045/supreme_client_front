@@ -186,7 +186,7 @@ export function ShopShell({
           </form>
 
           <div className="hidden shrink-0 items-center gap-2 md:flex">
-            <UserMenu name={userName} photoUrl={photoUrl} showLandingLink />
+            <UserMenu name={userName} photoUrl={photoUrl} />
             <ShopNotificationBell />
             <Link
               href="/shop/orders"
@@ -302,16 +302,6 @@ export function ShopShell({
               >
                 <HeartIcon />
                 {t("favorites")}
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/"
-                onClick={() => setProfileOpen(false)}
-                className="flex items-center gap-3 border-b border-[var(--border)] px-5 py-3 text-[0.95rem] font-medium text-[var(--text)] transition-colors duration-200 hover:bg-[var(--cream)]"
-              >
-                <HomeIcon />
-                {t("landing")}
               </Link>
             </li>
             <li className="px-4 py-3">

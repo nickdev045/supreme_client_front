@@ -6,16 +6,14 @@ import { useEffect, useId, useRef, useState } from "react";
 
 import { UserAvatar } from "@/components/landing/user-avatar";
 import { SignOutButton, SignOutConfirmDialog } from "@/components/portal/sign-out-button";
-import { HomeIcon, LogoutIcon, OrdersIcon, UserIcon } from "@/components/ui/icons";
+import { LogoutIcon, OrdersIcon, UserIcon } from "@/components/ui/icons";
 
 type UserMenuProps = {
   name: string;
   photoUrl: string | null;
-  /** When true, includes a link back to the public landing page. */
-  showLandingLink?: boolean;
 };
 
-export function UserMenu({ name, photoUrl, showLandingLink = false }: UserMenuProps) {
+export function UserMenu({ name, photoUrl }: UserMenuProps) {
   const t = useTranslations("Nav");
   const [open, setOpen] = useState(false);
   const [signOutOpen, setSignOutOpen] = useState(false);
@@ -84,17 +82,6 @@ export function UserMenu({ name, photoUrl, showLandingLink = false }: UserMenuPr
             <OrdersIcon />
             {t("yourOrders")}
           </Link>
-          {showLandingLink ? (
-            <Link
-              href="/"
-              role="menuitem"
-              className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-sm font-medium text-[var(--navy)] transition-colors duration-200 hover:bg-[var(--cream)]"
-              onClick={() => setOpen(false)}
-            >
-              <HomeIcon />
-              {t("backToLanding")}
-            </Link>
-          ) : null}
           <SignOutButton
             className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-sm font-medium text-[var(--navy)] transition-colors duration-200 hover:bg-[var(--cream)]"
             role="menuitem"
