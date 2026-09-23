@@ -51,7 +51,11 @@ export function CartView({ cart, addresses }: CartViewProps) {
     addresses[0]?.address?.trim() ?? "",
   );
 
-  const items = cart?.cart_products ?? [];
+  const items = useMemo(() => {
+    const rawItems = cart?.cart_products ?? [];
+    return [...rawItems].sort((a, b) => b.pk_cart_product - a.pk_cart_product);
+  }, [cart?.cart_products]);
+
   const total = cartTotal(cart);
   const hasUnpricedItems = cartHasUnpricedItems(cart);
   const sortedAddresses = useMemo(
