@@ -45,6 +45,10 @@ export function AddToCartControls({
         return;
       }
       setStatus("added");
+      
+      // Disparamos el evento global para que el ShopShell muestre el banner arriba a la derecha
+      window.dispatchEvent(new CustomEvent("product-added"));
+      
       router.refresh();
     });
   }

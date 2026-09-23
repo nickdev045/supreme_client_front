@@ -100,12 +100,36 @@ export function ShopShell({
   const [profileOpen, setProfileOpen] = useState(false);
   const [signOutOpen, setSignOutOpen] = useState(false);
   const [query, setQuery] = useState(searchParams.get("q") ?? "");
+  const [showGlobalBanner, setShowGlobalBanner] = useState(false);
   const firstName = userName.split(/\s+/)[0] || userName;
   const brandName = companyName?.trim() || tBrand("name");
 
   useEffect(() => {
     setQuery(searchParams.get("q") ?? "");
   }, [searchParams]);
+
+  useEffect(() => {
+    function handleProductAdded() {
+      setShowGlobalBanner(true);
+    }
+
+    window.addEventListener("product-added", handleProductAdded);
+    return () => {
+      window.removeEventListener("product-added", handleProductAdded);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!showGlobalBanner) return;
+
+    const timer = setTimeout(() => {
+      setShowGlobalBanner(false);
+    }, 3000); // 6 segundos reales
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [showGlobalBanner]);
 
   useEffect(() => {
     if (!profileOpen) return;
@@ -141,6 +165,20 @@ export function ShopShell({
 
   return (
     <div className="flex min-h-full flex-1 flex-col bg-[var(--shop-surface)]">
+      {/* Banner flotante global superior derecho */}
+      {showGlobalBanner ? (
+        <div className="fixed top-20 right-6 z-[300] flex items-center justify-between gap-4 rounded-[12px] border border-[var(--border)] bg-white px-4 py-3 shadow-2xl transition-all animate-in fade-in slide-in-from-top-2">
+          <div className="flex items-center gap-2">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--leaf)] text-xs font-bold text-white">
+              ✓
+            </span>
+            <p className="m-0 text-sm font-medium text-[var(--navy)]">
+              {t("cartPage.added") || "¡Producto añadido al carrito!"}
+            </p>
+          </div>
+        </div>
+      ) : null}
+
       <header className="sticky top-0 z-[100] bg-[var(--navy)] text-[var(--cream)] shadow-[0_2px_8px_rgba(0,0,0,0.15)]">
         <div className="mx-auto flex w-[min(1400px,calc(100%-1rem))] items-center gap-2 py-[0.65rem] sm:w-[min(1400px,calc(100%-2rem))] md:gap-3">
           <Link
