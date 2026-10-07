@@ -13,11 +13,14 @@ import { ProductCard } from "@/components/shop/product-card";
 import { Alert } from "@/components/ui/alert";
 import { btn } from "@/components/ui/styles";
 import type { StoreCatalogCard, StoreCatalogOrderBy } from "@/lib/api/types";
+import { buildShopHref } from "@/lib/shop-query";
 
 type CatalogFilters = {
   search: string;
   orderBy: StoreCatalogOrderBy;
   sort: "asc" | "desc";
+  fk_product_category?: string;
+  fk_product_subcategory?: string;
 };
 
 type ProductCatalogListProps = {
@@ -31,15 +34,13 @@ type ProductCatalogListProps = {
 };
 
 function buildShopQuery(filters: CatalogFilters) {
-  const params = new URLSearchParams();
-  if (filters.search.trim()) params.set("q", filters.search.trim());
-  const isDefaultSort = filters.orderBy === "name" && filters.sort === "asc";
-  if (!isDefaultSort) {
-    params.set("orderBy", filters.orderBy);
-    params.set("sort", filters.sort);
-  }
-  const qs = params.toString();
-  return qs ? `/shop?${qs}` : "/shop";
+  return buildShopHref({
+    search: filters.search,
+    orderBy: filters.orderBy,
+    sort: filters.sort,
+    fk_product_category: filters.fk_product_category,
+    fk_product_subcategory: filters.fk_product_subcategory,
+  });
 }
 
 export function ProductCatalogList({
@@ -71,6 +72,8 @@ export function ProductCatalogList({
     filters.orderBy,
     filters.sort,
     filters.search,
+    filters.fk_product_category,
+    filters.fk_product_subcategory,
   ]);
 
   function applyFilters(next: Partial<CatalogFilters>) {
@@ -78,6 +81,8 @@ export function ProductCatalogList({
       search: filters.search,
       orderBy: filters.orderBy,
       sort: filters.sort,
+      fk_product_category: filters.fk_product_category,
+      fk_product_subcategory: filters.fk_product_subcategory,
       ...next,
     };
     router.push(buildShopQuery(merged));
@@ -95,6 +100,8 @@ export function ProductCatalogList({
         search: filters.search || undefined,
         orderBy: filters.orderBy,
         sort: filters.sort,
+        fk_product_category: filters.fk_product_category,
+        fk_product_subcategory: filters.fk_product_subcategory,
       });
       if (!result.ok) {
         setError(

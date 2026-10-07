@@ -132,8 +132,12 @@ export function ShopShell({
     if (pathname.startsWith("/shop")) {
       const orderBy = searchParams.get("orderBy");
       const sort = searchParams.get("sort");
+      const category = searchParams.get("fk_product_category");
+      const subcategory = searchParams.get("fk_product_subcategory");
       if (orderBy) next.set("orderBy", orderBy);
       if (sort) next.set("sort", sort);
+      if (category) next.set("fk_product_category", category);
+      if (subcategory) next.set("fk_product_subcategory", subcategory);
     }
     const qs = next.toString();
     router.push(qs ? `/shop?${qs}` : "/shop");
@@ -223,9 +227,6 @@ export function ShopShell({
         >
           <Link href="/shop" className={navLinkClass(pathname === "/shop")}>
             {t("allProducts")}
-          </Link>
-          <Link href="/shop#recommended" className={navLinkClass(false)}>
-            {t("recommended")}
           </Link>
           <Link href="/shop/favorites" className={navLinkClass(pathname.startsWith("/shop/favorites"))}>
             {t("favorites")}

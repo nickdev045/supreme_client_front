@@ -19,6 +19,7 @@ import { addressLabel, type StoreAddress } from "@/lib/api/addresses";
 import { cartHasUnpricedItems, cartLineTotal, cartTotal } from "@/lib/api/cart";
 import type { StoreCart, StoreCartPriceChange } from "@/lib/api/types";
 import { formatMoney, hasSellablePrice, toMoneyNumber } from "@/lib/format-money";
+import { formatClassificationLabel } from "@/lib/shop-query";
 
 type CartViewProps = {
   cart: StoreCart | null;
@@ -183,6 +184,10 @@ export function CartView({ cart, addresses }: CartViewProps) {
               const quantity = Number(item.quantity);
               const unit = item.product.meassure?.name;
               const priced = hasSellablePrice(item.product.sale_price);
+              const classification = formatClassificationLabel(
+                item.product.category,
+                item.product.subcategory,
+              );
               return (
                 <li
                   key={item.pk_cart_product}
@@ -212,6 +217,11 @@ export function CartView({ cart, addresses }: CartViewProps) {
                         {item.product.name}
                       </Link>
                     </h2>
+                    {classification ? (
+                      <p className="mt-0 mb-1 text-[0.8rem] text-[var(--text-muted)]">
+                        {classification}
+                      </p>
+                    ) : null}
                     <p className="m-0 text-sm text-[var(--text-muted)]">
                       {priced ? formatMoney(toMoneyNumber(item.unit_price)) : "—"}
                       {priced && unit ? ` / ${unit}` : ""}

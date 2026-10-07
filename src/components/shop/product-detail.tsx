@@ -6,6 +6,7 @@ import { FavouriteToggle } from "@/components/shop/favourite-toggle";
 import { ProductImageGallery } from "@/components/shop/product-image-gallery";
 import type { StoreCatalogDetail } from "@/lib/api/types";
 import { formatMoney, hasSellablePrice } from "@/lib/format-money";
+import { formatClassificationLabel } from "@/lib/shop-query";
 
 type ProductDetailProps = {
   product: StoreCatalogDetail;
@@ -26,6 +27,7 @@ export async function ProductDetail({
       : [];
   const available = product.stock_status === "in_stock";
   const priced = hasSellablePrice(product.price);
+  const classification = formatClassificationLabel(product.category, product.subcategory);
 
   return (
     <section className="space-y-5">
@@ -44,6 +46,9 @@ export async function ProductDetail({
             <h1 className="mt-0 mb-2 text-2xl font-bold text-[var(--navy)]">
               {product.name}
             </h1>
+            {classification ? (
+              <p className="mt-0 mb-2 text-sm text-[var(--text-muted)]">{classification}</p>
+            ) : null}
             <p className="m-0 text-sm text-[var(--text-muted)]">
               {t("productPage.unit")}: {product.unit}
             </p>

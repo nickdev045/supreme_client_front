@@ -1,17 +1,20 @@
 import { getTranslations } from "next-intl/server";
 
-import { ProductCard } from "@/components/shop/product-card";
 import { ProductCatalogList } from "@/components/shop/product-catalog-list";
+import { StoreDepartmentNav } from "@/components/shop/store-department-nav";
 import { Alert } from "@/components/ui/alert";
 import { ApiError } from "@/lib/api/client";
-import { fetchStoreCatalog, STORE_CATALOG_PAGE_SIZE } from "@/lib/api/catalog";
+import {
+  fetchStoreCatalog,
+  fetchStoreCatalogDepartments,
+  STORE_CATALOG_PAGE_SIZE,
+} from "@/lib/api/catalog";
 import { cartQuantitiesByProductId, listStoreCarts } from "@/lib/api/cart";
 import { favouriteIdsByProductId, listStoreFavourites } from "@/lib/api/favourites";
-import type { StoreCatalogOrderBy } from "@/lib/api/types";
+import type { StoreCatalogDepartment, StoreCatalogOrderBy } from "@/lib/api/types";
 import { handleUnauthorized } from "@/lib/handle-unauthorized";
 import { getAccessToken } from "@/lib/session";
-
-const RECOMMENDED_COUNT = 3;
+import { parseShopUuid, type ShopCatalogQuery } from "@/lib/shop-query";
 
 const ORDER_BY_VALUES = ["name", "sale_price", "created_at"] as const;
 const SORT_VALUES = ["asc", "desc"] as const;
@@ -34,12 +37,16 @@ export type ProductCatalogProps = {
   search?: string;
   orderBy?: string;
   sort?: string;
+  fk_product_category?: string;
+  fk_product_subcategory?: string;
 };
 
 export async function ProductCatalog({
   search,
   orderBy: orderByParam,
   sort: sortParam,
+  fk_product_category,
+  fk_product_subcategory,
 }: ProductCatalogProps) {
   const t = await getTranslations("Shop");
   const token = await getAccessToken();
@@ -48,10 +55,14 @@ export async function ProductCatalog({
     return <Alert tone="error">{t("catalogSessionError")}</Alert>;
   }
 
-  const filters = {
+  const categoryId = parseShopUuid(fk_product_category);
+  const subcategoryId = parseShopUuid(fk_product_subcategory);
+  const filters: ShopCatalogQuery & { search: string; orderBy: StoreCatalogOrderBy; sort: "asc" | "desc" } = {
     search: search?.trim() ?? "",
     orderBy: parseOrderBy(orderByParam),
     sort: parseSort(sortParam),
+    fk_product_category: categoryId,
+    fk_product_subcategory: categoryId ? subcategoryId : undefined,
   };
 
   try {
@@ -61,24 +72,19 @@ export async function ProductCatalog({
       search: filters.search || undefined,
       orderBy: filters.orderBy,
       sort: filters.sort,
+      fk_product_category: filters.fk_product_category,
+      fk_product_subcategory: filters.fk_product_subcategory,
     });
 
-    // Hide recommendations while searching; keep them when only sorting/filtering.
-    const recommendedRequest = filters.search
-      ? Promise.resolve(null)
-      : fetchStoreCatalog(token, {
-          page: 1,
-          limit: RECOMMENDED_COUNT,
-          orderBy: "name",
-          sort: "asc",
-        });
-
+    const departmentsRequest = fetchStoreCatalogDepartments(token).catch(
+      (): StoreCatalogDepartment[] => [],
+    );
     const cartRequest = listStoreCarts(token).catch(() => []);
     const favouritesRequest = listStoreFavourites(token).catch(() => []);
 
-    const [response, recommendedResponse, carts, favourites] = await Promise.all([
+    const [response, departments, carts, favourites] = await Promise.all([
       catalogRequest,
-      recommendedRequest,
+      departmentsRequest,
       cartRequest,
       favouritesRequest,
     ]);
@@ -89,38 +95,19 @@ export async function ProductCatalog({
     const products = response.data;
     const total = response.meta.total;
     const hasMore = products.length < total;
-    const recommended = recommendedResponse?.data.slice(0, RECOMMENDED_COUNT) ?? [];
+    const selectedDepartment = departments.find((item) => item.id === filters.fk_product_category);
+    const listTitle = selectedDepartment?.name ?? t("allProducts");
 
     return (
       <div className="space-y-8">
-        {recommended.length > 0 ? (
-          <section id="recommended" aria-labelledby="recommended-title">
-            <h2
-              id="recommended-title"
-              className="mt-0 mb-4 text-[1.35rem] font-bold text-[var(--navy)]"
-            >
-              {t("recommendedForYou")}
-            </h2>
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {recommended.map((product) => (
-                <ProductCard
-                  key={`rec-${product.id}`}
-                  product={product}
-                  variant="recommended"
-                  inCartQuantity={cartQuantities[product.id] ?? 0}
-                  favouriteId={favouriteIds[product.id] ?? null}
-                />
-              ))}
-            </div>
-          </section>
-        ) : null}
+        <StoreDepartmentNav departments={departments} filters={filters} />
 
         <section id="search" aria-labelledby="all-products-title">
           <h2
             id="all-products-title"
             className="mt-0 mb-4 text-[1.35rem] font-bold text-[var(--navy)]"
           >
-            {t("allProducts")}
+            {listTitle}
           </h2>
 
           <ProductCatalogList
