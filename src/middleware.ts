@@ -52,6 +52,13 @@ export async function middleware(req: NextRequest) {
 
   const signedIn = Boolean(token?.sub) && isAccessTokenFresh(token);
 
+  if (path === "/") {
+    return clearLegacySessionCookie(
+      NextResponse.redirect(new URL(signedIn ? "/shop" : "/login", req.url)),
+      secureCookie,
+    );
+  }
+
   if (sessionExpiredOnLogin) {
     return clearSessionCookies(req, NextResponse.next());
   }

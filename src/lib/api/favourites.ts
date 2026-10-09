@@ -62,6 +62,20 @@ export function favouriteToCatalogCard(favourite: StoreFavourite): StoreCatalogC
     stock: Number.isFinite(stock) ? stock : 0,
     stock_status: stock > 0 && favourite.product.is_active !== false ? "in_stock" : "out_of_stock",
     price,
+    category: favourite.product.category
+      ? {
+          id: favourite.product.category.pk_product_category,
+          name: favourite.product.category.name,
+          image: favourite.product.category.photo_url ?? null,
+        }
+      : null,
+    subcategory: favourite.product.subcategory
+      ? {
+          id: favourite.product.subcategory.pk_product_subcategory,
+          name: favourite.product.subcategory.name,
+          image: favourite.product.subcategory.photo_url ?? null,
+        }
+      : null,
     ...(listPrice != null && listPrice > price ? { list_price: listPrice } : {}),
     ...(discountPercent && discountPercent > 0 ? { discount_percent: discountPercent } : {}),
   };

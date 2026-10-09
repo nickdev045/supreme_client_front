@@ -51,6 +51,12 @@ export type StoreCartPriceChange = {
 /** Storefront catalog card from GET /api/v1/customer/catalog */
 export type StoreStockStatus = "in_stock" | "out_of_stock";
 
+export type StoreCatalogClassification = {
+  id: string;
+  name: string;
+  image: string | null;
+};
+
 export type StoreCatalogCard = {
   id: string;
   name: string;
@@ -61,6 +67,12 @@ export type StoreCatalogCard = {
   price: number;
   list_price?: number;
   discount_percent?: number;
+  category: StoreCatalogClassification | null;
+  subcategory: StoreCatalogClassification | null;
+};
+
+export type StoreCatalogDepartment = StoreCatalogClassification & {
+  subcategories: StoreCatalogClassification[];
 };
 
 export type StoreCatalogDetail = StoreCatalogCard & {
@@ -77,6 +89,8 @@ export type StoreCatalogListMeta = {
   search: string | null;
   orderBy: StoreCatalogOrderBy;
   sort: "asc" | "desc";
+  fk_product_category?: string | null;
+  fk_product_subcategory?: string | null;
 };
 
 export type StoreCatalogListResponse = {
@@ -98,6 +112,8 @@ export type StoreCartProduct = {
     stock: string | number;
     sale_price: string | number;
     meassure?: { name: string } | null;
+    category?: { pk_product_category: string; name: string; photo_url?: string | null } | null;
+    subcategory?: { pk_product_subcategory: string; name: string; photo_url?: string | null } | null;
   };
 };
 
@@ -165,6 +181,8 @@ export type StoreFavouriteProduct = {
   deleted_at?: string | null;
   description?: string;
   meassure?: { name: string } | null;
+  category?: { pk_product_category: string; name: string; photo_url?: string | null } | null;
+  subcategory?: { pk_product_subcategory: string; name: string; photo_url?: string | null } | null;
 };
 
 export type StoreFavourite = {

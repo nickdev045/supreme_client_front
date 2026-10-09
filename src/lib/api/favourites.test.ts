@@ -52,6 +52,8 @@ describe("store favourites API", () => {
       stock: 8,
       stock_status: "in_stock",
       price: 12.5,
+      category: null,
+      subcategory: null,
     });
   });
 
@@ -79,6 +81,8 @@ describe("store favourites API", () => {
       price: 90,
       list_price: 100,
       discount_percent: 10,
+      category: null,
+      subcategory: null,
     });
   });
 

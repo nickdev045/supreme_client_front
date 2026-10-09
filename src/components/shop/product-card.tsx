@@ -4,10 +4,12 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 
 import { AddToCartControls } from "@/components/shop/add-to-cart-controls";
+import { CatalogInitialMark } from "@/components/shop/catalog-initial";
 import { FavouriteToggle } from "@/components/shop/favourite-toggle";
 import { btn } from "@/components/ui/styles";
 import type { StoreCatalogCard } from "@/lib/api/types";
 import { formatMoney, hasSellablePrice } from "@/lib/format-money";
+import { formatClassificationLabel } from "@/lib/shop-query";
 
 type ProductCardProps = {
   product: StoreCatalogCard;
@@ -26,6 +28,7 @@ export function ProductCard({
   const available = product.stock_status === "in_stock";
   const priced = hasSellablePrice(product.price);
   const href = `/shop/products/${product.id}`;
+  const classification = formatClassificationLabel(product.category, product.subcategory);
 
   return (
     <article className="relative flex flex-col rounded-[14px] border border-[#ddd] bg-[var(--shop-surface)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow)]">
@@ -41,18 +44,18 @@ export function ProductCard({
               className="h-full w-full object-cover"
             />
           ) : (
-            <span
-              aria-hidden
-              className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-lg font-bold text-[var(--navy)] sm:h-16 sm:w-16 sm:text-xl"
-            >
-              {product.name.trim().charAt(0).toUpperCase() || "?"}
-            </span>
+            <CatalogInitialMark name={product.name} />
           )}
         </div>
         <div className="px-2.5 pt-3 sm:px-4 sm:pt-4">
           <h3 className="m-0 line-clamp-2 text-sm font-semibold text-[var(--navy)] sm:text-base">
             {product.name}
           </h3>
+          {classification ? (
+            <p className="mt-1 mb-0 line-clamp-1 text-[0.75rem] text-[var(--text-muted)] sm:text-[0.8rem]">
+              {classification}
+            </p>
+          ) : null}
         </div>
       </Link>
 

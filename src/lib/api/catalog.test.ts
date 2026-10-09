@@ -10,7 +10,11 @@ vi.mock("@/lib/api/client", async (importOriginal) => {
 });
 
 import { apiData, apiRequest } from "@/lib/api/client";
-import { fetchStoreCatalog, fetchStoreProduct } from "@/lib/api/catalog";
+import {
+  fetchStoreCatalog,
+  fetchStoreCatalogDepartments,
+  fetchStoreProduct,
+} from "@/lib/api/catalog";
 
 describe("fetchStoreCatalog", () => {
   beforeEach(() => {
@@ -29,6 +33,8 @@ describe("fetchStoreCatalog", () => {
           stock: 8,
           stock_status: "in_stock",
           price: 24.8,
+          category: { id: "c1", name: "Produce", image: null },
+          subcategory: null,
         },
       ],
       meta: {
@@ -46,10 +52,11 @@ describe("fetchStoreCatalog", () => {
       limit: 12,
       orderBy: "name",
       sort: "asc",
+      fk_product_category: "11111111-1111-4111-8111-111111111111",
     });
 
     expect(apiRequest).toHaveBeenCalledWith(
-      "/api/v1/customer/catalog?page=1&limit=12&orderBy=name&sort=asc",
+      "/api/v1/customer/catalog?page=1&limit=12&orderBy=name&sort=asc&fk_product_category=11111111-1111-4111-8111-111111111111",
       { method: "GET", token: "token-abc" },
     );
     expect(result.data).toHaveLength(1);
@@ -113,6 +120,24 @@ describe("fetchStoreCatalog", () => {
     });
     expect(product.description).toBe("25 lb case");
     expect(product.images).toEqual(["https://example.com/roma.png"]);
+  });
+
+  it("loads store catalog departments", async () => {
+    vi.mocked(apiData).mockResolvedValue([
+      {
+        id: "c1",
+        name: "Abarrotes",
+        image: "https://example.com/abarrotes.png",
+        subcategories: [{ id: "s1", name: "Granos", image: null }],
+      },
+    ]);
+
+    const departments = await fetchStoreCatalogDepartments("token-abc");
+    expect(apiData).toHaveBeenCalledWith("/api/v1/customer/catalog/categories", {
+      method: "GET",
+      token: "token-abc",
+    });
+    expect(departments[0]?.name).toBe("Abarrotes");
   });
 
   it("treats a product without a sellable price as missing", async () => {

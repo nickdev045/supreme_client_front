@@ -10,6 +10,8 @@ export type LoadCatalogPageInput = {
   search?: string;
   orderBy?: StoreCatalogOrderBy;
   sort?: "asc" | "desc";
+  fk_product_category?: string;
+  fk_product_subcategory?: string;
   limit?: number;
 };
 
@@ -44,6 +46,8 @@ export async function loadCatalogPageAction(
       search: input.search,
       orderBy: input.orderBy ?? "name",
       sort: input.sort ?? "asc",
+      fk_product_category: input.fk_product_category,
+      fk_product_subcategory: input.fk_product_subcategory,
     });
     const loaded = page * limit;
     return {
