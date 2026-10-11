@@ -19,6 +19,7 @@ type ShopHomePageProps = {
     sort?: string;
     fk_product_category?: string;
     fk_product_subcategory?: string;
+    page?: string;
   }>;
 };
 
@@ -35,6 +36,7 @@ export default async function ShopHomePage({ searchParams }: ShopHomePageProps) 
         sort={params.sort}
         fk_product_category={params.fk_product_category}
         fk_product_subcategory={params.fk_product_subcategory}
+        page={params.page} 
       />
     </>
   );

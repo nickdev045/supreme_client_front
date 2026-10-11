@@ -257,6 +257,10 @@
       "unit": "Unit",
       "gallery": "Product images",
       "imageN": "Image {n}"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next"
     }
   },
   "Nav": {
