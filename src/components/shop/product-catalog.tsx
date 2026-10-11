@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 
 import { ProductCatalogList } from "@/components/shop/product-catalog-list";
+import { ShopPagination } from "@/components/shop/shop-pagination"; // <--- Tu componente flotante con círculos
 import { StoreDepartmentNav } from "@/components/shop/store-department-nav";
 import { Alert } from "@/components/ui/alert";
 import { ApiError } from "@/lib/api/client";
@@ -39,6 +40,7 @@ export type ProductCatalogProps = {
   sort?: string;
   fk_product_category?: string;
   fk_product_subcategory?: string;
+  page?: string; // <--- Añadimos la prop de la página
 };
 
 export async function ProductCatalog({
@@ -47,6 +49,7 @@ export async function ProductCatalog({
   sort: sortParam,
   fk_product_category,
   fk_product_subcategory,
+  page: pageParam, // <--- Recibimos el parámetro de página
 }: ProductCatalogProps) {
   const t = await getTranslations("Shop");
   const token = await getAccessToken();
@@ -55,8 +58,10 @@ export async function ProductCatalog({
     return <Alert tone="error">{t("catalogSessionError")}</Alert>;
   }
 
+  const page = Number(pageParam) > 0 ? Number(pageParam) : 1; // <--- Parseamos la página de manera segura
   const categoryId = parseShopUuid(fk_product_category);
   const subcategoryId = parseShopUuid(fk_product_subcategory);
+  
   const filters: ShopCatalogQuery & { search: string; orderBy: StoreCatalogOrderBy; sort: "asc" | "desc" } = {
     search: search?.trim() ?? "",
     orderBy: parseOrderBy(orderByParam),
@@ -67,8 +72,8 @@ export async function ProductCatalog({
 
   try {
     const catalogRequest = fetchStoreCatalog(token, {
-      page: 1,
-      limit: STORE_CATALOG_PAGE_SIZE,
+      page, 
+      limit: STORE_CATALOG_PAGE_SIZE, 
       search: filters.search || undefined,
       orderBy: filters.orderBy,
       sort: filters.sort,
@@ -94,12 +99,11 @@ export async function ProductCatalog({
 
     const products = response.data;
     const total = response.meta.total;
-    const hasMore = products.length < total;
     const selectedDepartment = departments.find((item) => item.id === filters.fk_product_category);
     const listTitle = selectedDepartment?.name ?? t("allProducts");
 
     return (
-      <div className="space-y-8">
+      <div className="space-y-8 pb-24">
         <StoreDepartmentNav departments={departments} filters={filters} />
 
         <section id="search" aria-labelledby="all-products-title">
@@ -110,14 +114,22 @@ export async function ProductCatalog({
             {listTitle}
           </h2>
 
+   
           <ProductCatalogList
             initialProducts={products}
-            initialPage={response.meta.page}
+            initialPage={page}
             total={total}
-            hasMore={hasMore}
+            hasMore={false}
             filters={filters}
             cartQuantities={cartQuantities}
             favouriteIds={favouriteIds}
+          />
+
+  
+          <ShopPagination
+            page={page}
+            pageSize={STORE_CATALOG_PAGE_SIZE}
+            total={total}
           />
         </section>
       </div>

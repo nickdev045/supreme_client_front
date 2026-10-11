@@ -4,10 +4,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
+import { ShoppingCart, Loader2, ShoppingCartPlus } from "lucide-react"; // Importamos los iconos
 
 import { addToCartAction } from "@/app/(portal)/shop/cart/actions";
 import { QuantityStepper, maxOrderQuantity } from "@/components/shop/quantity-stepper";
-import { btn } from "@/components/ui/styles";
 
 type AddToCartControlsProps = {
   productId: string;
@@ -46,7 +46,6 @@ export function AddToCartControls({
       }
       setStatus("added");
       
-      // Disparamos el evento global para que el ShopShell muestre el banner arriba a la derecha
       window.dispatchEvent(new CustomEvent("product-added"));
       
       router.refresh();
@@ -87,27 +86,35 @@ export function AddToCartControls({
       {alreadyInCart ? (
         <Link
           href="/shop/cart"
-          className={`${btn.primary} ${layout === "stack" ? `${btn.sm} w-full px-2 text-center leading-tight` : ""} min-h-11 no-underline`}
+          className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[10px] bg-[var(--navy)] px-6 text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-90 no-underline"
         >
-          {t("cartPage.goToCart")}
+          <ShoppingCart className="h-4 w-4 shrink-0 text-white font-bold" />
+          <span>{t("cartPage.goToCart")}</span>
         </Link>
       ) : canAdd ? (
         <button
           type="button"
-          className={`${btn.primary} ${layout === "stack" ? `${btn.sm} w-full px-2 text-center leading-tight` : ""} min-h-11`}
           disabled={pending}
           onClick={onAdd}
+          className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[10px] bg-[var(--navy)] px-6 text-sm font-bold text-white shadow-sm transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--navy)]/50 disabled:pointer-events-none disabled:opacity-50"
         >
-          {pending
-            ? t("cartPage.adding")
-            : status === "added"
-              ? t("cartPage.added")
-              : t("cartPage.add")}
+          {pending ? (
+            <Loader2 className="h-4 w-4 animate-spin text-white" />
+          ) : (
+            <>
+              <span>
+                {status === "added"
+                  ? t("cartPage.added")
+                  : t("cartPage.add")}
+              </span>
+              <ShoppingCartPlus className="h-4 w-4 shrink-0 text-white font-bold" />
+            </>
+          )}
         </button>
       ) : (
         <button
           type="button"
-          className={`${btn.primary} ${layout === "stack" ? `${btn.sm} w-full px-2 text-center leading-tight` : ""} min-h-11`}
+          className="inline-flex h-11 w-full items-center justify-center rounded-[10px] bg-zinc-200 px-6 text-sm font-semibold text-zinc-500 cursor-not-allowed dark:bg-zinc-800 dark:text-zinc-400"
           disabled
         >
           {t(hasPrice ? "cartPage.outOfStock" : "cartPage.noPrice")}
@@ -121,4 +128,4 @@ export function AddToCartControls({
       ) : null}
     </div>
   );
-}
+} 
