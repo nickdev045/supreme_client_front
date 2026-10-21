@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { Eye } from "lucide-react";
 
 import { AddToCartControls } from "@/components/shop/add-to-cart-controls";
 import { CatalogInitialMark } from "@/components/shop/catalog-initial";
@@ -31,17 +32,15 @@ export function ProductCard({
   const classification = formatClassificationLabel(product.category, product.subcategory);
 
   return (
-    <article className="relative flex flex-col rounded-[14px] border border-[#ddd] bg-[var(--shop-surface)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow)]">
+    <article className="relative flex flex-col rounded-[14px] border border-[#ddd] bg-[var(--shop-surface)] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg">
       <FavouriteToggle productId={product.id} favouriteId={favouriteId} />
       <Link href={href} className="block text-inherit no-underline">
         <div className="flex h-[110px] items-center justify-center overflow-hidden rounded-t-[14px] bg-[var(--shop-surface-muted)] sm:h-[140px]">
           {product.image ? (
-            // Product image hosts vary by upload/CDN config.
-            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={product.image}
               alt=""
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover transition-transform duration-500 ease-out hover:scale-105"
             />
           ) : (
             <CatalogInitialMark name={product.name} />
@@ -99,11 +98,13 @@ export function ProductCard({
             inCartQuantity={inCartQuantity}
             layout="stack"
           />
+          
           <Link
             href={href}
-            className={`${btn.outline} ${btn.sm} min-h-11 w-full px-2 text-center leading-tight no-underline`}
+            className={`${btn.outline} ${btn.sm} min-h-11 w-full px-2 inline-flex items-center justify-center gap-2 text-center leading-tight no-underline transition-all duration-200 ease-in-out hover:border-[var(--navy)] hover:bg-[var(--navy)]/20 hover:text-[var(--navy)] group`}
           >
-            {t("productPage.viewDetails")}
+            <Eye className="h-4 w-4 shrink-0 opacity-70 transition-opacity group-hover:opacity-100" />
+            <span>{t("productPage.viewDetails")}</span>
           </Link>
         </div>
       </div>

@@ -17,7 +17,7 @@ export type FetchStoreCatalogParams = {
   fk_product_subcategory?: string;
 };
 
-export const STORE_CATALOG_PAGE_SIZE = 12;
+export const STORE_CATALOG_PAGE_SIZE = 20;
 
 export async function fetchStoreCatalogDepartments(token: string) {
   return apiData<StoreCatalogDepartment[]>("/api/v1/customer/catalog/categories", {
