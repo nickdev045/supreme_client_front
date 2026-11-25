@@ -73,6 +73,7 @@ export async function OrderConfirmation({ order }: OrderConfirmationProps) {
                 <p className="m-0 font-semibold text-[var(--navy)]">{line.name}</p>
                 <p className="m-0 text-sm text-[var(--text-muted)]">
                   {line.quantity} × {formatMoney(line.unit_price)}
+                  {line.presentation ? <> / {line.presentation.name}</> : null}
                 </p>
               </div>
               <p className="m-0 shrink-0 font-semibold text-[var(--navy)]">

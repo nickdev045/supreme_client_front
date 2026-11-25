@@ -10,7 +10,11 @@ import {
   fetchStoreCatalogDepartments,
   STORE_CATALOG_PAGE_SIZE,
 } from "@/lib/api/catalog";
-import { cartQuantitiesByProductId, listStoreCarts } from "@/lib/api/cart";
+import {
+  cartBaseUnitsByProductId,
+  cartQuantitiesByProductId,
+  listStoreCarts,
+} from "@/lib/api/cart";
 import { favouriteIdsByProductId, listStoreFavourites } from "@/lib/api/favourites";
 import type { StoreCatalogDepartment, StoreCatalogOrderBy } from "@/lib/api/types";
 import { handleUnauthorized } from "@/lib/handle-unauthorized";
@@ -95,6 +99,7 @@ export async function ProductCatalog({
     ]);
 
     const cartQuantities = cartQuantitiesByProductId(carts[0] ?? null);
+    const cartBaseUnits = cartBaseUnitsByProductId(carts[0] ?? null);
     const favouriteIds = favouriteIdsByProductId(favourites);
 
     const products = response.data;
@@ -122,6 +127,7 @@ export async function ProductCatalog({
             hasMore={false}
             filters={filters}
             cartQuantities={cartQuantities}
+            cartBaseUnits={cartBaseUnits}
             favouriteIds={favouriteIds}
           />
 

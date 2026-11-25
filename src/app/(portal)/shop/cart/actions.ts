@@ -88,6 +88,7 @@ function parsePriceChanges(data: unknown): StoreCartPriceChange[] {
 export async function addToCartAction(
   productId: string,
   quantity = 1,
+  presentationId?: string | null,
 ): Promise<CartActionResult> {
   const token = await getAccessToken();
   if (!token) return { ok: false, error: "session" };
@@ -99,6 +100,7 @@ export async function addToCartAction(
     await addStoreCartItem(token, cart.pk_user_cart, {
       productId,
       quantity: String(quantity),
+      presentationId,
     });
     const refreshed = await ensureStoreCart(token);
     revalidateCart();

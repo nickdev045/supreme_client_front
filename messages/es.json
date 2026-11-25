@@ -255,6 +255,7 @@
       "description": "Detalles",
       "noDescription": "Este producto no tiene más detalles.",
       "unit": "Unidad",
+      "presentation": "Presentación",
       "gallery": "Imágenes del producto",
       "imageN": "Imagen {n}"
     },

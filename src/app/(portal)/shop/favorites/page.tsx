@@ -4,7 +4,11 @@ import { getTranslations } from "next-intl/server";
 import { ProductCard } from "@/components/shop/product-card";
 import { Alert } from "@/components/ui/alert";
 import { btn } from "@/components/ui/styles";
-import { cartQuantitiesByProductId, listStoreCarts } from "@/lib/api/cart";
+import {
+  cartBaseUnitsByProductId,
+  cartQuantitiesByProductId,
+  listStoreCarts,
+} from "@/lib/api/cart";
 import { ApiError } from "@/lib/api/client";
 import {
   favouriteToCatalogCard,
@@ -33,6 +37,7 @@ export default async function ShopFavoritesPage() {
       listStoreCarts(token).catch(() => []),
     ]);
     const cartQuantities = cartQuantitiesByProductId(carts[0] ?? null);
+    const cartBaseUnits = cartBaseUnitsByProductId(carts[0] ?? null);
     const products = favourites.map((favourite) => ({
       product: favouriteToCatalogCard(favourite),
       favouriteId: favourite.pk_user_favourite,
@@ -62,6 +67,7 @@ export default async function ShopFavoritesPage() {
                 product={product}
                 variant="catalog"
                 inCartQuantity={cartQuantities[product.id] ?? 0}
+                inCartBaseUnits={cartBaseUnits[product.id] ?? 0}
                 favouriteId={favouriteId}
               />
             ))}
