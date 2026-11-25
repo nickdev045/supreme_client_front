@@ -30,6 +30,7 @@ type ProductCatalogListProps = {
   hasMore: boolean;
   filters: CatalogFilters;
   cartQuantities?: Record<string, number>;
+  cartBaseUnits?: Record<string, number>;
   favouriteIds?: Record<string, number>;
 };
 
@@ -50,6 +51,7 @@ export function ProductCatalogList({
   hasMore: initialHasMore,
   filters,
   cartQuantities = {},
+  cartBaseUnits = {},
   favouriteIds = {},
 }: ProductCatalogListProps) {
   const t = useTranslations("Shop");
@@ -164,6 +166,7 @@ export function ProductCatalogList({
               product={product}
               variant="catalog"
               inCartQuantity={cartQuantities[product.id] ?? 0}
+              inCartBaseUnits={cartBaseUnits[product.id] ?? 0}
               favouriteId={favouriteIds[product.id] ?? null}
             />
           ))}

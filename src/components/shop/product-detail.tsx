@@ -5,18 +5,20 @@ import { AddToCartControls } from "@/components/shop/add-to-cart-controls";
 import { FavouriteToggle } from "@/components/shop/favourite-toggle";
 import { ProductImageGallery } from "@/components/shop/product-image-gallery";
 import type { StoreCatalogDetail } from "@/lib/api/types";
-import { formatMoney, hasSellablePrice } from "@/lib/format-money";
+import { hasSellablePrice } from "@/lib/format-money";
 import { formatClassificationLabel } from "@/lib/shop-query";
 
 type ProductDetailProps = {
   product: StoreCatalogDetail;
   inCartQuantity?: number;
+  inCartBaseUnits?: number;
   favouriteId?: number | null;
 };
 
 export async function ProductDetail({
   product,
   inCartQuantity = 0,
+  inCartBaseUnits = 0,
   favouriteId = null,
 }: ProductDetailProps) {
   const t = await getTranslations("Shop");
@@ -58,21 +60,6 @@ export async function ProductDetail({
             {t("stock.quantity", { count: product.stock })}
           </p>
 
-          <p className="m-0 text-2xl font-bold text-[var(--navy)]">
-            {available && priced ? (
-              <>
-                {product.list_price != null && product.list_price > product.price ? (
-                  <span className="mr-2 text-base font-normal text-[var(--text-muted)] line-through">
-                    {formatMoney(product.list_price)}
-                  </span>
-                ) : null}
-                {`${formatMoney(product.price)} / ${product.unit}`}
-              </>
-            ) : (
-              "—"
-            )}
-          </p>
-
           <div>
             <h2 className="mt-0 mb-2 text-base font-semibold text-[var(--navy)]">
               {t("productPage.description")}
@@ -88,7 +75,12 @@ export async function ProductDetail({
             stock={product.stock}
             available={available}
             hasPrice={priced}
+            presentationOptions={product.presentations}
+            basePrice={product.price}
+            baseListPrice={product.list_price}
+            unit={product.unit}
             inCartQuantity={inCartQuantity}
+            inCartBaseUnits={inCartBaseUnits}
             layout="row"
           />
           <FavouriteToggle productId={product.id} favouriteId={favouriteId} variant="detail" />

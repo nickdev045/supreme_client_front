@@ -16,6 +16,7 @@ type ProductCardProps = {
   product: StoreCatalogCard;
   variant: "recommended" | "catalog";
   inCartQuantity?: number;
+  inCartBaseUnits?: number;
   favouriteId?: number | null;
 };
 
@@ -23,6 +24,7 @@ export function ProductCard({
   product,
   variant,
   inCartQuantity = 0,
+  inCartBaseUnits = 0,
   favouriteId = null,
 }: ProductCardProps) {
   const t = useTranslations("Shop");
@@ -62,7 +64,6 @@ export function ProductCard({
         <p className="m-0 text-[0.8rem] text-[var(--text-muted)]">
           {t("stock.quantity", { count: product.stock })}
         </p>
-
         {!priced || (product.stock_status === "out_of_stock" && variant === "catalog") ? (
           <p className="mt-2 mb-0 font-bold text-[var(--navy)]">—</p>
         ) : variant === "recommended" ? (
@@ -88,6 +89,8 @@ export function ProductCard({
           </p>
         )}
 
+
+
         <div className="mt-auto flex flex-col gap-2 pt-3">
           <AddToCartControls
             key={`${product.id}-${inCartQuantity}`}
@@ -95,7 +98,14 @@ export function ProductCard({
             stock={product.stock}
             available={available}
             hasPrice={priced}
+            presentationOptions={product.presentations}
+            basePrice={product.price}
+            baseListPrice={product.list_price}
+            unit={product.unit}
             inCartQuantity={inCartQuantity}
+            inCartBaseUnits={inCartBaseUnits}
+            showPresentationSelector={false}
+            showPrice={false}
             layout="stack"
           />
           

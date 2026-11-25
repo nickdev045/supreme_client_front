@@ -26,13 +26,14 @@ export async function ensureStoreCart(token: string): Promise<StoreCart> {
 export function addStoreCartItem(
   token: string,
   cartId: number,
-  input: { productId: string; quantity: string },
+  input: { productId: string; quantity: string; presentationId?: string | null },
 ) {
   return apiData<StoreCart["cart_products"][number]>(`/api/v1/customer/carts/${cartId}/items`, {
     method: "POST",
     token,
     body: {
       fk_product: input.productId,
+      ...(input.presentationId ? { fk_product_presentation: input.presentationId } : {}),
       quantity: input.quantity,
       selected: true,
     },
@@ -132,7 +133,7 @@ export function cartItemCount(cart: StoreCart | null | undefined): number {
 }
 
 export function cartLineTotal(item: StoreCart["cart_products"][number]): number {
-  if (!hasSellablePrice(item.product.sale_price)) return 0;
+  if (!hasSellablePrice(item.unit_price)) return 0;
   return toMoneyNumber(Number(item.quantity) * toMoneyNumber(item.unit_price));
 }
 
@@ -143,7 +144,7 @@ export function cartTotal(cart: StoreCart | null | undefined): number {
 
 export function cartHasUnpricedItems(cart: StoreCart | null | undefined): boolean {
   if (!cart) return false;
-  return cart.cart_products.some((item) => !hasSellablePrice(item.product.sale_price));
+  return cart.cart_products.some((item) => !hasSellablePrice(item.unit_price));
 }
 
 export function cartQuantitiesByProductId(
@@ -155,6 +156,22 @@ export function cartQuantitiesByProductId(
     const quantity = Number(item.quantity);
     if (!Number.isFinite(quantity) || quantity <= 0) continue;
     quantities[item.fk_product] = (quantities[item.fk_product] ?? 0) + quantity;
+  }
+  return quantities;
+}
+
+export function cartBaseUnitsByProductId(
+  cart: StoreCart | null | undefined,
+): Record<string, number> {
+  const quantities: Record<string, number> = {};
+  if (!cart) return quantities;
+  for (const item of cart.cart_products) {
+    const quantity = Number(item.quantity);
+    const factor = Number(item.presentation?.base_quantity ?? 1);
+    if (!Number.isFinite(quantity) || quantity <= 0 || !Number.isFinite(factor) || factor <= 0) {
+      continue;
+    }
+    quantities[item.fk_product] = (quantities[item.fk_product] ?? 0) + quantity * factor;
   }
   return quantities;
 }

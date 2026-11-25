@@ -51,6 +51,17 @@ export type StoreCartPriceChange = {
 /** Storefront catalog card from GET /api/v1/customer/catalog */
 export type StoreStockStatus = "in_stock" | "out_of_stock";
 
+export type StoreProductPresentation = {
+  id: string | null;
+  name: string;
+  base_quantity: number;
+  price: number;
+  list_price?: number;
+  discount_percent?: number;
+  is_base: boolean;
+  available_quantity: number;
+};
+
 export type StoreCatalogClassification = {
   id: string;
   name: string;
@@ -69,6 +80,7 @@ export type StoreCatalogCard = {
   discount_percent?: number;
   category: StoreCatalogClassification | null;
   subcategory: StoreCatalogClassification | null;
+  presentations?: StoreProductPresentation[];
 };
 
 export type StoreCatalogDepartment = StoreCatalogClassification & {
@@ -101,10 +113,18 @@ export type StoreCatalogListResponse = {
 export type StoreCartProduct = {
   pk_cart_product: number;
   fk_product: string;
+  fk_product_presentation?: string | null;
   fk_user_cart: number;
   quantity: string;
   unit_price: string | number;
   selected: boolean;
+  presentation?: {
+    pk_product_presentation: string;
+    name: string;
+    base_quantity: number | string;
+    is_base: boolean;
+    is_active: boolean;
+  } | null;
   product: {
     pk_product: string;
     name: string;
@@ -132,6 +152,7 @@ export type StoreOrderLine = {
   quantity: number;
   unit_price: number;
   sub_total: number;
+  presentation?: { name: string; base_quantity: number } | null;
 };
 
 export type StoreOrderPayment = {

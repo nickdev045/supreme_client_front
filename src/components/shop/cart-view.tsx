@@ -16,7 +16,12 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { TrashIcon } from "@/components/ui/icons";
 import { btn, fieldClass } from "@/components/ui/styles";
 import { addressLabel, type StoreAddress } from "@/lib/api/addresses";
-import { cartHasUnpricedItems, cartLineTotal, cartTotal } from "@/lib/api/cart";
+import {
+  cartBaseUnitsByProductId,
+  cartHasUnpricedItems,
+  cartLineTotal,
+  cartTotal,
+} from "@/lib/api/cart";
 import type { StoreCart, StoreCartPriceChange } from "@/lib/api/types";
 import { formatMoney, hasSellablePrice, toMoneyNumber } from "@/lib/format-money";
 import { formatClassificationLabel } from "@/lib/shop-query";
@@ -59,6 +64,7 @@ export function CartView({ cart, addresses }: CartViewProps) {
 
   const total = cartTotal(cart);
   const hasUnpricedItems = cartHasUnpricedItems(cart);
+  const reservedBaseUnits = useMemo(() => cartBaseUnitsByProductId(cart), [cart]);
   const sortedAddresses = useMemo(
     () => [...addresses].sort((a, b) => b.pk_address - a.pk_address),
     [addresses],
@@ -184,10 +190,19 @@ export function CartView({ cart, addresses }: CartViewProps) {
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,22rem)]">
           <ul className="m-0 flex list-none flex-col gap-3 p-0">
             {items.map((item) => {
-              const stock = maxOrderQuantity(toMoneyNumber(item.product.stock));
+              const stockBaseUnits = maxOrderQuantity(toMoneyNumber(item.product.stock));
               const quantity = Number(item.quantity);
-              const unit = item.product.meassure?.name;
-              const priced = hasSellablePrice(item.product.sale_price);
+              const factorValue = Number(item.presentation?.base_quantity ?? 1);
+              const factor = Number.isFinite(factorValue) && factorValue > 0 ? factorValue : 1;
+              const otherReservedBaseUnits = Math.max(
+                0,
+                (reservedBaseUnits[item.fk_product] ?? 0) - quantity * factor,
+              );
+              const stock = maxOrderQuantity(
+                Math.floor(Math.max(0, stockBaseUnits - otherReservedBaseUnits) / factor),
+              );
+              const unit = item.presentation?.name ?? item.product.meassure?.name;
+              const priced = hasSellablePrice(item.unit_price);
               const classification = formatClassificationLabel(
                 item.product.category,
                 item.product.subcategory,
